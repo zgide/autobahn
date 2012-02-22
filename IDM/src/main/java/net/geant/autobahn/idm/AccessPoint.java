@@ -859,7 +859,7 @@ public final class AccessPoint implements UserAccessPoint,
 		
 		HomeDomainReservation res = reqConverter.createReservation(req);
 		
-		res.setBodID("fake_res_" + System.currentTimeMillis());
+		res.setBodID("fake_res_" + domainName + "@" + System.currentTimeMillis());
 		
         res.setPathFinder(pathFinder);
         res.setResourcesReservation(domainManager);

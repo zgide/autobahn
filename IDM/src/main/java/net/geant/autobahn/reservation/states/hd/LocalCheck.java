@@ -100,7 +100,7 @@ public class LocalCheck extends HomeDomainState {
         try {
             dcons = res.checkResources();
         } catch (OversubscribedException e) {
-        	System.out.println("OVERSUBSCRIBED");
+        	log.debug("OVERSUBSCRIBED");
         	Link failedLink = res.getPath().getLink(e.getFailedLink());
         	
             res.excludeLink(failedLink);

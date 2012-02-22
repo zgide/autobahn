@@ -116,8 +116,9 @@ public class GlobalConstraints implements Serializable {
     	
     	List<PathConstraints> selected = findBest(findPossibilities(), par);
 
-    	if(selected == null)
+    	if (selected == null || selected.size() == 0) {
     		return null;
+    	}
     	
         // select only one VLAN number
         MinValueConstraint mtu = selected.get(0).getMinValueConstraint(ConstraintsNames.MTU);
@@ -141,7 +142,14 @@ public class GlobalConstraints implements Serializable {
         	Constraint mcon = first.getMinValueConstraint(ConstraintsNames.MTU);
         	
             // Vlans applicable
-        	if(rcon != null) {
+        	if (rcon != null) {
+                if (selected.size() <= i) {
+                    log.error("Unexpected error while calculating constraints, "
+                    		+ "domain number (" + domainsIds.size()
+                            + ") is larger than path number (" + selected.size()
+                            + "), cannot get path at index " + i);
+                    return null;
+                }
         		RangeConstraint vlans = selected.get(i).getRangeConstraint(ConstraintsNames.VLANS);
         		
                 RangeConstraint vlanCons = new RangeConstraint(vlans.getFirstValue(), vlans.getFirstValue());
