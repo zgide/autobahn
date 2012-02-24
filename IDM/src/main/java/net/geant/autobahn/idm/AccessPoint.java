@@ -1581,20 +1581,21 @@ public final class AccessPoint implements UserAccessPoint,
 				sqlCommands = readSqlFile("sql/drop_all.sql");
 			} catch (FileNotFoundException e) {
 				log.error("File sql/drop_all.sql was not found: " + e.getMessage());
-				return;
+				throw new AdministrationException("File sql/drop_all.sql was not found: " + e.getMessage());
 			}
+			
 			daos.getAdminDomainDAO().deleteForTopologyUpdate(sqlCommands);
     		log.info("Database was cleared.");
     		
         } else if (deleteReservations == true && update == false) {
-        	List<String> rsvCommands;
-        	List<String> topoCommands;
+        	List<String> rsvCommands = null;
+        	List<String> topoCommands = null;
 			try {
 				rsvCommands = readSqlFile("sql/drop_reservations.sql");
 				topoCommands = readSqlFile("sql/drop_abstractTopology.sql");
 			} catch (FileNotFoundException e) {
 				log.error("File was not found: " + e.getMessage());
-				return;
+				throw new AdministrationException("File was not found: " + e.getMessage());
 			}
 
         	daos.getAdminDomainDAO().deleteForTopologyUpdate(rsvCommands);
