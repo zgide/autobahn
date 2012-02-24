@@ -1,5 +1,6 @@
 package net.geant.autobahn.administration;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import javax.jws.WebService;
@@ -110,8 +111,7 @@ public class AdministrationImpl implements Administration {
     }
 
     @Override
-    public void handleTopologyChange(boolean deleteReservations)
-            throws AdministrationException {
-        AccessPoint.getInstance().handleTopologyChange(deleteReservations);
-    }
+    public void handleTopologyChange(boolean deleteReservations, boolean update) throws AdministrationException {
+        AccessPoint.getInstance().handleTopologyChange(deleteReservations, update);
+    }    
 }

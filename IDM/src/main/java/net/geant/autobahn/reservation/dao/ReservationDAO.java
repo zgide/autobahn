@@ -24,6 +24,21 @@ public interface ReservationDAO extends GenericDAO<Reservation, String> {
     public List<Reservation> getRunningReservations();
     
     /**
+     * Returns all reservations that are not in final state, meaning that abahn has communicated with TP. This method is used 
+     * during the restart process (handleTopologyChange of IDM AccessPoint)
+     * 
+     * @return List of Reservation objects that are "active"
+     */
+    public List<Reservation> getActiveReservations();
+    
+    /**
+     * Returns all reservations that are in final state
+     * 
+     * @return List of Reservation objects that are "finished", "cancelled" or "failed"
+     */
+    public List<Reservation> getFinishedReservations();
+    
+    /**
      * Returns list of reservations that includes specified domain.
      * 
      * @param domainID String identifier of domain

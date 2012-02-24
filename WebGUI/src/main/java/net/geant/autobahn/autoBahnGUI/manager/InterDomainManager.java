@@ -1,5 +1,6 @@
 package net.geant.autobahn.autoBahnGUI.manager;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -761,8 +762,7 @@ public class InterDomainManager implements UserAccessPoint, Administration {
     }
 
     @Override
-    public void handleTopologyChange(boolean deleteReservations)
-            throws AdministrationException {
-        administration.handleTopologyChange(deleteReservations);
+    public void handleTopologyChange(boolean deleteReservations, boolean update) throws AdministrationException {
+        administration.handleTopologyChange(deleteReservations, update);
     }
 }

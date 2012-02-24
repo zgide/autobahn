@@ -13,7 +13,9 @@ import net.geant.autobahn.dao.hibernate.IdmHibernateUtil;
 import net.geant.autobahn.network.Link;
 import net.geant.autobahn.reservation.Reservation;
 import net.geant.autobahn.reservation.dao.ReservationDAO;
+import net.geant.autobahn.reservation.states.ed.ExternalDomainState;
 import net.geant.autobahn.reservation.states.hd.HomeDomainState;
+import net.geant.autobahn.reservation.states.ld.LastDomainState;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -37,6 +39,39 @@ public class HibernateReservationDAO extends
         					HomeDomainState.ACTIVE.getCode(), 
         					HomeDomainState.SCHEDULED.getCode(),
         					HomeDomainState.SCHEDULING.getCode()        					
+        				})); 
+
+        return reservations;
+    }
+	
+	public List<Reservation> getActiveReservations() {
+        List<Reservation> reservations = findByCriteria(
+        		Restrictions.in("state", new Object[] {
+        					HomeDomainState.ACTIVE.getCode(), 
+        					HomeDomainState.ACTIVATING.getCode(),
+        					HomeDomainState.WITHDRAWING.getCode(),
+        					HomeDomainState.CANCELLING.getCode(),
+        					HomeDomainState.FINISHING.getCode(),
+        					HomeDomainState.DEFERRED_CANCEL.getCode(),
+        					ExternalDomainState.CANCELLING.getCode(),
+        					ExternalDomainState.WITHDRAWING.getCode(),
+        					ExternalDomainState.ACTIVE.getCode(),
+        					LastDomainState.ACTIVE.getCode()
+        				})); 
+
+        return reservations;
+    }
+	
+	/**
+	 * This function assumes that states have the same int value regardless 
+	 * if they are Home, Last or External Reservations.
+	 */
+	public List<Reservation> getFinishedReservations() {
+        List<Reservation> reservations = findByCriteria(
+        		Restrictions.in("state", new Object[] {
+        					HomeDomainState.FINISHED.getCode(),
+        					HomeDomainState.FAILED.getCode(),
+        					HomeDomainState.CANCELLED.getCode()
         				})); 
 
         return reservations;

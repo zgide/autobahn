@@ -1,4 +1,3 @@
-DELETE FROM domainsids;
 DELETE FROM pcon_range_constraints;
 DELETE FROM pcon_range_names;
 DELETE FROM pcon_bool_constraints;
@@ -14,7 +13,7 @@ DELETE FROM reservation_params;
 
 DELETE FROM path_constraint;
 DELETE FROM domain_constraints;
-DELETE FROM domains_ids;
+DELETE FROM domain_ids;
 DELETE FROM global_constraints;
 
 DELETE FROM intradomain_path;

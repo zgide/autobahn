@@ -1,5 +1,6 @@
 package net.geant.autobahn.administration;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import javax.jws.WebMethod;
@@ -51,5 +52,5 @@ public interface Administration {
 	void restart();
 
     @WebMethod
-    void handleTopologyChange(boolean deleteReservations) throws AdministrationException;
+    void handleTopologyChange(boolean deleteReservations, boolean update) throws AdministrationException;
 }

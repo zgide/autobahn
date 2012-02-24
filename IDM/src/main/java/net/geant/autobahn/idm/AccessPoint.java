@@ -1,8 +1,11 @@
 package net.geant.autobahn.idm;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -910,11 +913,13 @@ public final class AccessPoint implements UserAccessPoint,
     public Service createService(String description, User user,
 			List<HomeDomainReservation> reservations) {
     	
+    	
         // Service
-    	String id = daos.getServiceDAO().generateNextId();
-        Service service = new Service(id, reservationProcessor);
+        Service service = new Service(daos.getServiceDAO().generateNextId(),
+				reservationProcessor);
         service.setJustification(description);
         service.setUser(user);
+        
         for(HomeDomainReservation res : reservations) {
             
         	if(res.getBodID() != null) {
@@ -1205,7 +1210,7 @@ public final class AccessPoint implements UserAccessPoint,
 		
 		List<KeyValue> props = new ArrayList<KeyValue>();
 		
-		Enumeration<Object> en = this.properties.keys();
+		Enumeration<Object> en = this.properties.keys();	
 		while (en.hasMoreElements()) {
 			
 			String key = (String)en.nextElement();
@@ -1482,10 +1487,8 @@ public final class AccessPoint implements UserAccessPoint,
     /**
      * Saves a statistics entry in the database.
      * 
-     * @deprecated This procedure is moved to <code>net.geant.autobahn.reservation.states.hd.Active</code> class  
      * @param se
      */
-    @Deprecated
     public static synchronized void saveStatisticsEntry(StatisticsEntry se) {
         HibernateUtil hbm = IdmHibernateUtil.getInstance();
         if(hbm == null) {
@@ -1493,7 +1496,7 @@ public final class AccessPoint implements UserAccessPoint,
         }
         
         StatisticsEntryDAO dao = HibernateIdmDAOFactory.getInstance().getStatisticsEntryDAO();
-       
+        
         Transaction t = hbm.beginTransaction();
         dao.update(se);
         if (!t.wasCommitted()) {
@@ -1557,39 +1560,87 @@ public final class AccessPoint implements UserAccessPoint,
         
     }
 
-    public void handleTopologyChange(boolean deleteReservations)
-            throws AdministrationException {
+	public void handleTopologyChange(boolean deleteReservations, boolean update) throws AdministrationException {
 
-        String dbname = properties.getProperty("db.name");
-        List<Reservation> reservations = daos.getReservationDAO().getAll();
-        if ((reservations.size() > 0) && (deleteReservations == false)) {
+		List<Reservation> reservations = daos.getReservationDAO().getAll();
+		List<Reservation> finishedReservations = daos.getReservationDAO().getFinishedReservations();
+		
+        if (reservations.size() != finishedReservations.size()) {
             throw new AdministrationException(
-                    "Reservations are present, cannot delete abstract topology.");
+                    "Active reservations are present, cannot delete them.");
+        } else if (deleteReservations == false) {
+        	throw new AdministrationException(
+        			"Cannot update topology without deleting non active reservations.");
         }
-        try {
-            Runtime.getRuntime().exec(
-                    "sudo -u postgres psql -d " + dbname
-                            + " -f sql/drop_reservations.sql");
-            Runtime.getRuntime().exec(
-                    "sudo -u postgres psql -d " + dbname
-                            + " -f sql/drop_abstractTopology.sql");            
-        } catch (IOException e) {
-            throw new AdministrationException(
-                    "Error executing sql scripts: " + e.getMessage(), e);
-        }
-        log.info("Reservations and Abstract Topology cleared.");
+		
+        //Delete all appropriate entries in database for a topology update
+        //using deleteForTopologyUpdate of HibernateGenericDAO
+        if (deleteReservations == true && update == true) {
+        	List<String> sqlCommands = null;
+			try {
+				sqlCommands = readSqlFile("sql/drop_all.sql");
+			} catch (FileNotFoundException e) {
+				log.error("File sql/drop_all.sql was not found: " + e.getMessage());
+				return;
+			}
+			daos.getAdminDomainDAO().deleteForTopologyUpdate(sqlCommands);
+    		log.info("Database was cleared.");
+    		
+        } else if (deleteReservations == true && update == false) {
+        	List<String> rsvCommands;
+        	List<String> topoCommands;
+			try {
+				rsvCommands = readSqlFile("sql/drop_reservations.sql");
+				topoCommands = readSqlFile("sql/drop_abstractTopology.sql");
+			} catch (FileNotFoundException e) {
+				log.error("File was not found: " + e.getMessage());
+				return;
+			}
 
-        restart();
-
-        // Return only when the server notifies that it has properly restarted
-        synchronized (idmReady) {
-            try {
-                idmReady.wait();
-            } catch (InterruptedException e) {
-                log.debug("handleTopologyChange returned before IDM was fully restarted: "
-                        + e.getMessage());
-            }
+        	daos.getAdminDomainDAO().deleteForTopologyUpdate(rsvCommands);
+    		daos.getAdminDomainDAO().deleteForTopologyUpdate(topoCommands);
+        	
+    		log.info("Reservations and Abstract Topology were cleared.");
         }
-    }
+
+		restart();
+
+		// Return only when the server notifies that it has properly restarted
+		synchronized (idmReady) {
+			try {
+				idmReady.wait();
+			} catch (InterruptedException e) {
+				log.debug("handleTopologyChange returned before IDM was fully restarted: "
+						+ e.getMessage());
+			}
+		}
+	}
+	
+	private List<String> readSqlFile (String file) throws FileNotFoundException {
+		List<String> contents = new ArrayList<String>();
+    	File sqlFile = new File(file);
+        
+    	if (!sqlFile.exists()) {
+        	log.error("File " + file + " was not found.");
+            throw new FileNotFoundException();
+        }
+        
+		try {
+			BufferedReader input =  new BufferedReader(new FileReader(sqlFile));
+			try {
+		        String line = null; 
+		        while (( line = input.readLine()) != null && line != "\n"){
+		          contents.add(line);
+		        }
+		      }
+		      finally {
+		        input.close();
+		      }
+		} catch (IOException e) {
+			log.error("Could not load sql file: " + e.getMessage());
+		}
+		
+		return contents;
+	}
 
 }

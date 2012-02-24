@@ -7,12 +7,14 @@ package net.geant.autobahn.dao.hibernate;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.geant.autobahn.dao.GenericDAO;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 
@@ -103,6 +105,28 @@ public class HibernateGenericDAO<T, PK extends Serializable> implements
 		getSession().createQuery(
 				"delete from " + persistentClass.getCanonicalName())
 				.executeUpdate();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.geant.autobahn.dao.GenericDAO#deleteForTopologyUpdate(java.util.List)
+	 * 
+	 * Deletes all database entries except ServiceHistory, ReservationHistory and Statistics
+	 */
+	public void deleteForTopologyUpdate(List<String> sql) {
+		try {
+			for (String query : sql) {
+				if (query != "") {
+					getSession().connection().prepareStatement(query).execute();
+				}
+			}
+			getSession().connection().commit();
+			getSession().disconnect();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
     
 	/**

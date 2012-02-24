@@ -63,4 +63,10 @@ public interface GenericDAO<T, PK extends Serializable> {
      * Deletes all objects of the class from the database.
      */
     public void deleteAll();
+    
+    /**
+     * Cleans the database for a topology update.
+     * @param sql 
+     */
+    public void deleteForTopologyUpdate(List<String> sql);
 }

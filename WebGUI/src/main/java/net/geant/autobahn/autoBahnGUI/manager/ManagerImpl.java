@@ -1,5 +1,6 @@
 package net.geant.autobahn.autoBahnGUI.manager;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -1391,14 +1392,14 @@ public class ManagerImpl implements Manager, ManagerNotifier {
         }
 
         // Work on a copy of idms Map as it will change while IDMs are restarted
-        Map<String, InterDomainManager> idms_copy = new HashMap<String, InterDomainManager>();
-        idms_copy.putAll(idms);
+        Map<String, InterDomainManager> idmsCopy = new HashMap<String, InterDomainManager>();
+        idmsCopy.putAll(idms);
 
-        InterDomainManager manager = idms_copy.get(idmParam);
+        InterDomainManager manager = idmsCopy.get(idmParam);
         if (manager != null){
             logger.info("Restarting IDM that caused topology change: " + idmParam);
             try {
-                manager.handleTopologyChange(deleteReservations);
+                manager.handleTopologyChange(deleteReservations, true);
             } catch (AdministrationException e) {
                 // Log the problem and continue to the other IDMs
                 logger.info(e.getMessage());
@@ -1406,16 +1407,16 @@ public class ManagerImpl implements Manager, ManagerNotifier {
         }
         
         // Parse through IDMs and get the first non-null result
-        for (String idm : idms_copy.keySet()) {
-            manager = idms_copy.get(idm);
+        for (String idm : idmsCopy.keySet()) {
+            manager = idmsCopy.get(idm);
             
             if(idm != null && !idm.equals(idmParam)) {
                 logger.info("Restarting IDM " + idm);
                 try {
-                    manager.handleTopologyChange(deleteReservations);
+                    manager.handleTopologyChange(deleteReservations, false);
                 } catch (AdministrationException e) {
                     // Log the problem and continue to next IDM
-                    logger.info(e.getMessage());
+                    logger.error(e.getMessage());
                 }
             }
         }
