@@ -85,7 +85,7 @@ public class LocalCheck extends HomeDomainState {
         final String domainID = res.getLocalDomainID();
         
         if(path.getCapacity() < res.getCapacity()) {
-        	System.out.println("PATH FAILED");
+        	log.debug("PATH FAILED");
         	pathFailed(res, ReservationErrors.PATH_CAPACITY_NOT_ENOUGH, path.toString());
         	return;
         }

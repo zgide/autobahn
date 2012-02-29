@@ -48,7 +48,7 @@ public class SdhConstraintsReservationCalendar implements
 		
 		IntradomainPath res = new IntradomainPath();
 		
-		for(GenericLink glink : ipath.getLinks()) {
+		for (GenericLink glink : ipath.getLinks()) {
 			AdditiveCalendar calendar = timeslotCalendars.get(glink);
 
 			PathConstraints pcon = ipath.getConstraints(glink);
@@ -56,7 +56,7 @@ public class SdhConstraintsReservationCalendar implements
 			MinValueConstraint timeslots = pcon.getMinValueConstraint(
 					ConstraintsNames.TIMESLOTS);
 
-			System.out.println("Constraint for link: " + glink + " " + timeslots);
+			log.info("Constraint for link: " + glink + " " + timeslots);
 			
 			if(calendar == null) {
 				res.addGenericLink(glink, pcon);
@@ -66,7 +66,7 @@ public class SdhConstraintsReservationCalendar implements
 			double total = timeslots.getValue();
 			double usage = calendar.getMaxUsage(startTime, endTime);
 			
-			if(total - usage > 0) {
+			if (total - usage > 0) {
 				MinValueConstraint av_timeslots = new MinValueConstraint(total - usage);
 				
 				PathConstraints resPCon = new PathConstraints();

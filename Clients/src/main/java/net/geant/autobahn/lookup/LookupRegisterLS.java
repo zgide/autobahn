@@ -1,6 +1,5 @@
 package net.geant.autobahn.lookup;
 
-
 import net.geant.autobahn.resources.ResourcePath;
 
 public class LookupRegisterLS {

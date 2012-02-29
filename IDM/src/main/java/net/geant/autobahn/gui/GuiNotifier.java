@@ -2,6 +2,8 @@ package net.geant.autobahn.gui;
 
 import java.net.MalformedURLException;
 
+import org.apache.log4j.Logger;
+
 import net.geant.autobahn.administration.Status;
 import net.geant.autobahn.idm.AccessPoint;
 import net.geant.autobahn.reservation.ReservationStatusListener;
@@ -21,7 +23,9 @@ public class GuiNotifier implements Runnable, ReservationStatusListener {
 	private String domainUrl;
 	private Thread t;
 	private boolean quit;
-	
+
+    private final Logger log = Logger.getLogger(GuiNotifier.class);
+
 	public GuiNotifier(String guiAddress, int update) throws MalformedURLException {
 
 		gui = new GuiClient(guiAddress);
@@ -113,6 +117,6 @@ public class GuiNotifier implements Runnable, ReservationStatusListener {
 	public void reservationModified(String reservationId, boolean success) {
 		
 		String action = success ? "modified" : "not modified";
-		System.out.println("Reservation " + reservationId + " " + action);
+		log.debug("Reservation " + reservationId + " " + action);
 	}
 }

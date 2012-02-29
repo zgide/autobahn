@@ -7,7 +7,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.geant.autobahn.network.Link;
-import net.geant.autobahn.resources.ResourcePath;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -45,7 +43,7 @@ public class LookupService {
     private static int TYPE5 = 5;
 
     private String host;
-    public static List<String> lookupHosts = new ArrayList();
+    public static List<String> lookupHosts = new ArrayList<String>();
     private Logger log = Logger.getLogger(this.getClass());
     public static Long timestamp = new Long(0);
 
@@ -55,34 +53,33 @@ public class LookupService {
      *            - address of LS
      */
     public LookupService(String host) {
-    	try{
-    	if(lookupHosts.size()==0){
-    			this.host = host;
-    			lookupHosts = getLS();
-    			for(int i=0; i<lookupHosts.size(); i++) {
-    				if (lookupHosts.get(i).equalsIgnoreCase(host)) {
-    					return;
-    				}
-    			}
-    			lookupHosts.add(host);
-    		}
-    		else {
-    			if(checkLookupHostStatus(host)){
-    		    	this.host = host;
-    				return;
-    			} else{
-    				for(int i=0; i<lookupHosts.size(); i++){
-    					if(checkLookupHostStatus(lookupHosts.get(i))){
-    						this.host = host;
-    						return;
-    					}
-    				}
-    			}
-    			this.host = host;
-    		}
-    	} catch (LookupServiceException ex){
-    		System.out.println(ex.getMessage());
-    	}
+        try {
+            if (lookupHosts.size() == 0) {
+                this.host = host;
+                lookupHosts = getLS();
+                for (int i = 0; i < lookupHosts.size(); i++) {
+                    if (lookupHosts.get(i).equalsIgnoreCase(host)) {
+                        return;
+                    }
+                }
+                lookupHosts.add(host);
+            } else {
+                if (checkLookupHostStatus(host)) {
+                    this.host = host;
+                    return;
+                } else {
+                    for (int i = 0; i < lookupHosts.size(); i++) {
+                        if (checkLookupHostStatus(lookupHosts.get(i))) {
+                            this.host = host;
+                            return;
+                        }
+                    }
+                }
+                this.host = host;
+            }
+        } catch (LookupServiceException ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     /**
@@ -452,29 +449,29 @@ public class LookupService {
      * @throws LookupServiceException
      */
     public void updateLookupServices(String URL) throws LookupServiceException {
-    	for(int i=0; i<lookupHosts.size(); i++) {
-    		if (lookupHosts.get(i).equalsIgnoreCase(URL)){
-    			log.info("Lookuphost:"+URL+" is already present");
-    			return;
-    		}
-    	}
-    	for(int i=0; i<lookupHosts.size(); i++) {
-    		System.out.println("checking:"+lookupHosts.get(i)+" and "+URL);
-    		if(checkLookupHostStatus(lookupHosts.get(i))&&(!lookupHosts.get(i).equalsIgnoreCase(URL))) {
-    			System.out.println("Calling NewLS");
-    			newLS(URL,lookupHosts.get(i));
-    		}
-    	}
-    	if(checkLookupHostStatus(URL)) {
-    		for(int i=0; i<lookupHosts.size(); i++) {
-    			if(!lookupHosts.get(i).equalsIgnoreCase(URL))
-    			newLS(lookupHosts.get(i),URL);
-    		}
-    	}
-    	lookupHosts.add(URL);
+        for (int i = 0; i < lookupHosts.size(); i++) {
+            if (lookupHosts.get(i).equalsIgnoreCase(URL)) {
+                log.info("Lookuphost:" + URL + " is already present");
+                return;
+            }
+        }
+        for (int i = 0; i < lookupHosts.size(); i++) {
+            log.info("checking:" + lookupHosts.get(i) + " and " + URL);
+            if (checkLookupHostStatus(lookupHosts.get(i))
+                    && (!lookupHosts.get(i).equalsIgnoreCase(URL))) {
+                log.debug("Calling NewLS");
+                newLS(URL, lookupHosts.get(i));
+            }
+        }
+        if (checkLookupHostStatus(URL)) {
+            for (int i = 0; i < lookupHosts.size(); i++) {
+                if (!lookupHosts.get(i).equalsIgnoreCase(URL))
+                    newLS(lookupHosts.get(i), URL);
+            }
+        }
+        lookupHosts.add(URL);
     }
-    
-    
+
     /**
      * 
      * New LS instance initialization

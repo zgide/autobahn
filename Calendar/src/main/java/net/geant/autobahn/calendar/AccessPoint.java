@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import net.geant.autobahn.constraints.BooleanConstraint;
 import net.geant.autobahn.constraints.ConstraintsNames;
 import net.geant.autobahn.constraints.GlobalConstraints;
 import net.geant.autobahn.constraints.MinValueConstraint;
