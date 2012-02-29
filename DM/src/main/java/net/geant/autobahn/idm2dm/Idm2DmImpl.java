@@ -3,7 +3,6 @@ package net.geant.autobahn.idm2dm;
 import javax.jws.WebService;
 
 import org.apache.log4j.Logger;
-import org.mortbay.log.Log;
 
 import net.geant.autobahn.aai.AAIException;
 import net.geant.autobahn.constraints.DomainConstraints;

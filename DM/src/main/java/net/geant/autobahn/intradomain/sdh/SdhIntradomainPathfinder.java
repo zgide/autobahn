@@ -18,7 +18,6 @@ import net.geant.autobahn.constraints.RangeConstraint;
 import net.geant.autobahn.intradomain.IntradomainTopology;
 import net.geant.autobahn.intradomain.common.GenericLink;
 import net.geant.autobahn.intradomain.common.Node;
-import net.geant.autobahn.intradomain.ethernet.EthLink;
 import net.geant.autobahn.intradomain.ethernet.SpanningTree;
 import net.geant.autobahn.intradomain.pathfinder.GenericIntradomainPathfinder;
 import net.geant.autobahn.intradomain.pathfinder.GraphEdge;

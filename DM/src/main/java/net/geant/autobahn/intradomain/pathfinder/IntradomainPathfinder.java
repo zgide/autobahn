@@ -3,7 +3,6 @@ package net.geant.autobahn.intradomain.pathfinder;
 import java.util.Collection;
 import java.util.List;
 
-import net.geant.autobahn.constraints.PathConstraints;
 import net.geant.autobahn.intradomain.IntradomainPath;
 import net.geant.autobahn.intradomain.common.GenericLink;
 import net.geant.autobahn.intradomain.common.Node;

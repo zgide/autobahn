@@ -37,6 +37,9 @@
 				<includes>
 					<include>**/*.*</include>
 				</includes>
+                <excludes>
+                    <exclude>**/dm.properties</exclude>
+                </excludes>
 			</resource>
 		</resources>
 		<plugins>
