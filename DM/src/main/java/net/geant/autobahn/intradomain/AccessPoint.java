@@ -76,8 +76,7 @@ public final class AccessPoint implements Idm2Dm, DmAdministration {
             properties.load(is);
             is.close();
             log.debug(properties.size() + " properties loaded from " + prop_file);
-        } catch (IOException e) {
-            log.info("Could not load app.properties: " + e.getMessage());
+        } catch (Exception e) {
             throw new Exception("Could not load app.properties: " + e.getMessage());
         }
 	}
