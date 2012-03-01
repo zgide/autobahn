@@ -155,7 +155,9 @@ public final class AccessPoint implements Idm2Dm, DmAdministration {
             		properties.getProperty("domainName"), topologyType);
             
             // Send topology to TA via WS
-            log.debug("Send to TA" + topology);
+            if (log.isDebugEnabled()) {
+                log.debug("Send to TA" + topology);
+            }
             ta.setIntradomainTopology(topology, topologyType);
             
             // Init intradomain pathfinder
