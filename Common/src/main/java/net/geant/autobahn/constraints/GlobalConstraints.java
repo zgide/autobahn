@@ -159,12 +159,20 @@ public class GlobalConstraints implements Serializable {
             //mtu info added
             if(mcon != null) {
                 //MinValueConstraint mtu1 = (MinValueConstraint) mcon;
+                if (mtu == null) {
+                    log.error("Unexpected null value for MTU constraint value");
+                    return null;
+                }
                 MinValueConstraint mtuCons = new MinValueConstraint(mtu.getValue());
                 resPcon.addMinValueConstraint(ConstraintsNames.MTU, mtuCons);
             }
         	
         	// Timeslots
         	if(mvcon != null) {
+                if (par == null) {
+                    log.error("Unexpected null value for ReservationParams object");
+                    return null;
+                }
         		double ts_num = Math.ceil((double)par.getCapacity() / ONE_TIMESLOT_CAPACITY);
         		MinValueConstraint timeslots = new MinValueConstraint(ts_num);
         		resPcon.addMinValueConstraint(ConstraintsNames.TIMESLOTS, timeslots);
