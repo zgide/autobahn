@@ -1,6 +1,5 @@
 package net.geant.autobahn.autoBahnGUI.manager;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -55,6 +54,7 @@ import net.geant.autobahn.useraccesspoint.ServiceRequest;
 import net.geant.autobahn.useraccesspoint.UserAccessPointException;
 
 import org.apache.log4j.Logger;
+import org.mortbay.log.Log;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.userdetails.UserDetails;
@@ -339,7 +339,7 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             List<PortType> pTypes = manager.getAllClientPorts();
 
             if (pTypes != null) {
-                return pTypes;
+                return filterUserAuthorized(pTypes);
             } else {
                 return getAllClientPorts();
             }
@@ -362,7 +362,7 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             ports = manager.getAllClientPorts();
 
             if (ports != null) {
-                return ports;
+                return filterUserAuthorized(ports);
             }
         }
 
@@ -520,7 +520,7 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             return null;
         }
 
-        return pTypes;
+        return filterUserAuthorized(pTypes);
     }
 
     @Override
@@ -1038,6 +1038,82 @@ public class ManagerImpl implements Manager, ManagerNotifier {
         Set<String> authorities = AuthorityUtils.authorityArrayToSet(auth.getAuthorities());
         UserAuthParameters authParameters = new UserAuthParameters(auth.getName(), authorities);
         return authParameters;
+    }
+
+    List<PortType> filterUserAuthorized(List<PortType> allPorts) {
+        List<PortType> res = new ArrayList<PortType>();
+        if (allPorts == null) {
+            return null;
+        }
+        List<String> userAllowed = getUserPorts("allow");
+        if (userAllowed != null) {
+            logger.info("Some ports allowed only:");
+            for (PortType p : allPorts) {
+                for (String s : userAllowed) {
+                    if (p.getAddress().equals(s)) {
+                        logger.info(" --" + s);
+                        res.add(p);
+                    }
+                }
+            }
+        } else {
+            List<String> userDenied = getUserPorts("deny");
+            if (userDenied != null) {
+                logger.info("Some ports denied:");
+                for (PortType p : allPorts) {
+                    for (String s : userDenied) {
+                        if (p.getAddress().equals(s)) {
+                            logger.info(" --" + s);
+                            continue;
+                        }
+                        res.add(p);
+                    }
+                }
+            } else {
+                return allPorts;
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     * 
+     * @param key - Permitted values are allow and deny
+     * @return null if no such property is found
+     */
+    public List<String> getUserPorts(String key) {
+        UserAuthParameters userAuth = this.getUserAuthParameters();
+        if (userAuth == null) {
+            logger.info("No user auth data");
+            return null;
+        }
+        String username = userAuth.getIdentifier();
+        Properties prop = getPropertiesFromResource("../etc/aai/" + username);
+        if (prop == null) {
+            logger.info(username + " not found in etc/aai");
+            return null;
+        }
+        String allowed = prop.getProperty(key);
+        if (allowed == null || allowed.length() == 0) {
+            logger.info(key + " has no values");
+            return null;
+        }
+        return Arrays.asList(allowed.split(","));
+    }
+
+    public Properties getPropertiesFromResource(String path) {
+        Properties properties = new Properties();
+        try {
+            InputStream is = getClass().getClassLoader().getResourceAsStream(path);
+            properties.load(is);
+            is.close();
+            logger.debug(properties.size() + " properties loaded from " + path);
+        } catch (Exception e) {
+            logger.info("Could not load " + path + ": " + e.getMessage());
+            return null;
+        }
+        return properties;
     }
 
     /*

@@ -635,6 +635,7 @@ public class InterDomainManager implements UserAccessPoint, Administration {
                 return ptypes;
             }
         } catch (Exception e) {
+            logger.error("getAllClientPorts error:", e);
             // TODO: convert to spring strings
             throw new UserAccessPointException("errors.uap.notconnected");
         }
