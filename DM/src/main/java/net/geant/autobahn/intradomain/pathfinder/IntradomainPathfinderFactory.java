@@ -13,21 +13,30 @@ import net.geant.autobahn.intradomain.sdh.SdhIntradomainPathfinder;
 public class IntradomainPathfinderFactory {
 
     private IntradomainPathfinderFactory() {}
-    
+
     /**
      * Creates proper pathfinder instance.
      * 
-     * @param topology intradomain Topology
+     * @param topology
+     *            intradomain Topology
+     * @param defaultMtu
+     *            MTU value to use as default. If null is provided, hard-coded
+     *            values are used
      * @return intradomain pathfinder
      */
-    public static IntradomainPathfinder getIntradomainPathfinder(IntradomainTopology topology) {
+    public static IntradomainPathfinder getIntradomainPathfinder(
+            IntradomainTopology topology, String defaultMtu) {
         
         if (topology.isEthernet())
-            return new EthernetIntradomainPathfinder(topology);
+            return new EthernetIntradomainPathfinder(topology, defaultMtu);
         else if (topology.isSDH())
-            return new SdhIntradomainPathfinder(topology);
+            return new SdhIntradomainPathfinder(topology, defaultMtu);
         else 
             throw new IllegalArgumentException("Pathfinder for topology type cannot be found");
     }
 	
+    public static IntradomainPathfinder getIntradomainPathfinder(
+            IntradomainTopology topology) {
+        return getIntradomainPathfinder(topology, null);
+    }
 }

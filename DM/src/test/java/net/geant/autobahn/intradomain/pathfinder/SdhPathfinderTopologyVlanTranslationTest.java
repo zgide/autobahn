@@ -1,7 +1,5 @@
 package net.geant.autobahn.intradomain.pathfinder;
 
-
-import static net.geant.autobahn.intradomain.topologies.SdhTopology1._10Gb;
 import static net.geant.autobahn.intradomain.topologies.SdhTopology1._1Gb;
 
 import java.util.HashMap;
@@ -58,7 +56,7 @@ public class SdhPathfinderTopologyVlanTranslationTest {
         }
         
         // Instantiate the pathfinder
-        pf = new SdhIntradomainPathfinder(topo);
+        pf = new SdhIntradomainPathfinder(topo, null);
     }
 
     /**

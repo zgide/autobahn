@@ -33,16 +33,22 @@ public class EthernetIntradomainPathfinder extends GenericIntradomainPathfinder 
     private List<Node> all_nodes = new ArrayList<Node>();
 
     private static final Logger log = Logger.getLogger(EthernetIntradomainPathfinder.class);
-    private final int defaultEthernetMtu = 1514; 
+    private int defaultEthernetMtu = 1514; 
     
     /**
      * Initialize object with given topology.
      * 
      * @param topology
+     * @param defaultMtu If null is provided, value 1514 is used
      */
-    public EthernetIntradomainPathfinder(IntradomainTopology topology) {
+    public EthernetIntradomainPathfinder(IntradomainTopology topology, String defaultMtu) {
         this.all_nodes = topology.getNodes();
         this.all_sptrees = topology.getSpanningTrees();
+        try {
+            defaultEthernetMtu = Integer.parseInt(defaultMtu);
+        } catch (NumberFormatException e) {
+            log.info("Using default Ethernet MTU value of " + defaultEthernetMtu);
+        }
     }
 	
 	/**
@@ -52,9 +58,14 @@ public class EthernetIntradomainPathfinder extends GenericIntradomainPathfinder 
 	 * @param all_nodes of all nodes in the domain
 	 */
     public EthernetIntradomainPathfinder(List<SpanningTree> all_sptrees,
-			List<Node> all_nodes) {
+			List<Node> all_nodes, String defaultMtu) {
 		this.all_sptrees = all_sptrees;
 		this.all_nodes = all_nodes;
+        try {
+            defaultEthernetMtu = Integer.parseInt(defaultMtu);
+        } catch (NumberFormatException e) {
+            log.info("Using default Ethernet MTU value of " + defaultEthernetMtu);
+        }
     }
 	
 	/* (non-Javadoc)

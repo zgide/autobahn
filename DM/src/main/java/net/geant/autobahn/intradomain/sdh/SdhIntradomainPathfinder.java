@@ -39,17 +39,23 @@ public class SdhIntradomainPathfinder extends GenericIntradomainPathfinder {
     private Map<GenericLink, List<SpanningTree>> strees = null;
 	
 	private static final Logger log = Logger.getLogger(SdhIntradomainPathfinder.class);
-	private final int defaultSdhMtu = 4474;
+	private int defaultSdhMtu = 4474;
 	
-    public SdhIntradomainPathfinder(IntradomainTopology topology) {
-        this(topology.getStmLinks(), topology.getSdhDevices(), topology.getSpanningTrees());
+    public SdhIntradomainPathfinder(IntradomainTopology topology, String defaultMtu) {
+        this(topology.getStmLinks(), topology.getSdhDevices(), 
+                topology.getSpanningTrees(), defaultMtu);
     }
 
 	public SdhIntradomainPathfinder(List<StmLink> all_links,
-			List<SdhDevice> all_devices, List<SpanningTree> sptrees) {
+			List<SdhDevice> all_devices, List<SpanningTree> sptrees, String defaultMtu) {
 		super();
 		this.all_links = all_links;
 		this.all_devices = all_devices;
+        try {
+            defaultSdhMtu = Integer.parseInt(defaultMtu);
+        } catch (NumberFormatException e) {
+            log.info("Using default SDH MTU value of " + defaultSdhMtu);
+        }
 		
 		// Build a map of links with all their associated VLAN ranges (SpanningTree)
         this.strees = new HashMap<GenericLink, List<SpanningTree>>();

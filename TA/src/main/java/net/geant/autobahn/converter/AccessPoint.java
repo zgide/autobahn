@@ -144,7 +144,7 @@ public final class AccessPoint implements TopologyAbstraction {
             if(!topology.isEmpty()) {
     	        // Init intradomain pathfinder
     	        IntradomainPathfinder pathfinder = IntradomainPathfinderFactory
-    	                .getIntradomainPathfinder(topology);
+    	                .getIntradomainPathfinder(topology, properties.getProperty("defaultMtu"));
     	        
     	        // Init topologyConverter
     	        converter = TopologyConverterFactory.getTopologyConverter(topology, pathfinder, properties);

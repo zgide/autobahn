@@ -133,8 +133,8 @@ public class EthernetTopology {
 	public int getLastSpanningId (){
 		return lastSpanningId++;
 	}
-	public List getSpanningTreesForLink (EthLink link){
-		List list = new ArrayList ();
+	public List<SpanningTree> getSpanningTreesForLink (EthLink link){
+		List<SpanningTree> list = new ArrayList<SpanningTree>();
 		int length = spanningTrees.size();
 		SpanningTree tree =null;
 		for (int i=0;i<length;i++){

@@ -1,7 +1,6 @@
 package net.geant.autobahn.intradomain;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -161,7 +160,8 @@ public final class AccessPoint implements Idm2Dm, DmAdministration {
             ta.setIntradomainTopology(topology, topologyType);
             
             // Init intradomain pathfinder
-            pathfinder = IntradomainPathfinderFactory.getIntradomainPathfinder(topology);
+            pathfinder = IntradomainPathfinderFactory.getIntradomainPathfinder(
+                    topology, properties.getProperty("defaultMtu"));
             
             // Run abstraction of internal part of topology process
             ta.abstractInternalPartOfTopology();

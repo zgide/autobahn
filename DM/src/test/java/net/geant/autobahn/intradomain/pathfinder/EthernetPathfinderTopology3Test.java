@@ -56,7 +56,7 @@ public class EthernetPathfinderTopology3Test {
         }
 
         // Instantiate the pathfinder
-        pf = new EthernetIntradomainPathfinder(topo);
+        pf = new EthernetIntradomainPathfinder(topo, null);
     }
 
     /**

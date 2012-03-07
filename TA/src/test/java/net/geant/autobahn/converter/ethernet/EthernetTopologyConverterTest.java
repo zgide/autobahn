@@ -42,7 +42,7 @@ public class EthernetTopologyConverterTest {
 		topo.domain1(builder);
 		
 		IntradomainPathfinder pf = IntradomainPathfinderFactory.getIntradomainPathfinder(
-				builder.getIntradomainTopology());
+				builder.getIntradomainTopology(), null);
 		
         String nrange = "10.11.0.0/19";
         String prange = "10.11.32.0/19";
@@ -133,7 +133,8 @@ public class EthernetTopologyConverterTest {
 
 		TopologyConverter conv = createTopology2Converter(true);
 		
-		Stats stats = conv.abstractInternalPartOfTopology();
+		@SuppressWarnings("unused")
+        Stats stats = conv.abstractInternalPartOfTopology();
 		conv.abstractExternalPartOfTopology(null);
 	}
 	
@@ -261,6 +262,7 @@ public class EthernetTopologyConverterTest {
 
         TopologyConverter conv = createTopology2Converter(false);
         
+        @SuppressWarnings("unused")
         Stats stats = conv.abstractInternalPartOfTopology();
         conv.abstractExternalPartOfTopology(null);
     }

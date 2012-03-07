@@ -1,8 +1,5 @@
 package net.geant.autobahn.intradomain.pathfinder;
 
-
-import org.junit.After;
-import org.junit.Before;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +14,6 @@ import net.geant.autobahn.intradomain.IntradomainPath;
 import net.geant.autobahn.intradomain.IntradomainTopology;
 import net.geant.autobahn.intradomain.common.GenericLink;
 import net.geant.autobahn.intradomain.common.Node;
-import net.geant.autobahn.intradomain.sdh.SdhDevice;
 import net.geant.autobahn.intradomain.sdh.SdhIntradomainPathfinder;
 import net.geant.autobahn.intradomain.topologies.SdhTopology1;
 import net.geant.autobahn.utils.IntraTopologyBuilder;
@@ -61,7 +57,7 @@ public class SdhPathfinderTopology1Test {
         }
         
         // Instantiate the pathfinder
-        pf = new SdhIntradomainPathfinder(topo);
+        pf = new SdhIntradomainPathfinder(topo, null);
         
     }
 

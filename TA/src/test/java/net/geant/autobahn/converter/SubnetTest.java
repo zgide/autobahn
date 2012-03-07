@@ -20,71 +20,85 @@ public class SubnetTest {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void testWrongDataFormat() {
-		Subnet subnet = new Subnet("-- a.b.cxxx");
+		@SuppressWarnings("unused")
+        Subnet subnet = new Subnet("-- a.b.cxxx");
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void testEmpty() {
-		Subnet subnet = new Subnet("");
+		@SuppressWarnings("unused")
+        Subnet subnet = new Subnet("");
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void testIllegalMaskTooSmall() {
-		Subnet subnet = new Subnet("192.168.1.10/33");
+		@SuppressWarnings("unused")
+        Subnet subnet = new Subnet("192.168.1.10/33");
 	}
 
     @Test(expected=IllegalArgumentException.class)
     public void testIllegalMaskTooLarge() {
+        @SuppressWarnings("unused")
         Subnet subnet = new Subnet("192.168.1.10/-1");
     }
     
 	@Test(expected=IllegalArgumentException.class)
 	public void testIllegalIpNumberTooLarge() {
-		Subnet subnet = new Subnet("10.300.1.1/24");
+		@SuppressWarnings("unused")
+        Subnet subnet = new Subnet("10.300.1.1/24");
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void testIllegalIpNumberMoreDotsTooLarge() {
-		Subnet subnet = new Subnet("10.300.1.1.6/24");
+		@SuppressWarnings("unused")
+        Subnet subnet = new Subnet("10.300.1.1.6/24");
 	}
 
     @Test(expected=IllegalArgumentException.class)
     public void testIllegalIpNumberMoreDots() {
+        @SuppressWarnings("unused")
         Subnet subnet = new Subnet("10.10.1.1.1/24");
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testIllegalIpNumberWhitespaceStart() {
+        @SuppressWarnings("unused")
         Subnet subnet = new Subnet(" 10.10.1.1/24 ");
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testIllegalIpNumberWhitespaceMiddle() {
+        @SuppressWarnings("unused")
         Subnet subnet = new Subnet("10 .10.1.1/24");
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testIllegalIpNumberWhitespaceEnd() {
+        @SuppressWarnings("unused")
         Subnet subnet = new Subnet("10.10.1.1/24 ");
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testIllegalIpNumber6() {
+        @SuppressWarnings("unused")
         Subnet subnet = new Subnet("10.10.1/24");
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testIllegalIpNumberTwoMasks() {
+        @SuppressWarnings("unused")
         Subnet subnet = new Subnet("10.10.1.1/23/24");
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testIllegalIpNumberWrongOrder() {
+        @SuppressWarnings("unused")
         Subnet subnet = new Subnet("23/10.10.1.1");
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testIllegalIpNumberNoMask() {
+        @SuppressWarnings("unused")
         Subnet subnet = new Subnet("10.10.1.1");
     }
     
@@ -103,6 +117,7 @@ public class SubnetTest {
 
     @Test
     public void testWholeInternetMask() {
+        @SuppressWarnings("unused")
         Subnet subnet = new Subnet("192.168.1.10/0");
     }
     
