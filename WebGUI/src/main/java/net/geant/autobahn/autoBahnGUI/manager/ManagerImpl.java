@@ -54,7 +54,6 @@ import net.geant.autobahn.useraccesspoint.ServiceRequest;
 import net.geant.autobahn.useraccesspoint.UserAccessPointException;
 
 import org.apache.log4j.Logger;
-import org.mortbay.log.Log;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.userdetails.UserDetails;
@@ -339,7 +338,7 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             List<PortType> pTypes = manager.getAllClientPorts();
 
             if (pTypes != null) {
-                return filterUserAuthorized(pTypes);
+                return pTypes;
             } else {
                 return getAllClientPorts();
             }
@@ -362,11 +361,16 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             ports = manager.getAllClientPorts();
 
             if (ports != null) {
-                return filterUserAuthorized(ports);
+                return ports;
             }
         }
 
         return null;
+    }
+
+    public List<PortType> getAllClientPorts_filtered(String idmIdentifier)
+            throws UserAccessPointException {
+        return filterUserAuthorized(getAllClientPorts(idmIdentifier));
     }
 
     /*
@@ -520,7 +524,11 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             return null;
         }
 
-        return filterUserAuthorized(pTypes);
+        return pTypes;
+    }
+
+    public List<PortType> getInterDomainManagerPorts_filtered(String idmIdentifier) {
+        return filterUserAuthorized(getInterDomainManagerPorts(idmIdentifier));
     }
 
     @Override

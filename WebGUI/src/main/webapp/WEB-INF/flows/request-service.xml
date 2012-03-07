@@ -27,8 +27,8 @@
 		</transition>
 		<transition on="add" to="addReservation" bind="true">
 			<set name="flowScope.home" value="service.userHomeDomain" type="string"/>
-			<evaluate expression="manager.getInterDomainManagerPorts(service.userHomeDomain)" result="flowScope.friendlyports_domain"/>
-			<evaluate expression="manager.getAllClientPorts(service.userHomeDomain)" result="flowScope.friendlyports_all"/>
+			<evaluate expression="manager.getInterDomainManagerPorts_filtered(service.userHomeDomain)" result="flowScope.friendlyports_domain"/>
+			<evaluate expression="manager.getAllClientPorts_filtered(service.userHomeDomain)" result="flowScope.friendlyports_all"/>
 			<evaluate expression="manager.getAllIdcpPorts(service.userHomeDomain)" result="flowScope.idcpPorts_all"/>
 			<evaluate expression="manager.getAllDomains_NonClient()" result="flowScope.domains_all"/>
 			<evaluate expression="manager.getAllDomainLinks()" result="flowScope.links_all"/>
