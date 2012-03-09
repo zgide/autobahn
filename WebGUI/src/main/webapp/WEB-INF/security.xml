@@ -12,15 +12,15 @@
 		<intercept-url pattern="/portal/home.htm" />
 		
 		<intercept-url pattern="/portal/secure/logs.htm"
-			access="ROLE_ADMINISTRATOR" />		
+			access="ROLE_NETWORKADMIN,ROLE_ADMINISTRATOR" />		
 		<intercept-url pattern="/portal/secure/settings_select.htm"
 			access="ROLE_ADMINISTRATOR" />
         <intercept-url pattern="/portal/secure/restartAll.htm"
             access="ROLE_ADMINISTRATOR" />      
 		<intercept-url pattern="/portal/secure/**"
-			access="ROLE_USER,ROLE_ADMINISTRATOR" />
+			access="ROLE_USER,ROLE_NETWORKADMIN,ROLE_ADMINISTRATOR" />
         <intercept-url pattern="/portal/secure/statistics_select.htm"
-            access="ROLE_ADMINISTRATOR" />      
+            access="ROLE_NETWORKADMIN,ROLE_ADMINISTRATOR" />      
 		<form-login login-page='/portal/login.htm'
             default-target-url="/portal/secure/request-service.htm" 
             authentication-failure-url="/portal/login_error.htm"/>
@@ -39,13 +39,6 @@
 		<password-encoder hash="md5" />
 	</authentication-provider>
 
-	<!--
-	dmarchal/auto123 : ROLE_ADMINISTRATOR
-	rod/koala : ROLE_USER
-	-->
-	
-	
-	
 	<!-- CROWD IDP 
 	<beans:import resource="classpath:/applicationContext-CrowdClient.xml" />
 
@@ -55,7 +48,6 @@
 		<beans:property name="groupMembershipManager" ref="crowdGroupMembershipManager" />
 		<beans:property name="userManager" ref="crowdUserManager" />
 	</beans:bean>
-
 
 	<beans:bean id="crowdAuthenticationProvider" class="net.geant.security.crowd.WebAuthNProvider">
 		<custom-authentication-provider />

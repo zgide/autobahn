@@ -1270,8 +1270,9 @@ public class ManagerImpl implements Manager, ManagerNotifier {
 
         // Filtering submitted services
         boolean isAdmin = AuthorityUtils.userHasAuthority("ROLE_ADMINISTRATOR");
+        boolean isNetAdmin = AuthorityUtils.userHasAuthority("ROLE_NETWORKADMIN");
 
-        if (!isAdmin && serv.getServices() != null) {
+        if (!isAdmin && !isNetAdmin && serv.getServices() != null) {
             // Filtering by username
             List<ServiceType> filteredServices = new ArrayList<ServiceType>();
 

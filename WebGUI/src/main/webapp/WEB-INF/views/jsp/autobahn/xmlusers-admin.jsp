@@ -34,6 +34,7 @@
                                         <td>
                                         	<select name="role" style="width:auto">
                                         		<option value="ADMINISTRATOR">ADMINISTRATOR</option>
+                                                <option value="NETWORKADMIN">NETWORK ADMIN</option>
                                         		<option value="USER">USER</option>
                                         	</select>
                                         </td>
