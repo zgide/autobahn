@@ -6,9 +6,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ * Represents the information about a reservation received in a response.
  * @author Michal
  */
-
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name="ReservationResponse", namespace="useraccesspoint.autobahn.geant.net", propOrder={
 		"bodID", "state", "message",
@@ -37,116 +37,145 @@ public class ReservationResponse {
 	private boolean bidirectional;
 		
 	/**
-	 * @return the bodID
+	 * The ID that has been assigned to this reservation.
+	 * 
+	 * @return
 	 */
 	public String getBodID() {
 		return bodID;
 	}
+
 	/**
-	 * @param bodID the bodID to set
+	 * @param bodID
 	 */
 	public void setBodID(String bodID) {
 		this.bodID = bodID;
 	}
+
 	/**
-	 * @return the state
+	 * The current state of the reservation.
+	 * 
+	 * @return
 	 */
 	public State getState() {
 		return state;
 	}
+
 	/**
-	 * @param state the state to set
+	 * @param state
 	 */
 	public void setState(State state) {
 		this.state = state;
 	}
+
 	/**
-	 * @return the message
+	 * A message with optional information.
+	 * 
+	 * @return
 	 */
 	public String getMessage() {
 		return message;
 	}
+
 	/**
-	 * @param message the message to set
+	 * @param message
 	 */
 	public void setMessage(String message) {
 		this.message = message;
 	}
+
 	/**
-	 * @return the startPort
+	 * The starting port of the reservation.
+	 * 
+	 * @return
 	 */
 	public String getStartPort() {
 		return startPort;
 	}
+
 	/**
-	 * @param startPort the startPort to set
+	 * @param startPort
 	 */
 	public void setStartPort(String startPort) {
 		this.startPort = startPort;
 	}
+
 	/**
-	 * @return the endPort
+	 * The ending port of the reservation.
+	 * 
+	 * @return
 	 */
 	public String getEndPort() {
 		return endPort;
 	}
+
 	/**
-	 * @param endPort the endPort to set
+	 * @param endPort
 	 */
 	public void setEndPort(String endPort) {
 		this.endPort = endPort;
 	}
+
 	/**
-	 * @return the priority
+	 * The priority of the reservation.
+	 * 
+	 * @return
 	 */
 	public Priority getPriority() {
 		return priority;
 	}
+
 	/**
-	 * @param priority the priority to set
+	 * @param priority
 	 */
 	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
+
 	/**
-	 * @return the description
+	 * Textual description of the reservation.
+	 * 
+	 * @return
 	 */
 	public String getDescription() {
 		return description;
 	}
+
 	/**
-	 * @param description the description to set
+	 * @param description
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	/**
-	 * @return the capacity
+	 * The requested capacity for the reservation (in bps).
+	 * 
+	 * @return
 	 */
 	public long getCapacity() {
 		return capacity;
 	}
+
 	/**
-	 * @param capacity the capacity to set
+	 * @param capacity
 	 */
 	public void setCapacity(long capacity) {
 		this.capacity = capacity;
 	}
-	
+
     /**
-     * Gets the value of the userInclude property.
+     * A list of domains and links that should be included in the reservation
+     * path.
      * 
-     * @return
-     *     possible object is
-     *     {@link PathInfo }
-     *     
+     * @return possible object is {@link PathInfo }
+     * 
      */
     public PathInfo getUserInclude() {
         return userInclude;
     }
 
     /**
-     * Sets the value of the userInclude property.
      * 
      * @param value
      *     allowed object is
@@ -158,12 +187,11 @@ public class ReservationResponse {
     }
 
     /**
-     * Gets the value of the userExclude property.
+     * A list of domains and links that should be excluded from the reservation
+     * path.
      * 
-     * @return
-     *     possible object is
-     *     {@link PathInfo }
-     *     
+     * @return possible object is {@link PathInfo }
+     * 
      */
 
     public PathInfo getUserExclude() {
@@ -171,7 +199,6 @@ public class ReservationResponse {
     }
 
     /**
-     * Sets the value of the userExclude property.
      * 
      * @param value
      *     allowed object is
@@ -183,93 +210,113 @@ public class ReservationResponse {
     }
 
     /**
-     * Gets the value of the userVlanId property.
+     * A VLAN id that should be used by the reservation when traversing Ethernet
+     * domains
      * 
+     * @return
      */
     public int getUserVlanId() {
         return userVlanId;
     }
 
     /**
-     * Sets the value of the userVlanId property.
      * 
+     * @param value
      */
     public void setUserVlanId(int value) {
         this.userVlanId = value;
     }
-    
+
     /**
+     * The minimum MTU available in bytes.
      * 
-     * Gets mtu size in bytes
+     * @return
      */
     public int getMtu(){
         return mtu;
     }
-    
+
     /**
      * 
-     * Sets mtu size in bytes
+     * @param mtu
      */
     public void setMtu(int mtu){
         this.mtu = mtu;
     }
-    
+
 	/**
-	 * @return the maxDelay
+	 * The maximum allowed delay (in ms).
+	 * 
+	 * @return
 	 */
 	public int getMaxDelay() {
 		return maxDelay;
 	}
+
 	/**
-	 * @param maxDelay the maxDelay to set
+	 * @param maxDelay
 	 */
 	public void setMaxDelay(int maxDelay) {
 		this.maxDelay = maxDelay;
 	}
+
 	/**
-	 * @return the resiliency
+	 * The type of resiliency requested by the reservation.
+	 * 
+	 * @return
 	 */
 	public Resiliency getResiliency() {
 		return resiliency;
 	}
+
 	/**
-	 * @param resiliency the resiliency to set
+	 * @param resiliency
 	 */
 	public void setResiliency(Resiliency resiliency) {
 		this.resiliency = resiliency;
 	}
+
 	/**
-	 * @return the bidirectional
+	 * @return
 	 */
 	public boolean isBidirectional() {
 		return bidirectional;
 	}
+
 	/**
-	 * @param bidirectional the bidirectional to set
+	 * @param bidirectional
 	 */
 	public void setBidirectional(boolean bidirectional) {
 		this.bidirectional = bidirectional;
 	}
+
 	/**
-	 * @return the startTime
+	 * The starting time of the reservation.
+	 * 
+	 * @return
 	 */
 	public Calendar getStartTime() {
 		return startTime;
 	}
+
 	/**
-	 * @param startTime the startTime to set
+	 * @param startTime
 	 */
 	public void setStartTime(Calendar startTime) {
 		this.startTime = startTime;
 	}
+
 	/**
-	 * @return the endTime
+	 * The ending time of the reservation.
+	 * 
+	 * @return
 	 */
 	public Calendar getEndTime() {
 		return endTime;
 	}
+
 	/**
-	 * @param endTime the endTime to set
+	 * @param endTime
 	 */
 	public void setEndTime(Calendar endTime) {
 		this.endTime = endTime;

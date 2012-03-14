@@ -10,9 +10,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ * Represents a service request, which is a collection of reservation requests.
+ * 
  * @author Michal
  */
-
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name="ServiceRequest", namespace="useraccesspoint.autobahn.geant.net", propOrder={
 		"userName", "userHomeDomain", "userEmail", "justification",
@@ -31,48 +32,59 @@ public class ServiceRequest implements Serializable {
 	private List<ReservationRequest> reservations = new ArrayList<ReservationRequest>();
 
 	/**
-	 * @return the userName
+	 * Returns the name of the user submitting the service.
+	 * @return
 	 */
 	public String getUserName() {
 		return userName;
 	}
 
 	/**
-	 * @param userName the userName to set
+	 * Set the name of the user submitting the service.
+	 * 
+	 * @param userName
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
 
 	/**
-	 * @return the userHomeDomain
+	 * Returns home domain of the user submitting the service.
+	 * 
+	 * @return
 	 */
 	public String getUserHomeDomain() {
 		return userHomeDomain;
 	}
 
 	/**
-	 * @param userHomeDomain the userHomeDomain to set
+	 * Set the home domain of the user submitting the service.
+	 * 
+	 * @param userHomeDomain
 	 */
 	public void setUserHomeDomain(String userHomeDomain) {
 		this.userHomeDomain = userHomeDomain;
 	}
 
 	/**
-	 * @return the userEmail
+	 * Returns the email of the user submitting the service.
+	 * @return
 	 */
 	public String getUserEmail() {
 		return userEmail;
 	}
 
 	/**
-	 * @param userEmail the userEmail to set
+	 * Sets the email of the user submitting the service.
+	 * @param userEmail
 	 */
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
 	}
 
 	/**
+	 * Returns a textual description of the service.
+	 * 
 	 * @return the justification
 	 */
 	public String getJustification() {
@@ -80,21 +92,27 @@ public class ServiceRequest implements Serializable {
 	}
 
 	/**
-	 * @param justification the justification to set
+	 * Set a free-text description of the service.
+	 * 
+	 * @param justification
 	 */
 	public void setJustification(String justification) {
 		this.justification = justification;
 	}
 
 	/**
-	 * @return the reservations
+	 * Returns the reservation request(s) included in this service.
+	 * 
+	 * @return
 	 */
 	public List<ReservationRequest> getReservations() {
 		return reservations;
 	}
 
 	/**
-	 * @param reservations the reservations to set
+	 * Set the reservation request(s) to be included in this service.
+	 * 
+	 * @param reservations
 	 */
 	public void setReservations(List<ReservationRequest> reservations) {
 		this.reservations = reservations;

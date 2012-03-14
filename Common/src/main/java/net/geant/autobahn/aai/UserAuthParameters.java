@@ -72,42 +72,91 @@ public class UserAuthParameters implements Serializable {
         return id;
     }
 
+    /**
+     * Returns the unique user identifier.
+     * 
+     * @return
+     */
     public String getIdentifier() {
         return identifier;
     }
 
+    /**
+     * Set a unique user identifier.
+     * 
+     * @param identifier
+     */
     public void setIdentifier(String identifier) {
         this.identifier = identifier.trim();
     }
 
+    /**
+     * Returns the organization the user belongs to.
+     * 
+     * @return
+     */
     public String getOrganization() {
         return organization;
     }
 
+    /**
+     * Set the organization the user belongs to.
+     * 
+     * @param organization
+     */
     public void setOrganization(String organization) {
         this.organization = organization.trim();
     }
 
+    /**
+     * Returns the project the user works for.
+     * 
+     * @return
+     */
     public String getProjectMembership() {
         return projectMembership;
     }
 
+    /**
+     * Set the project the user works for.
+     * 
+     * @param projectMembership
+     */
     public void setProjectMembership(String projectMembership) {
         this.projectMembership = projectMembership.trim();
     }
 
+    /**
+     * Returns the role of the user.
+     * 
+     * @return
+     */
     public String getProjectRole() {
         return projectRole;
     }
 
+    /**
+     * Set the role of the user (ADMINISTRATOR, USER, etc.)
+     * @param projectRole
+     */
     public void setProjectRole(String projectRole) {
         this.projectRole = projectRole.trim();
     }
 
+    /**
+     * Returns the email of the user.
+     * 
+     * @return
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Set the email of the user.
+     * 
+     * @param email
+     */
     public void setEmail(String email) {
         this.email = email.trim();
     }

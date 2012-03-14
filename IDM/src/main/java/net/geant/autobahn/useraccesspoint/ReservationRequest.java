@@ -11,10 +11,10 @@ import javax.xml.bind.annotation.XmlType;
 import net.geant.autobahn.aai.UserAuthParameters;
 
 /**
- * Describes single reservation request
+ * Describes a single reservation request.
+ * 
  * @author Michal
  */
-
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name="ReservationRequest", namespace="useraccesspoint.autobahn.geant.net", propOrder={
 		"startPort", "endPort", "startTime", "endTime",
@@ -41,6 +41,7 @@ public class ReservationRequest implements Serializable {
 	private Resiliency resiliency;
 	private boolean bidirectional;
 	private boolean processNow;
+
 	//fields added for passing friendly names between the webpages of client portal
 	//no need to be serialized and passed through the web service interface
 	@XmlTransient
@@ -57,135 +58,173 @@ public class ReservationRequest implements Serializable {
         this.startPort = new PortType();
         this.endPort = new PortType();
 	}
-	
-	/**
-	 * @return the startPort
-	 */
+
+    /**
+     * Returns the starting port of the reservation.
+     * 
+     * @return
+     */
 	public PortType getStartPort() {
 		return startPort;
 	}
 
-	/**
-	 * @param startPort the startPort to set
-	 */
+    /**
+     * Set the starting port of the reservation.
+     * 
+     * @param startPort
+     */
 	public void setStartPort(PortType startPort) {
 		this.startPort = startPort;
 	}
 
-	/**
-	 * @return the endPort
-	 */
+
+    /**
+     * Returns the ending port of the reservation.
+     * 
+     * @return
+     */
 	public PortType getEndPort() {
 		return endPort;
 	}
 
-	/**
-	 * @param endPort the endPort to set
-	 */
+    /**
+     * Set the ending port of the reservation.
+     * 
+     * @param endPort
+     */
 	public void setEndPort(PortType endPort) {
 		this.endPort = endPort;
 	}
 
-	/**
-	 * @return the startTime
-	 */
+    /**
+     * Returns the starting time of the reservation.
+     * 
+     * @return
+     */
 	public Calendar getStartTime() {
 		return startTime;
 	}
+
 	/**
-	 * @param startTime the startTime to set
-	 */
+     * Set the starting time of the reservation.
+     * 
+     * @param startTime
+     */
 	public void setStartTime(Calendar startTime) {
 		this.startTime = startTime;
 	}
-	/**
-	 * @return the endTime
-	 */
+
+    /**
+     * Returns the ending time of the reservation.
+     * 
+     * @return
+     */
 	public Calendar getEndTime() {
 		return endTime;
 	}
-	/**
-	 * @param endTime the endTime to set
-	 */
+
+    /**
+     * Set the ending time of the reservation.
+     * 
+     * @param endTime
+     */
 	public void setEndTime(Calendar endTime) {
 		this.endTime = endTime;
 	}
-	/**
-	 * @return the priority
-	 */
+
+    /**
+     * Returns the priority of the reservation.
+     * 
+     * @return
+     */
 	public Priority getPriority() {
 		return priority;
 	}
-	/**
-	 * @param priority the priority to set
-	 */
+
+    /**
+     * Set the priority of the reservation.
+     * 
+     * @param priority
+     */
 	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
-	/**
-	 * @return the description
-	 */
+
+    /**
+     * Returns the textual description of the reservation.
+     * 
+     * @return
+     */
 	public String getDescription() {
 		return description;
 	}
+
 	/**
-	 * @param description the description to set
-	 */
+     * Set the free-text description of the reservation.
+     * 
+     * @param description
+     */
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	/**
-	 * @return the capacity
+	 * Returns the requested capacity for the reservation (in bps).
+	 * 
+	 * @return
 	 */
 	public long getCapacity() {
 		return capacity;
 	}
+
 	/**
-	 * @param capacity the capacity to set
+	 * Set the requested capacity for the reservation (in bps).
+	 * 
+	 * @param capacity
 	 */
 	public void setCapacity(long capacity) {
 		this.capacity = capacity;
 	}
 
-	/**
-     * Gets the value of the userInclude property.
+    /**
+     * Returns the list of domains and links that should be included in the
+     * reservation path.
      * 
-     * @return
-     *     possible object is
-     *     {@link PathInfo }
-     *     
+     * @return possible object is {@link PathInfo }
+     * 
      */
     public PathInfo getUserInclude() {
         return userInclude;
     }
 
     /**
-     * Sets the value of the userInclude property.
+     * Sets the list of domains and links that should be included in the
+     * reservation path.
      * 
      * @param value
-     *     allowed object is
-     *     {@link PathInfo }
-     *     
+     *            allowed object is {@link PathInfo }
+     * 
      */
     public void setUserInclude(PathInfo value) {
         this.userInclude = value;
     }
 
     /**
-     * Gets the value of the userExclude property.
+     * Returns the list of domains and links that should be excluded in the
+     * reservation path.
      * 
      * @return
      *     possible object is
      *     {@link PathInfo }
      *     
      */
-
     public PathInfo getUserExclude() {
         return userExclude;
     }
 
     /**
-     * Sets the value of the userExclude property.
+     * Sets the list of domains and links that should be excluded in the
+     * reservation path.
      * 
      * @param value
      *     allowed object is
@@ -195,97 +234,104 @@ public class ReservationRequest implements Serializable {
     public void setUserExclude(PathInfo value) {
         this.userExclude = value;
     }
-    
+
     /**
+     * Returns the minimum MTU (in bytes) that should be available across the
+     * reservation path.
      * 
-     * @return mtu size in bytes
+     * @return
      */
     public int getMtu(){
         return mtu;
     }
-    
+
     /**
+     * Set the minimum MTU (in bytes) that should be available across the
+     * reservation path.
      * 
-     * Set mtu value in bytes
+     * @param mtu
      */
     public void setMtu(int mtu){
         this.mtu = mtu;
     }
-    
-    /**
-	 * @return the bidirectional
-	 */
+
 	public boolean isBidirectional() {
 		return bidirectional;
 	}
-	/**
-	 * @param bidirectional the bidirectional to set
-	 */
+
 	public void setBidirectional(boolean bidirectional) {
 		this.bidirectional = bidirectional;
 	}
-	/**
-	 * @return the maxDelay
-	 */
+
+    /**
+     * Returns the maximum allowed delay (in ms).
+     * 
+     * @return
+     */
 	public int getMaxDelay() {
 		return maxDelay;
 	}
-	/**
-	 * @param maxDelay the maxDelay to set
-	 */
+
+    /**
+     * Set the maximum allowed delay (in ms).
+     * 
+     * @param maxDelay
+     */
 	public void setMaxDelay(int maxDelay) {
 		this.maxDelay = maxDelay;
 	}
+
 	/**
-	 * @return the resiliency
+	 * Returns the type of resiliency requested by the reservation.
+	 * 
+	 * @return
 	 */
 	public Resiliency getResiliency() {
 		return resiliency;
 	}
+
 	/**
-	 * @param resiliency the resiliency to set
+	 * Set the type of resiliency requested by the reservation.
+	 * 
+	 * @param resiliency
 	 */
 	public void setResiliency(Resiliency resiliency) {
 		this.resiliency = resiliency;
 	}
-	/**
-     * @return the startPortDescription
-     */
+
 	@XmlTransient
     public String getStartPortFriendlyName() {
         return startPortFriendlyName;
     }
 
-    /**
-     * @param startPortDescription the startPortDescription to set
-     */
     public void setStartPortFriendlyName(String startPortFriendlyName) {
         this.startPortFriendlyName = startPortFriendlyName;
     }
 
-    /**
-     * @return the endPortDescription
-     */
     @XmlTransient
     public String getEndPortFriendlyName() {
         return endPortFriendlyName;
     }
 
-    /**
-     * @param endPortDescription the endPortDescription to set
-     */
     public void setEndPortFriendlyName(String endPortFriendlyName) {
         this.endPortFriendlyName = endPortFriendlyName;
     }
 
     /**
-	 * @return the processNow
-	 */
+     * Checks whether to process the reservation now. If true, the reservation’s
+     * start time will set to the current time.
+     * 
+     * @return
+     */
 	public boolean isProcessNow() {
 		return processNow;
 	}
+
 	/**
-	 * @param processNow the processNow to set
+	 * Set whether to process the reservation now. If true, the reservation’s
+     * start time will set to the current time.
+     * 
+	 * @param processNow
 	 */
 	public void setProcessNow(boolean processNow) {
 		this.processNow = processNow;
@@ -371,10 +417,20 @@ public class ReservationRequest implements Serializable {
         return res;
 	}
 
+    /**
+     * Returns information about the user submitting the request.
+     * 
+     * @return
+     */
     public UserAuthParameters getAuthParameters() {
         return authParameters;
     }
 
+    /**
+     * Sets information about the user submitting the request.
+     * 
+     * @param authParameters
+     */
     public void setAuthParameters(UserAuthParameters authParameters) {
         this.authParameters = authParameters;
     }

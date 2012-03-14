@@ -8,9 +8,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
+ * Represents the information about a service (a collection of reservations)
+ * received in a response.
+ * 
  * @author Michal
  */
-
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name="ServiceResponse", namespace="useraccesspoint.autobahn.geant.net", propOrder={
 		"userName", "userHomeDomain", "userEmail",
@@ -26,56 +28,64 @@ public class ServiceResponse {
 	private List<ReservationResponse> reservations;
 
 	/**
-	 * @return the userName
+	 * The name of the user that submitted the service.
+	 * 
+	 * @return
 	 */
 	public String getUserName() {
 		return userName;
 	}
 
 	/**
-	 * @param userName the userName to set
+	 * @param userName
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
 
 	/**
-	 * @return the userHomeDomain
+	 * The home domain of the user that submitted the service.
+	 * 
+	 * @return
 	 */
 	public String getUserHomeDomain() {
 		return userHomeDomain;
 	}
 
 	/**
-	 * @param userHomeDomain the userHomeDomain to set
+	 * @param userHomeDomain
 	 */
 	public void setUserHomeDomain(String userHomeDomain) {
 		this.userHomeDomain = userHomeDomain;
 	}
 
 	/**
-	 * @return the userEmail
+	 * The email of the user that submitted the service.
+	 * 
+	 * @return
 	 */
 	public String getUserEmail() {
 		return userEmail;
 	}
 
 	/**
-	 * @param userEmail the userEmail to set
+	 * @param userEmail
 	 */
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
 	}
 
 	/**
-	 * @return the reservations
+	 * The reservation request(s) that are included in this service.
+	 * 
+	 * @return
 	 */
 	public List<ReservationResponse> getReservations() {
 		return reservations;
 	}
 
 	/**
-	 * @param reservations the reservations to set
+	 * @param reservations
 	 */
 	public void setReservations(List<ReservationResponse> reservations) {
 		this.reservations = reservations;
