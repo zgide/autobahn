@@ -22,7 +22,6 @@ import net.geant.autobahn.idm2dm.Idm2Dm;
 @WebServiceClient(name = "Idm2DmService", targetNamespace = "http://idm2dm.autobahn.geant.net/", wsdlLocation = "file:wsdl/idm2dm.wsdl")
 public class Idm2DmService {
 
-	private final static int TIMEOUT = 1000 * 60 * 5;
     private final static QName SERVICE = new QName("http://idm2dm.autobahn.geant.net/", "Idm2DmService");
     private final static QName Idm2DmPort = new QName("http://idm2dm.autobahn.geant.net/", "Idm2DmPort");
     private Service service;

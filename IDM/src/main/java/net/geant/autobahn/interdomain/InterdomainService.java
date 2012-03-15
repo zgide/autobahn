@@ -22,7 +22,6 @@ import net.geant.autobahn.edugain.WSSecurity;
 		targetNamespace = "http://interdomain.autobahn.geant.net/", wsdlLocation = "file:wsdl/interdomain.wsdl")
 class InterdomainService {
 
-	private final static int TIMEOUT = 10000;
 	private final static QName SERVICE = new QName("http://interdomain.autobahn.geant.net/", "InterdomainService");
     private final static QName InterdomainPort = new QName("http://interdomain.autobahn.geant.net/", "InterdomainPort");
     private Service service;

@@ -10,10 +10,8 @@ import java.util.List;
 
 import net.geant.autobahn.dao.hibernate.HibernateGenericDAO;
 import net.geant.autobahn.dao.hibernate.IdmHibernateUtil;
-import net.geant.autobahn.reservation.Service;
 import net.geant.autobahn.reservation.ServiceHistory;
 import net.geant.autobahn.reservation.dao.ServiceHistoryDAO;
-import net.geant.autobahn.reservation.states.hd.HomeDomainState;
 
 import org.hibernate.Query;
 import org.hibernate.criterion.Expression;

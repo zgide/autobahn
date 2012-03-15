@@ -15,8 +15,6 @@ import net.geant.autobahn.dao.IdmDAOFactory;
 import net.geant.autobahn.dao.hibernate.HibernateIdmDAOFactory;
 import net.geant.autobahn.dao.hibernate.HibernateUtil;
 import net.geant.autobahn.dao.hibernate.IdmHibernateUtil;
-import net.geant.autobahn.idm.AccessPoint.State;
-import net.geant.autobahn.idm.AccessPoint;
 import net.geant.autobahn.idm.TopologyMerge;
 import net.geant.autobahn.lookup.LookupService;
 import net.geant.autobahn.lookup.LookupServiceException;

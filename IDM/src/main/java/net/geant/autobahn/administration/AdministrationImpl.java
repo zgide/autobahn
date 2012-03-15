@@ -1,6 +1,5 @@
 package net.geant.autobahn.administration;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 
 import javax.jws.WebService;
