@@ -318,7 +318,7 @@ public class ReservationRequest implements Serializable {
     }
 
     /**
-     * Checks whether to process the reservation now. If true, the reservation’s
+     * Checks whether to process the reservation now. If true, the reservation
      * start time will set to the current time.
      * 
      * @return
@@ -328,7 +328,7 @@ public class ReservationRequest implements Serializable {
 	}
 
 	/**
-	 * Set whether to process the reservation now. If true, the reservation’s
+	 * Set whether to process the reservation now. If true, the reservation
      * start time will set to the current time.
      * 
 	 * @param processNow
