@@ -7,29 +7,31 @@
 	<on-start>
 		<evaluate expression="manager.getAllInterdomainManagers()" result="flowScope.idms" />
 		<evaluate expression="manager.getTimezone()" result="flowScope.appTimezone" />
-		<evaluate expression="manager.getServiceRequestTemplate()" result="flowScope.service" />
+		<evaluate expression="manager.getServiceRequestTemplate()" result="flowScope.serviceModel" />
         <evaluate expression="manager.getUserAuthParameters()" result="flowScope.authParameters" />
 	</on-start>
 	<decision-state id="moreAnswersNeeded">
     	<if test="flowScope.idms== null ||flowScope.idms.isEmpty()" then="no-idm-regitered" else="request-service" />
 	</decision-state>
 
-	<view-state id="request-service" view="secure/request-service" model="service">
+	<view-state id="request-service" view="secure/request-service" model="serviceModel">
 		 <binder>
-		 	<binding property="userHomeDomain" required="true"/>
-            <binding property="justification" required="true"/>    
+		 	<binding property="service.userHomeDomain" required="true"/>
+		 	<binding property="destinationDomain" required="true"/>
+            <binding property="service.justification" required="true"/>    
     	</binder>
 		<transition on="cancel" to="services" bind="false" />
 
 		<transition on="submit" to="request-service-success" bind="true">
-			<evaluate expression="manager.submitServiceAtInterDomainManager(service.userHomeDomain, service)" result="flowScope.serviceId"/>
+			<evaluate expression="manager.submitServiceAtInterDomainManager(serviceModel.service.userHomeDomain, serviceModel.service)" result="flowScope.serviceId"/>
 			<evaluate expression="manager.getServiceRequestTemplate()"></evaluate>		
 		</transition>
 		<transition on="add" to="addReservation" bind="true">
-			<set name="flowScope.home" value="service.userHomeDomain" type="string"/>
-			<evaluate expression="manager.getInterDomainManagerPorts_filtered(service.userHomeDomain)" result="flowScope.friendlyports_domain"/>
-			<evaluate expression="manager.getAllClientPorts_filtered(service.userHomeDomain)" result="flowScope.friendlyports_all"/>
-			<evaluate expression="manager.getAllIdcpPorts(service.userHomeDomain)" result="flowScope.idcpPorts_all"/>
+			<set name="flowScope.home" value="serviceModel.service.userHomeDomain" type="string"/>
+			<evaluate expression="manager.getInterDomainManagerPorts_filtered(serviceModel.service.userHomeDomain)" result="flowScope.friendlyports_domain"/>
+			<evaluate expression="manager.getInterDomainManagerPorts_filtered(serviceModel.destinationDomain)" result="flowScope.friendlyports_destinationDomain"/>
+			<evaluate expression="manager.getAllClientPorts_filtered(serviceModel.service.userHomeDomain)" result="flowScope.friendlyports_all"/>
+			<evaluate expression="manager.getAllIdcpPorts(serviceModel.service.userHomeDomain)" result="flowScope.idcpPorts_all"/>
 			<evaluate expression="manager.getAllDomains_NonClient()" result="flowScope.domains_all"/>
 			<evaluate expression="manager.getAllDomainLinks()" result="flowScope.links_all"/>
 			<evaluate expression="manager.getReservationRequestTemplate()" result="flowScope.reservation"/>
@@ -41,7 +43,7 @@
 		</transition>	
 		<transition on="remove" to="request-service">
 			<set name="requestScope.id" value="requestParameters.id" type="int"/>
-			<evaluate expression="service.getReservations().remove(id)"/>
+			<evaluate expression="serviceModel.service.getReservations().remove(id)"/>
 		</transition>
 	</view-state>
 
@@ -74,7 +76,7 @@
 		<transition on="submit" to="request-service" bind="true">
 			<evaluate expression="manager.convertTimeToApplicationTimezone(reservation.timezone,reservation.request)"/>
 			<evaluate expression="manager.convertCapacity(reservation.request)"/>
-			<evaluate expression="service.getReservations().add(reservation.request)"/>
+			<evaluate expression="serviceModel.service.getReservations().add(reservation.request)"/>
 		</transition>
 		
 		<transition on="cancel" to="request-service" bind="false"/>

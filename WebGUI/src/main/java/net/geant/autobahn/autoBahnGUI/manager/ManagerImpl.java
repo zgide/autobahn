@@ -35,6 +35,7 @@ import net.geant.autobahn.autoBahnGUI.model.LogsFormModel;
 import net.geant.autobahn.autoBahnGUI.model.MapKeySetComparator;
 import net.geant.autobahn.autoBahnGUI.model.ReservatiomDepandentOnTimezone;
 import net.geant.autobahn.autoBahnGUI.model.ReservationTest;
+import net.geant.autobahn.autoBahnGUI.model.ServiceRequestModel;
 import net.geant.autobahn.autoBahnGUI.model.ServicesComparator;
 import net.geant.autobahn.autoBahnGUI.model.ServicesFormModel;
 import net.geant.autobahn.autoBahnGUI.model.SettingsFormModel;
@@ -523,7 +524,6 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             logger.info("idms.get client ports is NULL");
             return null;
         }
-
         return pTypes;
     }
 
@@ -1129,8 +1129,9 @@ public class ManagerImpl implements Manager, ManagerNotifier {
      * @see net.geant.autobahn.autoBahnGUI.manager.Manager#getServiceRequestTemplate()
      */
     @Override
-    public ServiceRequest getServiceRequestTemplate() {
-        ServiceRequest service = new ServiceRequest();
+    public ServiceRequestModel getServiceRequestTemplate() {
+    	ServiceRequest service = new ServiceRequest();
+        ServiceRequestModel serviceModel = new ServiceRequestModel();
         Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = null;
         if (obj instanceof UserDetails) {
@@ -1145,9 +1146,10 @@ public class ManagerImpl implements Manager, ManagerNotifier {
         service.setUserName(username);
         List<String> idms = getAllInterdomainManagers();
         if (idms != null && !idms.isEmpty()) {
-            service.setUserHomeDomain(idms.get(0));
+        	service.setUserHomeDomain(idms.get(0));
         }
-        return service;
+        serviceModel.setService(service);
+        return serviceModel;
     }
 
     /*

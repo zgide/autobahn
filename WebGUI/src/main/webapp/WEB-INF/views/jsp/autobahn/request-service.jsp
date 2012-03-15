@@ -44,47 +44,55 @@ cursor:pointer;
 	<br style="height: 50px"></br>
 	<h3 style="margin: 20px"><spring:message code="service.submitted.successfully"/></h3>
 	<!--p style="margin:20px"><spring:message code="service.submitted.view"/><a href="<c:url value="/portal/secure/reservations.htm?idm=${service.userHomeDomain}#${serviceId}"/>"><spring:message code="service.submitted.goto"/></a></p-->
-	<p style="margin:20px"><spring:message code="service.submitted.view"/><a href="<c:url value="/portal/secure/reservations_select.htm?idm=${service.userHomeDomain}"/>"><spring:message code="service.submitted.goto"/></a></p>
+	<p style="margin:20px"><spring:message code="service.submitted.view"/><a href="<c:url value="/portal/secure/reservations_select.htm?idm=${serviceModel.service.userHomeDomain}"/>"><spring:message code="service.submitted.goto"/></a></p>
 </c:if>
 
 <c:if test="${serviceId==null}">
-<form:form commandName="service">
+<form:form commandName="serviceModel">
 <br>
 <table width="100%">
 	<tr>
-		<td class="label" ><spring:message code="service.userHomeDomain"/><br /><span class="error"><form:errors path="userHomeDomain"/></span></td>
+		<td class="label" ><spring:message code="service.userHomeDomain"/><br /><span class="error"><form:errors path="service.userHomeDomain"/></span></td>
 		<td class="value">
             <c:if test="${home!=null}">
-                <c:if test="${fn:length(service.reservations) != 0}">
-                    <form:select path="userHomeDomain">
+                <c:if test="${fn:length(serviceModel.service.reservations) != 0}">
+                    <form:select path="service.userHomeDomain">
                         <form:option value="${home}"/>
                     </form:select>
                 </c:if>
-                <c:if test="${fn:length(service.reservations) == 0}">
-                    <form:select path="userHomeDomain">
+                <c:if test="${fn:length(serviceModel.service.reservations) == 0}">
+                    <form:select path="service.userHomeDomain">
                         <form:options items="${idms}"/>
                     </form:select>
                 </c:if>
             </c:if>
             <c:if test="${home==null}">
-                <form:select path="userHomeDomain">
+                <form:select path="service.userHomeDomain">
                     <form:options items="${idms}"/>
                 </form:select>
             </c:if>
 		</td>
-		<!--td class="error"><form:errors path="userHomeDomain"/></td-->
+		<!--td class="error"><form:errors path="service.userHomeDomain"/></td-->
+	</tr>
+    <tr>
+        <td class="label" ><spring:message code="service.destinationDomain"/><br /><span class="error"><form:errors path="destinationDomain"/></span></td>
+            <td class="value">
+                <form:select path="destinationDomain">
+                    <form:options items="${idms}"/>
+                </form:select>
+            </td>
 	</tr>
 	<tr>
-		<td class="label" ><spring:message code="service.userName"/><br /><span class="error"><form:errors path="userName"/></span></td>
+		<td class="label" ><spring:message code="service.userName"/><br /><span class="error"><form:errors path="service.userName"/></span></td>
 		<td class="value">
-			<form:input path="userName" disabled="true"/>
+			<form:input path="service.userName" disabled="true"/>
 		</td>
-		<!--td class="error"><form:errors path="userName"/></td-->
+		<!--td class="error"><form:errors path="service.userName"/></td-->
 	</tr>
 	<tr>
-		<td class="label" ><spring:message code="service.justification"/><br /><span class="error"><form:errors path="justification"/></span></td>
+		<td class="label" ><spring:message code="service.justification"/><br /><span class="error"><form:errors path="service.justification"/></span></td>
 		<td class="value">
-			<form:textarea rows="8" cols="65" path="justification"/>
+			<form:textarea rows="8" cols="65" path="service.justification"/>
 		</td>
 	</tr>
 	<tr>
@@ -100,7 +108,7 @@ cursor:pointer;
 <h2>Service Reservations <input type="submit" name="_eventId_add" value="<spring:message code="reservation.add"/>"/></h2>
 
 
-<c:if test="${fn:length(service.reservations) != 0}">
+<c:if test="${fn:length(serviceModel.service.reservations) != 0}">
 
 <br/>
 
@@ -120,8 +128,8 @@ cursor:pointer;
 			<th><spring:message code="reservation.mtu" text="Mtu"/></th>
 	
 		</tr>  
-		<c:forEach items="${service.reservations}" var="item" varStatus="loop">
-			<spring:bind path="service.reservations">
+		<c:forEach items="${serviceModel.service.reservations}" var="item" varStatus="loop">
+			<spring:bind path="serviceModel.service.reservations">
 				<tr>
 					<td>
 						<a href="${flowExecutionUrl}&_eventId=remove&id=${loop.count-1}">Remove</a>

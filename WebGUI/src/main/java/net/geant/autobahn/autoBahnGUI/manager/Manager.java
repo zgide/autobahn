@@ -8,6 +8,7 @@ import net.geant.autobahn.administration.ServiceType;
 import net.geant.autobahn.autoBahnGUI.model.LogsFormModel;
 import net.geant.autobahn.autoBahnGUI.model.ReservatiomDepandentOnTimezone;
 import net.geant.autobahn.autoBahnGUI.model.ReservationTest;
+import net.geant.autobahn.autoBahnGUI.model.ServiceRequestModel;
 import net.geant.autobahn.autoBahnGUI.model.ServicesFormModel;
 import net.geant.autobahn.autoBahnGUI.model.SettingsFormModel;
 import net.geant.autobahn.autoBahnGUI.model.StatisticsFormModel;
@@ -235,7 +236,7 @@ public interface Manager {
      * Gets ServiceRequest template for service request form
      * @return ServiceRequest template
      */
-    public ServiceRequest getServiceRequestTemplate();
+    public ServiceRequestModel getServiceRequestTemplate();
 
     /**
      * Gets ReservationRequest template for reservation request form 

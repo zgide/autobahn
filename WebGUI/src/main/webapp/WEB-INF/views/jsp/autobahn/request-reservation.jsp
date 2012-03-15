@@ -11,7 +11,6 @@
 
 function passPort(){
     setStartFriendlyName(document.getElementById('request.startPort.address').options[document.getElementById('request.startPort.address').options.selectedIndex].text);
-    setEndFriendlyName(document.getElementById('request.endPort.address').options[document.getElementById('request.endPort.address').options.selectedIndex].text);
     var now = new Date();
     var month = parseInt(now.getMonth())+1;
     if (month > 12) {
@@ -65,52 +64,35 @@ function alerta(){
 }
 
 function setStartFriendlyName(path){
-	document.getElementById('request.startPortFriendlyName').value = path;
+    document.getElementById('request.startPortFriendlyName').value = path;
     startPortValue = $(document.getElementById('request.startPort.address')).val();
     var endPortSelect = document.getElementById('request.endPort.address');
+	var startPortSelect = document.getElementById('request.startPort.address');
+    for (var i=0; i < startPortSelect.length; i++) {
+        $(startPortSelect.options[i]).removeAttr("disabled");
+    }
 
     for (var i=0; i < endPortSelect.length; i++) {
-        $(endPortSelect.options[i]).removeAttr("disabled");
-
+        if (endPortSelect.options[i].value != "IDCP") { 
+            $(endPortSelect.options[i]).removeAttr("disabled");
+        }
         if (endPortSelect.options[i].value == startPortValue) {
             $(endPortSelect.options[i]).attr("disabled", "true");
+            if (i == 0){
+                endPortSelect.selectedIndex= i+1;
+            }
+            else {
+                endPortSelect.selectedIndex = i-1;
+	     }
+         
         }
+        document.getElementById('request.endPortFriendlyName').value = document.getElementById('request.endPort.address').options[endPortSelect.selectedIndex].text;
     }
     
-    if ($(document.getElementById('request.startPort.address')).val() == $(document.getElementById('request.endPort.address')).val()) {
-		var index = $(document.getElementById('request.endPort.address')).attr("selectedIndex");
-		if (endPortSelect.options[index + 1].value != null) {
-			endPortSelect.options[index + 1].selected = true;
-		} else {
-			endPortSelect.options[index - 1].selected = true;
-		}
-	}
 }
 
 function setEndFriendlyName(path){
-	if ($(document.getElementById('request.startPort.address')).val() == $(document.getElementById('request.endPort.address')).val()) {
-		//alert('OOOO');
-	}
-    document.getElementById('request.endPortFriendlyName').value = path;
-    endPortValue = $(document.getElementById('request.endPort.address')).val();
-    var startPortSelect = document.getElementById('request.startPort.address');
-        
-    for (var i=0; i < startPortSelect.length; i++) {
-        $(startPortSelect.options[i]).removeAttr("disabled");
-
-        if (startPortSelect.options[i].value == endPortValue) {
-            $(startPortSelect.options[i]).attr("disabled", "true");
-        }
-    }
-    /*
-    if ($(document.getElementById('request.startPort.address')).val() == $(document.getElementById('request.endPort.address')).val()) {
-		var index = $(document.getElementById('request.startPort.address')).attr("selectedIndex");
-		if (startPortSelect.options[index + 1].value != null) {
-			startPortSelect.options[index + 1].selected = true;
-		} else {
-			startPortSelect.options[index - 1].selected = true;
-		}
-	} */
+document.getElementById('request.endPortFriendlyName').value = path;
 }
 
 function checkMinus(field,id){
@@ -273,7 +255,7 @@ function blockInputStartTime(checked) {
             <td class="label"><spring:message code="reservation.endPort"/><br /><span class="error"><form:errors path="request.endPort.address"/></span></td>
             <td class="value">
                 <form:select path="request.endPort.address" onchange="setEndFriendlyName(this.options[this.options.selectedIndex].text)">
-                    <form:options items="${friendlyports_all}" itemValue="address" itemLabel="friendlyName"/>
+                    <form:options items="${friendlyports_destinationDomain}" itemValue="address" itemLabel="friendlyName"/>
                     <option disabled="true" value="IDCP">IDCP</option>
                     <form:options items="${idcpPorts_all}" />
                 </form:select>
