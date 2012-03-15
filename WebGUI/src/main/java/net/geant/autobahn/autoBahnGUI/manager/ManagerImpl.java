@@ -117,6 +117,33 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             "UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN",
             "FINISHED","CANCELLED", "FAILED"};
 
+    public static final String[] reservationDescriptions = {
+            "Invalid state", // 0 UNKNOWN
+            "Reservation has been put in processing queue", // 1 ACCEPTED
+            "Looking for a suitable inter-domain path", // 2 PATHFINDING
+            "Looking for a suitable intra-domain path", // 3 LOCAL_CHECK
+            "A suitable intra-domain path has been found in some domains, waiting for the rest", // 4 SCHEDULING
+            "Waiting for reservation start time in order to activate the circuit", // 5 SCHEDULED
+            "User requested cancellation, some domains have cancelled, waiting for the rest", // 6 CANCELLING
+            "User requested cancellation, some processing needs to finish and then reservation will be cancelled", // 7 DEFERRED_CANCEL
+            "Circuit creation failed in some domain(s) and will be withdrawn from all", // 8 WITHDRAWING
+            "Some domains have created the circuit, waiting for the rest", // 9 ACTIVATING
+            "Circuit is up in all domains, end host connectivity is available", // 10 ACTIVE
+            "Some domains have taken down the circuit, waiting for the rest", // 11 FINISHING
+            "Invalid state", // 12 UNKNOWN
+            "Invalid state", // 13 UNKNOWN
+            "Invalid state", // 14 UNKNOWN
+            "Invalid state", // 15 UNKNOWN
+            "Invalid state", // 16 UNKNOWN
+            "Invalid state", // 17 UNKNOWN
+            "Invalid state", // 18 UNKNOWN
+            "Invalid state", // 19 UNKNOWN
+            "Invalid state", // 20 UNKNOWN
+            "All domains have taken down the circuit, reservation finished successfully", // 21 FINISHED
+            "User requested reservation cancellation, all domains have cancelled successfully", // 22 CANCELLED
+            "Reservation failed, all domains have ceased processing it", // 23 FAILED
+    };
+    
     public static final String[] priorities = {};
 
     /**
@@ -737,6 +764,15 @@ public class ManagerImpl implements Manager, ManagerNotifier {
     @Override
     public String[] getReservationStates() {
         return reservationStates;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see net.geant.autobahn.autoBahnGUI.manager.Manager#getReservationDescriptions()
+     */
+    @Override
+    public String[] getReservationDescriptions() {
+        return reservationDescriptions;
     }
 
     /*

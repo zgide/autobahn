@@ -104,7 +104,9 @@
         <c:set var="hideCancel" value="true"/>
 		<c:forEach items="${element.reservations}" var="item" varStatus="loopStatus">
 				<tr>
-					<td>${reservationStates[item.state]}(${item.state})</td>
+					<td title="${reservationDescriptions[item.state]}">
+					   ${reservationStates[item.state]}(${item.state})
+					</td>
 					<td>${item.startTime.time}</td>
 					<td>${item.endTime.time}</td>
 					<td>${item.startPort.friendlyName}</td>
@@ -191,7 +193,9 @@
         <c:set var="hideCancel" value="true"/>
 		<c:forEach items="${element.reservations}" var="item" varStatus="loopStatus">
 				<tr>
-					<td>${reservationStates[item.state]}(${item.state})</td>
+					<td title="${reservationDescriptions[item.state]}">
+					   ${reservationStates[item.state]}(${item.state})
+					</td>
 					<td>${item.startTime.time}</td>
 					<td>${item.endTime.time}</td>
 					<td>${item.startPort.friendlyName}</td>
@@ -271,7 +275,9 @@
         <c:set var="hideCancel" value="true"/>
 		<c:forEach items="${element.reservations}" var="item" varStatus="loopStatus">
 				<tr>
-					<td>${reservationStates[item.state]}(${item.state})</td>
+					<td title="${reservationDescriptions[item.state]}">
+					   ${reservationStates[item.state]}(${item.state})
+					</td>
 					<td>${item.startTime.time}</td>
 					<td>${item.endTime.time}</td>
 					<td>${item.startPort.friendlyName}</td>

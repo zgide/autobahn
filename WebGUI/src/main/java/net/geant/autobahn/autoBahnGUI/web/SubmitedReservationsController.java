@@ -38,6 +38,7 @@ public class SubmitedReservationsController extends SimpleFormController {
 	protected Map<String, Object> referenceData(HttpServletRequest request) throws Exception {
 		Map<String, Object> data = new HashMap<String, Object> ();
 		data.put("reservationStates", manager.getReservationStates());
+        data.put("reservationDescriptions", manager.getReservationDescriptions());
 		data.put("serviceStates", manager.getServiceStates());
 		data.put("priorities", manager.getReservationPriorities());
 		

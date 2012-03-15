@@ -181,17 +181,20 @@ public class AutobahnController {
     public void handleServicesForIdm(@RequestParam String currentIdm,Map<String, Object> model){
         ServicesFormModel services = null;
         String[] reservationStates = null;
+        String[] reservationDescriptions = null;
 
         logger.debug("getting services for idm, currentIdm:" + currentIdm);
         if (currentIdm != null) {
             services = manager.getSubmitedServicesInIDM(currentIdm);
             reservationStates = manager.getReservationStates();
+            reservationDescriptions = manager.getReservationDescriptions();
         }
         //logger.debug("services:"+services);
         //logger.debug("reservationStates:"+reservationStates);
         //logger.debug("services.getServices():"+services.getServices());
         model.put("services", services);
         model.put("reservationStates", reservationStates);
+        model.put("reservationDescriptions", reservationDescriptions);
     }
 
     @RequestMapping("/secure/settings.htm")

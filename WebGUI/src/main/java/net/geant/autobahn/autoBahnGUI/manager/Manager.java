@@ -32,6 +32,12 @@ public interface Manager {
     public String[] getReservationStates();
 
     /**
+     * Gets array of all string descriptions of  Reservation states members
+     * @return array with string Reservation types descriptions
+     */
+    public String[] getReservationDescriptions();
+
+    /**
      * Gets array of all string representations of  ReservationService states members
      * @return array with string ReservationService types members 
      */
