@@ -134,6 +134,7 @@ public class SdhTopologyConverterTest {
     
         TopologyConverter conv = createTopology2Converter(true);
         
+        @SuppressWarnings("unused")
         Stats stats = conv.abstractInternalPartOfTopology();
         conv.abstractExternalPartOfTopology(null);
     }
@@ -182,10 +183,6 @@ public class SdhTopologyConverterTest {
         
         IntradomainPathfinder pf = IntradomainPathfinderFactory.getIntradomainPathfinder(
                 builder.getIntradomainTopology());
-        
-        String nrange = "10.11.0.0/19";
-        String prange = "10.11.32.0/19";
-        String lrange = "10.11.64.0/19";
         
         InternalIdentifiersSource internal = new InternalIdentifiersSourceURN("MyDomain");
         
@@ -266,6 +263,7 @@ public class SdhTopologyConverterTest {
     
         TopologyConverter conv = createTopology2Converter(false);
         
+        @SuppressWarnings("unused")
         Stats stats = conv.abstractInternalPartOfTopology();
         conv.abstractExternalPartOfTopology(null);
     }
@@ -289,20 +287,44 @@ public class SdhTopologyConverterTest {
         
         TestCase.assertEquals(7, links.size());
         
-        for(Link l : links)
-            System.out.println(l);
-    
-        // Check the client link
-        GenericLink glink = conv.getEdgeLink(links.get(2));
-        TestCase.assertEquals("p2.4-cli-port2", glink.toString());
-    
-        // Check the external link
-        glink = conv.getEdgeLink(links.get(0));
-        TestCase.assertEquals("p2.1-dom1-port1", glink.toString());
+        // The topology should have exactly 2 client links, 2 interdomain links
+        // and 3 virtual links
+        String clientlink1 = null;
+        String clientlink2 = null;
+        String externlink1 = null;
+        String externlink2 = null;
+        int virtualinkNum = 0;
+        for (Link l : links) {
+            GenericLink glink = conv.getEdgeLink(l);
+            System.out.println(l + " ---- " + glink);
+            if (glink != null) {
+                if ("p2.3-cli-port1".equals(glink.toString())) {
+                    clientlink1 = glink.toString();
+                }
+                if ("p2.4-cli-port2".equals(glink.toString())) {
+                    clientlink2 = glink.toString();
+                }
+                if ("p2.1-dom1-port1".equals(glink.toString())) {
+                    externlink1 = glink.toString();
+                }
+                if ("p2.2-dom3-port2".equals(glink.toString())) {
+                    externlink2 = glink.toString();
+                }
+            } else {
+                virtualinkNum++;
+            }
+        }
+
+        // Check the client links
+        TestCase.assertEquals("p2.3-cli-port1", clientlink1);
+        TestCase.assertEquals("p2.4-cli-port2", clientlink2);
+
+        // Check the external links
+        TestCase.assertEquals("p2.1-dom1-port1", externlink1);
+        TestCase.assertEquals("p2.2-dom3-port2", externlink2);
         
-        // Check the virtual link
-        glink = conv.getEdgeLink(links.get(5));
-        TestCase.assertNull(glink);
+        // Check the virtual links number
+        TestCase.assertEquals(3, virtualinkNum);
     }
     
     private TopologyConverter createTopology2Converter(boolean ipv4) throws IOException {
