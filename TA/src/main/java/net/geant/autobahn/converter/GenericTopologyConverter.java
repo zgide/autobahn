@@ -264,8 +264,11 @@ public abstract class GenericTopologyConverter implements TopologyConverter {
     	net.geant.autobahn.network.Node res = absNodes.get(nodeName);
     	
     	if(res == null) {
-    		if(interName == null)
-    			interName = internalIds.generateNodeID();
+    		if(interName == null && gif.isClientPort() == false) {
+    			interName = internalIds.generateNodeID(nodeName, InternalIdentifiersSourceURNHash.EDGE_NODE);
+    		} else if(interName == null && gif.isClientPort() == true) {
+    			interName = internalIds.generateNodeID(nodeName, InternalIdentifiersSourceURNHash.CLIENT_NODE);
+    		}
 
             res = new net.geant.autobahn.network.Node();
             
@@ -299,7 +302,7 @@ public abstract class GenericTopologyConverter implements TopologyConverter {
     		// Start port
     		String sportname = gl.getStartInterface().getName();
     		String nodename = gl.getStartInterface().getNode().getName();
-    		String bodID = internalIds.generatePortID();
+    		String bodID = internalIds.generatePortID(sportname, gl.getEndInterface().getName(), InternalIdentifiersSourceURNHash.INTER_PORT);
     		Port sport = new Port(bodID, "Ethernet", false, absNodes.get(nodename));
 
     		info.add("Mapping port " + sportname + "\t to " + bodID);
@@ -323,7 +326,7 @@ public abstract class GenericTopologyConverter implements TopologyConverter {
     		
     		// Link
     		Link l = Link.createInterDomainLink(sport, dport, gl.getCapacity());
-    		String bodID = internalIds.generateLinkID();
+    		String bodID = internalIds.generateLinkID(sportname, dportname, InternalIdentifiersSourceURNHash.INTER_LINK);
     		
     		l.setBodID(bodID);
     		
@@ -460,7 +463,7 @@ public abstract class GenericTopologyConverter implements TopologyConverter {
             	// End port
         		String dname = glink.getEndInterface().getName();
         		String dnode = glink.getEndInterface().getNode().getName();
-    			String bodID = internalIds.generatePortID();
+    			String bodID = internalIds.generateClientPortID(sname, InternalIdentifiersSourceURNHash.CLIENT_PORT);
     			String ddesc = glink.getEndInterface().getDescription();
     			if (ddesc == null || ddesc.equals("") || ddesc.equalsIgnoreCase("null")) {
     			    ddesc = bodID;
@@ -472,7 +475,7 @@ public abstract class GenericTopologyConverter implements TopologyConverter {
         		// Link
             	Link l = Link.createInterDomainLink(sport, eport, glink.getCapacity());
             	
-            	bodID = internalIds.generateLinkID();
+            	bodID = internalIds.generateLinkID(sname, dname, InternalIdentifiersSourceURNHash.CLIENT_LINK);
             	l.setBodID(bodID);
             	
             	info.add("Mapping client link " + sname + " - " + dname + "\t to " + bodID);
@@ -515,19 +518,19 @@ public abstract class GenericTopologyConverter implements TopologyConverter {
             			maxCapacity = path.getCapacity();
             	}
             	
-            	String portname = internalIds.generatePortID();
+            	String portname = internalIds.generatePortID(snode.getName(), dnode.getName(), InternalIdentifiersSourceURNHash.VIRTUAL_PORT);
             	Port sport = new Port(portname, "Ethernet", false, absNodes.get(snode.getName()));
 
-        		info.add("Mapping port " + snode.getName() + "\t to " + portname);
+        		info.add("Mapping virtual port to " + snode.getName() + "\t to " + portname);
             	
-            	portname = internalIds.generatePortID();
+            	portname = internalIds.generatePortID(dnode.getName(), snode.getName(), InternalIdentifiersSourceURNHash.VIRTUAL_PORT);
             	Port eport = new Port(portname, "Ethernet", false, absNodes.get(dnode.getName()));
             	
-            	info.add("Mapping port " + dnode.getName() + "\t to " + portname);
+            	info.add("Mapping virtual port on " + dnode.getName() + "\t to " + portname);
             	
             	Link l = Link.createVirtualLink(sport, eport, maxCapacity);
             	
-            	String bodID = internalIds.generateLinkID();
+            	String bodID = internalIds.generateLinkID(snode.getName(), dnode.getName(), InternalIdentifiersSourceURNHash.VIRTUAL_LINK);
             	l.setBodID(bodID);
             	
             	info.add("Mapping link " + snode.getName() + " - " + dnode.getName()

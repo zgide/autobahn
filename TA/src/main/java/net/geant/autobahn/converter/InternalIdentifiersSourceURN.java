@@ -18,18 +18,24 @@ public class InternalIdentifiersSourceURN implements InternalIdentifiersSource {
     }
 
     @Override
-    public String generateNodeID() {
+    public String generateNodeID(String name, String desc) {
         return domain + delimiter + "Node" + delimiter + ++count;
     }
 
     @Override
-    public String generatePortID() {
+    public String generatePortID(String snode, String dnode, String desc) {
         return domain + delimiter + "Port" + delimiter + ++count;
     }
 
     @Override
-    public String generateLinkID() {
+    public String generateLinkID(String startPort, String endPort, String desc) {
         return domain + delimiter + "Link" + delimiter + ++count;
     }
+
+	@Override
+	public String generateClientPortID(String sname, String desc) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

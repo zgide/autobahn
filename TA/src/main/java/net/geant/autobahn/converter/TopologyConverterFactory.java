@@ -30,7 +30,7 @@ public class TopologyConverterFactory {
         String domain = properties.getProperty("domainName");
         String lookuphost = properties.getProperty("lookuphost");
         
-        InternalIdentifiersSource internal = new InternalIdentifiersSourceURN(domain);
+        InternalIdentifiersSource internal = new InternalIdentifiersSourceURNHash(domain, true);
         PublicIdentifiersMapping mapping = new PublicIdentifiersMapping(
         		properties.getProperty("public.ids.file"));
         

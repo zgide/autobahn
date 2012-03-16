@@ -12,17 +12,24 @@ public interface InternalIdentifiersSource {
      * 
      * @return Abstract identifier for the network's node.
      */
-    public String generateNodeID();
+    public String generateNodeID(String name, String desc);
 
     /**
      * 
      * @return Abstract identifier for the network's port.
      */
-    public String generatePortID();
+    public String generatePortID(String snode, String dnode, String desc);
 
     /**
      * 
      * @return Abstract identifier for the network's link.
      */
-    public String generateLinkID();
+    public String generateLinkID(String startPort, String endPort, String desc);
+
+    /**
+     * 
+     * @return Absract identifier for client's port
+     */
+	public String generateClientPortID(String sname, String desc);
+
 }
