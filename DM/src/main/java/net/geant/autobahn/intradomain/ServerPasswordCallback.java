@@ -25,7 +25,7 @@ public class ServerPasswordCallback implements CallbackHandler {
 			UnsupportedCallbackException {
 		
 		WSPasswordCallback pc = (WSPasswordCallback)arg0[0];
-		if (pc.getIdentifer().equals("autobahn"))
+		if (pc.getIdentifier().equals("autobahn"))
 			pc.setPassword(PASSWORD);
 	}
 }

@@ -1,6 +1,7 @@
 package net.geant.autobahn.intradomain;
 
 import net.geant.autobahn.reservation.ReservationParams;
+import java.io.Serializable;
 
 /**
  * Class representing intradomain reservation. Stores the intradomain path to be
@@ -10,7 +11,9 @@ import net.geant.autobahn.reservation.ReservationParams;
  * @author <a href="mailto:jaxlucas@man.poznan.pl">Jacek Lukasik</a>
  * 
  */
-public class IntradomainReservation {
+public class IntradomainReservation implements Serializable {
+
+	private static final long serialVersionUID = -8436766059807033668L;
 
 	private String reservationId;
 	

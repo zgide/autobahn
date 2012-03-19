@@ -25,12 +25,19 @@ import java.util.concurrent.ConcurrentMap;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import net.geant.autobahn.aai.AccessPolicy;
+import net.geant.autobahn.aai.AccessRule;
 import net.geant.autobahn.aai.UserAuthParameters;
 import net.geant.autobahn.administration.AdministrationException;
 import net.geant.autobahn.administration.KeyValue;
 import net.geant.autobahn.administration.ReservationType;
 import net.geant.autobahn.administration.ServiceType;
 import net.geant.autobahn.administration.Status;
+import net.geant.autobahn.autoBahnGUI.model.AccessPolicyFormModel;
+import net.geant.autobahn.autoBahnGUI.model.IntraCalendarFormModel;
+import net.geant.autobahn.autoBahnGUI.model.IntrasComparator;
+import net.geant.autobahn.autoBahnGUI.model.IntrasFormModel;
+import net.geant.autobahn.autoBahnGUI.model.IntraPathsFormModel;
 import net.geant.autobahn.autoBahnGUI.model.LogsFormModel;
 import net.geant.autobahn.autoBahnGUI.model.MapKeySetComparator;
 import net.geant.autobahn.autoBahnGUI.model.ReservatiomDepandentOnTimezone;
@@ -43,9 +50,11 @@ import net.geant.autobahn.autoBahnGUI.model.StatisticsFormModel;
 import net.geant.autobahn.autoBahnGUI.topology.TopologyFinderNotifier;
 import net.geant.autobahn.gui.EventType;
 import net.geant.autobahn.gui.ReservationChangedType;
+import net.geant.autobahn.intradomain.IntradomainReservation;
 import net.geant.autobahn.lookup.LookupService;
 import net.geant.autobahn.lookup.LookupServiceException;
 import net.geant.autobahn.network.Link;
+import net.geant.autobahn.reservation.User;
 import net.geant.autobahn.useraccesspoint.Mode;
 import net.geant.autobahn.useraccesspoint.PortType;
 import net.geant.autobahn.useraccesspoint.Priority;
@@ -178,6 +187,8 @@ public class ManagerImpl implements Manager, ManagerNotifier {
     private String[] comparedDomains;
 
     private String lookupHost;
+
+    private List<ReservationHelper> reservaionHelpers = new ArrayList<ReservationHelper>();
 
     public ManagerImpl() {
         Properties properties = new Properties();
@@ -674,6 +685,7 @@ public class ManagerImpl implements Manager, ManagerNotifier {
         }
         List<ReservationType> list = new ArrayList<ReservationType>();
         list.addAll(service.getReservations());
+        markIDMCacheAsDirty(list);
         int stateOfReservation = convertReservationTypes(state);
         if (stateOfReservation == SCHEDULED) {
             manager.forceUpdateService(serviceId);
@@ -688,6 +700,29 @@ public class ManagerImpl implements Manager, ManagerNotifier {
                     reservation.setFailureCause(message);
                 }
                 break;
+            }
+        }
+        manager.getServices(true);
+    }
+
+    /**
+     * Finds all IDMs that are traversed by one of the 
+     * reservations in the list and marks their caches as dirty.
+     * 
+     * @param rsvList
+     */
+    private void markIDMCacheAsDirty(List<ReservationType> rsvList) {
+        for (ReservationType rsvType : rsvList) {
+            if (rsvType.getPath() != null && rsvType.getPath().getDomains() != null) {
+                for (String domain : rsvType.getPath().getDomains()) {
+                    InterDomainManager manager = idms.get(domain);
+
+                    if (manager != null) {
+                        manager.setIntraCalendarsCacheIsUptodate(false);
+                        manager.setIntraPathsCacheIsUptodate(false);
+                        manager.setIntraRsvCacheIsUptodate(false);
+                    }
+                }
             }
         }
     }
@@ -750,11 +785,15 @@ public class ManagerImpl implements Manager, ManagerNotifier {
      * @see net.geant.autobahn.autoBahnGUI.manager.Manager#getLogsInterDomainManager(java.lang.String, boolean, boolean)
      */
     @Override
-    public String getLogsInterDomainManager(String idm, boolean refresh, boolean all) {
+    public String getLogsInterDomainManager(String idm, boolean refresh, boolean all, String resId) {
         InterDomainManager manager = idms.get(idm);
-        if (manager == null)
+        if (manager == null) {
             return null;
+        }
+        if (resId == null) {
         return manager.getLog(refresh, all);
+        }
+        return manager.getReservationLog(resId);
     }
 
     /*
@@ -902,6 +941,41 @@ public class ManagerImpl implements Manager, ManagerNotifier {
 
     /*
      * (non-Javadoc)
+     * @see net.geant.autobahn.autoBahnGUI.manager.Manager#setAccessPolicyForInterDomainManager(java.lang.String, AccessPolicy)
+     */
+    public void setAccessPolicyForInterDomainManager(String idm, AccessPolicy acp) {
+        InterDomainManager manager = idms.get(idm);
+        if (manager != null) {
+            manager.setAccessPolicy(acp);
+        }
+    }
+
+    @Override
+    public void addRuleForIDM(String idm, String role, String email, String projMem, String org) {
+        InterDomainManager manager = idms.get(idm);
+        if (manager != null) {
+            AccessPolicy p = manager.getAccessPolicy();
+            UserAuthParameters uauth = new UserAuthParameters(role, email, projMem, org);
+            p.addRule(new AccessRule(uauth));
+            logger.debug("Adding rule:" + new AccessRule(uauth) + " at domain:" + idm);
+            manager.setAccessPolicy(p);
+        }
+    }
+
+    @Override
+    public void removeRuleForIDM(String idm, String role, String email, String projMem, String org) {
+        InterDomainManager manager = idms.get(idm);
+        if (manager != null) {
+            AccessPolicy p = manager.getAccessPolicy();
+            UserAuthParameters uauth = new UserAuthParameters(role, email, projMem, org);
+            p.removeRule(new AccessRule(uauth));
+            logger.debug("Removing rule:" + new AccessRule(uauth) + " from domain:" + idm);
+            manager.setAccessPolicy(p);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
      * @see net.geant.autobahn.autoBahnGUI.manager.Manager#getServiceStates()
      */
     @Override
@@ -915,9 +989,80 @@ public class ManagerImpl implements Manager, ManagerNotifier {
      */
     @Override
     public List<ServiceType> getServicesFromInterDomainManager(String idm) {
+        if (idm == null) {
+            List<ServiceType> all_services = new ArrayList<ServiceType>();
+            for (InterDomainManager mgr : idms.values()) {
+                all_services.addAll(mgr.getServices(false));
+            }
+            return all_services;
+        }
         InterDomainManager manager = idms.get(idm);
         if (manager != null) {
             return manager.getServices(false);
+        }
+        return null;
+    }
+
+    /**
+     * Get domain reservations
+     * 
+     * @param The domain name.
+     * @return The list of the ReservationType in selected domain
+     */
+    public List<ReservationType> getDomainReservations(String idm){
+        List<ReservationType> resType = new ArrayList<ReservationType>();
+        if(idm == null){
+            for (InterDomainManager mgr : idms.values()) {
+                for(ServiceType sType : mgr.getServices(false)){
+                    for(ReservationType rt :sType.getReservations()){
+                        resType.add(rt);
+                    }
+                }
+            }
+            return resType;
+        }
+        InterDomainManager manager = idms.get(idm);
+        if (manager != null){
+            for(ServiceType sType : manager.getServices(false)){
+                for(ReservationType rt :sType.getReservations()){
+                    resType.add(rt);
+                }
+            }
+            return resType;
+        }
+        return null;
+    }
+
+    /**
+     * Get domain reservations with specific reservation state
+     * 
+     * @param The domain name
+     * @param The state
+     * @return The list of the ReservationType in selected domain and specific state
+     */
+    public List<ReservationType> getInterReservationsForIDMWithSelectedReservationState(String idm, String state){
+        List<ReservationType> res = new ArrayList<ReservationType>();
+        if (idm == null) {
+            for (InterDomainManager mgr : idms.values()) {
+                for (ServiceType serviceType : mgr.getServices(false)) {
+                    for (ReservationType resType : serviceType.getReservations()){
+                        if (reservationStates[resType.getState()].equals(state))
+                            res.add(resType);
+                    }
+                }
+            }
+
+            return res;
+        }
+        InterDomainManager manager = idms.get(idm);
+        if (manager != null){
+            for(ServiceType serviceType : manager.getServices(false)){
+                for(ReservationType resType : serviceType.getReservations()) {
+                    if (reservationStates[resType.getState()].equals(state))
+                        res.add(resType);
+                }
+            }
+            return res;
         }
         return null;
     }
@@ -1297,10 +1442,10 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             serv.setCurrentIdm(managers.get(0));
             manager = idms.get(managers.get(0));
             serv.setComparator(new ServicesComparator());
-            serv.setServices(manager.getServices());
+            serv.setServices(manager.getServices(false));
         } else {
             manager = idms.get(idm);
-            List<ServiceType> services = manager.getServices();
+            List<ServiceType> services = manager.getServices(false);
             serv.setComparator(new ServicesComparator());
             serv.setServices(services);
             serv.setCurrentIdm(idm);
@@ -1338,7 +1483,7 @@ public class ManagerImpl implements Manager, ManagerNotifier {
     }
 
     @Override
-    public LogsFormModel getLogsForInterDomainManager(String idm) {
+    public LogsFormModel getLogsForInterDomainManager(String idm, String resId) {
         LogsFormModel serv = new LogsFormModel();
         List<String> managers = getAllInterdomainManagers();
         serv.setIdms(managers);
@@ -1350,11 +1495,210 @@ public class ManagerImpl implements Manager, ManagerNotifier {
         if (idm == null) {
             idm = managers.get(0);
         }
-        serv.setLogs(getLogsInterDomainManager(idm, true, true));
+        serv.setLogs(getLogsInterDomainManager(idm, true, true, resId));
         serv.setCurrentIdm(idm);
         if (serv.getLogs() == null)
             serv.setLogs("");
 
+        return serv;
+    }
+
+    public IntrasFormModel getIntraReservationsForInterDomainManager(String idm) {
+        IntrasFormModel intras = new IntrasFormModel();
+        List<String> managers = getAllInterdomainManagers();
+        InterDomainManager manager = null;
+        logger.info("managers:" + managers);
+        if (managers == null || managers.size() == 0) {
+            return intras;
+        }
+        intras.setIdms(managers);
+        if (idm == null)
+            idm = managers.get(0);
+
+        manager = idms.get(idm);
+        intras.setCurrentIdm(idm);
+        intras.setComparator(new IntrasComparator());
+
+        HashMap<String, IntradomainReservation> map = manager.getIntradomainReservationParams();
+
+        intras.setIntras(new ArrayList<IntradomainReservation>(map.values()));
+        logger.info("Got intra reservations:" + intras.getIntras());
+
+        //TODO: Think about possible authR filtering, as done in getSubmitedServicesInIDM
+
+        return intras;
+    }
+
+    public IntrasFormModel getIntraReservationsForIDMWithSelectedReservationState(String idm, String state) {
+        IntrasFormModel intras = new IntrasFormModel();
+        List<String> managers = getAllInterdomainManagers();
+        InterDomainManager manager = null;
+        if (managers == null || managers.size() == 0) {
+            return intras;
+        }
+        intras.setIdms(managers);
+        if (idm == null)
+            idm = managers.get(0);
+
+        manager = idms.get(idm);
+        intras.setCurrentIdm(idm);
+        intras.setComparator(new IntrasComparator());
+
+        HashMap<String, IntradomainReservation> map = manager.getIntradomainReservationParams();
+
+        List<IntradomainReservation> list = new ArrayList<IntradomainReservation>();
+        for(IntradomainReservation r : map.values()){
+            if(getReservationByResID(r.getReservationId()) != null){
+                ReservationType rType = getReservationByResID(r.getReservationId());
+                if(reservationStates[rType.getState()].equals(state))
+                    list.add(r);
+            }
+        }
+        intras.setIntras(list);
+        return intras;
+    }
+
+    public IntradomainReservation getIntraReservationsForInterDomainManager(String idm, String resId) {
+        IntradomainReservation res = null;
+        List<String> managers = getAllInterdomainManagers();
+        InterDomainManager manager = null;
+        logger.info("managers:" + managers);
+        if (managers == null || managers.size() == 0) {
+            return null;
+        }
+        if (idm == null) {
+            idm = managers.get(0);
+        }
+        manager = idms.get(idm);
+        HashMap<String, IntradomainReservation> allres = manager.getIntradomainReservationParams();
+        if (allres == null) {
+            return null;
+        }
+        logger.info("There are " + allres.size() + " intra-reservations, searching for id " + resId);
+        res = allres.get(resId);
+        logger.info("Got intra reservation:" + res);
+
+        //TODO: Think about possible authR filtering, as done in getSubmitedServicesInIDM
+
+        return res;
+    }
+
+    public ReservationType getReservation (String idm, String resId) {
+        ReservationType res = null;
+        List<String> managers = getAllInterdomainManagers();
+        InterDomainManager manager = null;
+        logger.info("managers:" + managers);
+        if (managers == null || managers.size() == 0) {
+            return null;
+        }
+        if (idm == null){
+            idm = managers.get(0);
+        }
+        manager = idms.get(idm);
+        if(manager == null)
+            return null;
+
+        res = manager.getReservation(resId);
+        logger.info("Got reservation:" + res);
+
+        //TODO: Think about possible authR filtering, as done in getSubmitedServicesInIDM
+
+        return res;
+    }
+
+    public ReservationType getReservationByResID(String resID){
+        if(resID == null)
+            return null;
+
+        List<String> managers = getAllInterdomainManagers();
+        InterDomainManager manager = null;
+        if (managers == null || managers.size() == 0)
+            return null;
+
+        int end = 0;
+        if(resID.contains("@"))
+            end = resID.indexOf("@");
+
+        String idm = resID.substring(0, end);
+        if (idm == null || idm.length() == 0)
+            return null;
+
+        manager = idms.get(idm);
+        if(manager == null)
+            return null;
+
+        if(manager.getReservation(resID) != null)
+            return manager.getReservation(resID);
+        else 
+            return null;
+
+    }
+
+    public IntraPathsFormModel getIntraPathsForInterDomainManager(String idm) {
+        IntraPathsFormModel intraPaths = new IntraPathsFormModel();
+        List<String> managers = getAllInterdomainManagers();
+        InterDomainManager manager = null;
+        logger.info("managers:" + managers);
+        if (managers == null || managers.size() == 0) {
+            return intraPaths;
+        }
+        intraPaths.setIdms(managers);
+        if (idm == null) {
+            idm = managers.get(0);
+        }
+        manager = idms.get(idm);
+        intraPaths.setCurrentIdm(idm);
+        //intras.setComparator(new IntrasPathComparator());
+        intraPaths.setIntraPaths(manager.getIntradomainPaths());
+        logger.info("Got intra paths:" + intraPaths);
+
+        //TODO: Think about possible authR filtering, as done in getSubmitedServicesInIDM
+
+        return intraPaths;
+    }
+
+    public IntraCalendarFormModel getIntraCalendarForInterDomainManager(String idm) {
+        IntraCalendarFormModel intraCalendar = new IntraCalendarFormModel();
+        List<String> managers = getAllInterdomainManagers();
+        InterDomainManager manager = null;
+        logger.info("managers:" + managers);
+        if (managers == null || managers.size() == 0) {
+            return intraCalendar;
+        }
+        intraCalendar.setIdms(managers);
+        if (idm == null) {
+            idm = managers.get(0);
+        }
+        manager = idms.get(idm);
+        intraCalendar.setCurrentIdm(idm);
+        //intras.setComparator(new IntraCalendarComparator());
+        intraCalendar.setIntraCalendar(manager.getIntradomainCalendarsUsage(null));
+        logger.info("Got intra calendar:" + intraCalendar);
+
+        //TODO: Think about possible authR filtering, as done in getSubmitedServicesInIDM
+
+        return intraCalendar;
+    }
+
+    public AccessPolicyFormModel getAccessPolicyForInterDomainManager(String idm) {
+        AccessPolicyFormModel serv =  new AccessPolicyFormModel();
+        List<String> managers = getAllInterdomainManagers();
+        serv.setIdms(managers);
+        if (managers == null || managers.isEmpty()) {
+            serv.setError("No AccessPolicy information can be fetched");
+            return serv;
+        }
+        if (idm == null) {
+            idm = managers.get(0);
+        }
+        InterDomainManager manager = idms.get(idm);
+        try {
+            serv.setAccessPolicy(manager.getAccessPolicy());
+        } catch (Exception e) {
+            logger.error("No Access Policy");
+            serv.setAccessPolicy(null);
+        }
+        serv.setCurrentIdm(idm);
         return serv;
     }
 
@@ -1494,6 +1838,67 @@ public class ManagerImpl implements Manager, ManagerNotifier {
 
                 return true;
             }
+        }
+        return false;
+    }
+
+    public static String[] getReservationstates() {
+        return reservationStates;
+    }
+
+    /**
+     * Get domain reservations (intra and inter) which is used in NOC panel
+     * 
+     * @param The IntrasFormModel
+     * @param The list of ReservationType
+     * @return The list of the ReservationHelper used in NOC panel
+     */
+    public List<ReservationHelper> getDomainReservations(IntrasFormModel intras, List<ReservationType> inter_reservations){
+
+        reservaionHelpers.clear();
+        if (intras.getIntras() != null && intras.getIntras().size() > 0) {
+            for (IntradomainReservation res : intras.getIntras()) {
+                if (getReservationByResID(res.getReservationId()) != null) {
+                    ReservationHelper helper = new ReservationHelper();
+                    helper.setBodID(res.getReservationId());
+                    helper.setCapacity(res.getParams().getCapacity());
+                    helper.setState(reservationStates[getReservationByResID(res.getReservationId()).getState()]);
+                    helper.setStartTime(res.getParams().getStartTime());
+                    helper.setEndTime(res.getParams().getEndTime());
+                    helper.setPrevDomain(res.getReservedPath().getFirstLink().getStartInterface().getDomainId());
+                    helper.setNextDomain(res.getReservedPath().getLastLink().getEndInterface().getDomainId());
+
+                    reservaionHelpers.add(helper);
+                }
+            }
+        }
+        if (inter_reservations != null && inter_reservations.size() > 0) {
+            for (ReservationType resType : inter_reservations) {
+                if (!checkIfReservationIsAdded(resType.getBodID())) {
+                    if (getReservationByResID(resType.getBodID()) != null) {
+
+                        ReservationHelper helper = new ReservationHelper();
+                        helper.setBodID(resType.getBodID());
+                        helper.setCapacity(resType.getCapacity());				
+                        helper.setState(reservationStates[getReservationByResID(resType.getBodID()).getState()]);
+                        helper.setStartTime(resType.getStartTime());
+                        helper.setEndTime(resType.getEndTime());
+                        helper.setPrevDomain("-");
+                        helper.setNextDomain("-");
+
+                        reservaionHelpers.add(helper);
+                    }
+                }
+            }
+        }
+        return reservaionHelpers;
+    }
+
+    public boolean checkIfReservationIsAdded(String boodID) {
+
+        for (ReservationHelper r : reservaionHelpers) {
+            if (boodID.equals(r.getBodID()))
+                return true;
         }
         return false;
     }

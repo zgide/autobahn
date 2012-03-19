@@ -5,10 +5,14 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import net.geant.autobahn.aai.AAIException;
+import net.geant.autobahn.aai.AccessPolicy;
 import net.geant.autobahn.constraints.DomainConstraints;
 import net.geant.autobahn.dao.DmDAOFactory;
 import net.geant.autobahn.dao.hibernate.DmHibernateUtil;
@@ -21,6 +25,7 @@ import net.geant.autobahn.idm2dm.OversubscribedException;
 import net.geant.autobahn.intradomain.administration.DmAdministration;
 import net.geant.autobahn.intradomain.administration.KeyValue;
 import net.geant.autobahn.intradomain.common.GenericInterface;
+import net.geant.autobahn.intradomain.common.GenericLink;
 import net.geant.autobahn.intradomain.pathfinder.IntradomainPathfinder;
 import net.geant.autobahn.intradomain.pathfinder.IntradomainPathfinderFactory;
 import net.geant.autobahn.network.Link;
@@ -32,16 +37,26 @@ import net.geant.autobahn.topologyabstraction.TopologyAbstraction;
 import net.geant.autobahn.topologyabstraction.TopologyAbstractionClient;
 
 import org.apache.log4j.Logger;
+import org.apache.xml.serialize.XMLSerializer;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ExceptionUtils;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Access point implementations of all web services. Singleton design pattern.
  * 
  * @author Michal
  */
+@SuppressWarnings("deprecation")
 public final class AccessPoint implements Idm2Dm, DmAdministration {
 
+	private static final long serialVersionUID = -2345971604078181693L;
 	private static AccessPoint instance;
 	public static enum State { READY, PROCESSING, INACTIVE, RESTARTING, ERROR };
     private State state;
@@ -213,7 +228,7 @@ public final class AccessPoint implements Idm2Dm, DmAdministration {
     public void dispose() {
         
         log.info("===== Disposing =====");
-        DmHibernateUtil.getInstance().closeSession();
+        //DmHibernateUtil.getInstance().closeSession();
         intradomainManager.dispose();
         intradomainManager = null;
         log.info("===== Disposed =====");
@@ -520,6 +535,64 @@ public final class AccessPoint implements Idm2Dm, DmAdministration {
     public List<StatisticsEntry> getStatisticsInter() {
         DmDAOFactory daos = HibernateDmDAOFactory.getInstance();
         return daos.getStatisticsEntryDAO().getInterdomainEntries();
+    }
+    
+    public AccessPolicy getAccessPolicy() {
+        AccessPolicy accessPolicy = null;
+        try {
+            File file = new File("./etc/security/aai/dm_security.xml");
+            String currentPolicy;
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(file);
+            doc.getDocumentElement().normalize();
+
+            NodeList nodeLst = doc.getElementsByTagName("protect-pointcut");
+            Node fstNode = nodeLst.item(0);
+
+            currentPolicy = ((Element) fstNode).getAttribute("access");
+            accessPolicy = new AccessPolicy(currentPolicy);
+            System.out.println("AccessPoint currentpolicy="
+                    + accessPolicy.getPolicy());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return accessPolicy;
+    }
+    
+    public void setAccessPolicy(AccessPolicy accessPolicy){
+        try {
+            File file = new File("./etc/security/aai/dm_security.xml");
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(file);
+            doc.getDocumentElement().normalize();
+            
+            NodeList nodeLst = doc.getElementsByTagName("protect-pointcut");
+            Node fstNode = nodeLst.item(0);
+            
+            ((Element)fstNode).setAttribute("access",accessPolicy.getPolicy());
+            
+            XMLSerializer serializer = new XMLSerializer();
+            serializer.setOutputCharStream(new java.io.FileWriter(file));
+            serializer.serialize(doc);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public HashMap<String, IntradomainPath> getIntradomainPaths() {
+        return getDomainManager().getAllResvMappingHash();
+    }
+    
+    public HashMap<String, IntradomainReservation> getIntradomainReservationParams() {
+    	PersistentReservationsManager prm = new PersistentReservationsManager(DmHibernateUtil.getInstance());
+    	return (HashMap<String, IntradomainReservation>) prm.loadReservations();
+    }
+    
+    public HashMap<GenericLink, TreeMap<Calendar, Long>> getIntradomainCalendarsUsage(IntradomainPath path) {
+    	return getDomainManager().getIntradomainCalendarsUsage(path);      
     }
 
 }

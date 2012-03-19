@@ -4,13 +4,13 @@
 	<parent>
 		<artifactId>autobahn</artifactId>
 		<groupId>net.geant.autobahn</groupId>
-		<version>1.0.5-SNAPSHOT</version>
+		<version>1.2-SNAPSHOT</version>
 	</parent>
 	
 	<modelVersion>4.0.0</modelVersion>
     <groupId>net.geant.autobahn</groupId>
     <artifactId>autobahn-webgui</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <name>Web GUI</name>
     <packaging>war</packaging>	
 	
@@ -302,13 +302,18 @@
 		<dependency>
 			<groupId>net.geant.autobahn</groupId>
 			<artifactId>autobahn-common</artifactId>
-			<version>1.0.5-SNAPSHOT</version>
+			<version>1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.geant.autobahn</groupId>
 			<artifactId>autobahn-idm</artifactId>
-			<version>1.0.5-SNAPSHOT</version>
+			<version>1.2-SNAPSHOT</version>
 		</dependency>		
+        <dependency>
+            <groupId>net.geant.autobahn</groupId>
+            <artifactId>autobahn-dm</artifactId>
+            <version>1.2-SNAPSHOT</version>
+        </dependency>       
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
@@ -470,7 +475,7 @@
 			</exclusions>
 		</dependency>
   
- </dependencies>
+	</dependencies>
  <repositories>
         <repository>
             <id>json-lib</id>

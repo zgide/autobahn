@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class RangeConstraint extends Constraint implements Serializable {
 
+	private static final long serialVersionUID = -7506525852961787946L;
 	@XmlElement(required = true, nillable = true)
 	private List<Range> ranges = new ArrayList<Range>();
 

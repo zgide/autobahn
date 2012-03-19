@@ -3,8 +3,14 @@ package net.geant.autobahn.autoBahnGUI.manager;
 import java.util.List;
 import java.util.Map;
 
+import net.geant.autobahn.aai.AccessPolicy;
 import net.geant.autobahn.administration.KeyValue;
+import net.geant.autobahn.administration.ReservationType;
 import net.geant.autobahn.administration.ServiceType;
+import net.geant.autobahn.autoBahnGUI.model.AccessPolicyFormModel;
+import net.geant.autobahn.autoBahnGUI.model.IntraCalendarFormModel;
+import net.geant.autobahn.autoBahnGUI.model.IntraPathsFormModel;
+import net.geant.autobahn.autoBahnGUI.model.IntrasFormModel;
 import net.geant.autobahn.autoBahnGUI.model.LogsFormModel;
 import net.geant.autobahn.autoBahnGUI.model.ReservatiomDepandentOnTimezone;
 import net.geant.autobahn.autoBahnGUI.model.ReservationTest;
@@ -55,6 +61,14 @@ public interface Manager {
     */
     public Map<String, String> getServicesForAllInterDomainManagers();
 
+    public IntrasFormModel getIntraReservationsForInterDomainManager(String idm);
+
+    public ReservationType getReservation (String idm, String resId);
+
+    public IntraPathsFormModel getIntraPathsForInterDomainManager(String idm);
+
+    public IntraCalendarFormModel getIntraCalendarForInterDomainManager(String idm);
+
     /**
      * Gets list of all IDMs registered in WEB GUI
      * @return list of InterDomain  types members 
@@ -95,6 +109,47 @@ public interface Manager {
      * @param list of KeyValue
      */
     public void setPropertiesForInterDomainManager (String idm, List<KeyValue> properties);
+
+    /**
+     * Gets the access policy for specified IDM
+     * 
+     * @param idm
+     *            identifier name of the IDM
+     * @return
+     */
+    public AccessPolicyFormModel getAccessPolicyForInterDomainManager(String idm);
+
+    /**
+     * Sets list of configuration properties for specified IDM
+     * 
+     * @param idm
+     *            identifier of the IDM
+     * @param the
+     *            new AccessPolicy to be set
+     */
+    public void setAccessPolicyForInterDomainManager(String idm, AccessPolicy acp);
+	
+    /**
+     * Adds the rule with the supplied attributes to the specified IDM
+     * 
+     * @param idm
+     * @param role
+     * @param email
+     * @param projMem
+     * @param org
+     */
+    public void addRuleForIDM(String idm, String role, String email, String projMem, String org);
+
+    /**
+     * Removes the rule with the supplied attributes from the specified IDM
+     * 
+     * @param idm
+     * @param role
+     * @param email
+     * @param projMem
+     * @param org
+     */
+    public void removeRuleForIDM(String idm, String role, String email, String projMem, String org);
 
     /**
      * Gets list of all services for specified IDM registered in WEB GUI
@@ -139,11 +194,13 @@ public interface Manager {
 
     /**
      * Gets logged information from specified IDM registered in WEB GUI
+     * for specified reservation
      * @param idm identifier of the IDM
+     * @param resId Only gets logs for specific reservation. If null, returns all logs
      * @return String log information
      */
-    public String getLogsInterDomainManager(String idm, boolean b, boolean c);
-	
+    public String getLogsInterDomainManager(String idm, boolean b, boolean c, String resId);
+    
     /**
      * Gets all IDCP port names in all IDM registered in WEB GUI
      * 
@@ -285,9 +342,10 @@ public interface Manager {
     /**
      * Gets LogsFormModel used in IDM logs view
      * @param idm identifier of IDM
+     * @param resId if null, all logs are returned
      * @return LogsFormModel
      */
-    public LogsFormModel getLogsForInterDomainManager (String idm);
+    public LogsFormModel getLogsForInterDomainManager (String idm, String resId);
 
     /**
      * Gets StatisticsFormModel used in IDM setting view
@@ -323,6 +381,43 @@ public interface Manager {
      * @return list of links
      */
     public List<LinkMap> getAllDomainLinks();
+
+    /**
+     * Gets IntrasFormModel used in IDM setting view
+     * @param idm identifier of IDM
+     * @param state identifier of reservation state
+     * @return IntrasFormModel
+     */
+    public IntrasFormModel getIntraReservationsForIDMWithSelectedReservationState(String idm, String state);
+    /**
+     * Get reservation by reservation id
+     * @param resID identifier of reservation
+     * @return reservation type
+     */
+    public ReservationType getReservationByResID(String resID);
+
+    /**
+     * Get reservation type for selected domain name and reservation state
+     * @param idm identifier of domain name
+     * @param state identifier of reservation state
+     * @return List of reservations type
+     */
+    public List<ReservationType> getInterReservationsForIDMWithSelectedReservationState(String idm, String resState);
+
+    /**
+     * Get reservation helper for selected domain name and reservation state
+     * @param intras identifier of intra-domain reservations
+     * @param inter-reservations identifier of list of inter-domain reservations
+     * @return List of reservations helper
+     */
+    public List<ReservationHelper> getDomainReservations(IntrasFormModel intras, List<ReservationType> inter_reservations);
+
+    /**
+     * Get reservation type for selected domain name
+     * @param idm identifier of domain name
+     * @return List of reservations type
+     */
+    public List<ReservationType> getDomainReservations(String idm);
 
     public boolean checkTopology(String idm);
 

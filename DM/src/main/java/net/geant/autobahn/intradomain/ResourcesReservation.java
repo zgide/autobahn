@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TimerTask;
+import java.util.TreeMap;
 
 import net.geant.autobahn.aai.AAIException;
 import net.geant.autobahn.aai.DmUserAuthorizer;
@@ -866,6 +867,37 @@ public class ResourcesReservation {
      */      
     public ReservationParams getResvParams(String resID) {
     	return reservations.get(resID).getParams();
+    }
+    
+    /**
+     * Used by NOCPanel functionality. Returns HashMap instead of Map
+     * 
+     * @return HashMap
+     */
+    public HashMap<String, IntradomainPath> getAllResvMappingHash() {
+    	HashMap<String, IntradomainPath> result = new HashMap<String, IntradomainPath>();
+    	
+        for(String resID : reservations.keySet()) {            
+            result.put(resID, reservations.get(resID).getReservedPath());
+        }
+        
+        return result;        
+    }
+    
+    public Map<String, IntradomainReservation> getReservations() {
+        return reservations;
+    }
+    
+    public HashMap<String, IntradomainReservation> getReservationsHashMap() {
+    	DmHibernateUtil.getInstance();
+    	HashMap<String, IntradomainReservation> reservations = (HashMap<String, IntradomainReservation>) prManager.loadReservations();
+    	//hbm.closeSession();
+        
+    	return reservations;    	
+   }
+    
+    public HashMap<GenericLink, TreeMap<Calendar, Long>> getIntradomainCalendarsUsage(IntradomainPath path) {
+       	return calendar.getIntradomainCalendarsUsage(path);
     }
 
 }

@@ -3,13 +3,23 @@
  */
 package net.geant.autobahn.idm2dm;
 
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.TreeMap;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.geant.autobahn.aai.AAIException;
+import net.geant.autobahn.aai.AccessPolicy;
 import net.geant.autobahn.constraints.DomainConstraints;
+import net.geant.autobahn.intradomain.IntradomainPath;
+import net.geant.autobahn.intradomain.IntradomainReservation;
+import net.geant.autobahn.intradomain.common.GenericLink;
 import net.geant.autobahn.network.Link;
 import net.geant.autobahn.network.LinkIdentifiers;
 import net.geant.autobahn.reservation.ReservationParams;
@@ -22,7 +32,7 @@ import net.geant.autobahn.reservation.TimeRange;
  * @author Michal
  */
 @WebService(targetNamespace = "http://idm2dm.autobahn.geant.net/", name = "Idm2Dm")
-public interface Idm2Dm {
+public interface Idm2Dm extends Serializable{
 
 	/**
 	 * Checks for local domain paths that can be configured regarding provided
@@ -137,4 +147,22 @@ public interface Idm2Dm {
 	@WebMethod
 	LinkIdentifiers getIdentifiers(@WebParam(name="portName")String portName, 
 			@WebParam(name="linkBodId")String linkBodId);
+	
+	@WebMethod
+	AccessPolicy getAccessPolicy();
+
+	@WebMethod
+	void setAccessPolicy(AccessPolicy accessPolicy);
+	
+	@WebMethod
+	@XmlJavaTypeAdapter(IntradomainPathsAdapter.class)
+	HashMap<String, IntradomainPath> getIntradomainPaths();	
+	    
+    @WebMethod
+    @XmlJavaTypeAdapter(IntradomainReservationParamsAdapter.class)
+    HashMap<String, IntradomainReservation> getIntradomainReservationParams();
+    
+    @WebMethod
+    @XmlJavaTypeAdapter(GenericLinkCalendarAdapter.class)
+    HashMap<GenericLink, TreeMap<Calendar, Long>> getIntradomainCalendarsUsage(@WebParam(name="intraPath")IntradomainPath path);
 }

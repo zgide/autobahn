@@ -1,4 +1,6 @@
 <%@ include file="../common/includes.jsp" %>
+
+
 <h2><spring:message code="logs.htitle" text="Domains Logs"/></h2>
 <script type="text/javascript" src="<c:url value="/js/jquery/jquery.min.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/js/jquery/jquery.json-1.3.min.js"/>"></script>
@@ -6,6 +8,11 @@
 <script type="text/javascript" src="<c:url value="/js/jquery/jquery.dateFormat-1.0.js"/>"></script>
 <script type="text/javascript">
 
+String.prototype.startsWith = function(prefix) {
+  return (this.substr(0, prefix.length) === prefix);
+} 
+
+var logs="";
 
 $.fn.serializeObject = function()
 {
@@ -44,17 +51,31 @@ jQuery(document).ready(function()
 	  var aa = $.toJSON($("values").serializeObject());
           jQuery.getJSON("logs_request.htm", aa,
                     function(data) 
-		    {                    
+		    {			 
 			 $("#ajaxsuccess").html("Showing logs for <font color='blue'>"+$("#currentIdm").val()+"</font><br/>"+(new Date()).format("r")+"<br>The contents will update every 5 seconds");
-			 if($("#logsview").text()!=data.result)
-			 {
-			      $("#logsview").text(data.result);
-			      $("#logsview").animate({ scrollTop: $("#logsview").attr("scrollHeight") - $('#logsview').height() }, 1);
+			 if(logs!=data.result)
+			 {			
+				logs=data.result;
+
+				$("#logs_div").html("</br>");
+				var lines=data.result.split("\n");
+
+				lines.each(function(index) { 			    
+				    if(index.startsWith("[ERROR]") )
+				    {
+					$('#logs_div').append("<div id='error'>"+index+"</div>");
+				    }
+				    else
+				    {
+					$('#logs_div').append(index);
+					$('#logs_div').append("</br>");
+				    }
+				} );			     
 			 } 
+
                     }, "json");
 	  if(counter)
 	  {
-	       $("#logsview").animate({ scrollTop: $("#logsview").attr("scrollHeight") - $('#logsview').height() }, 1);
 	       counter=false;
 	  }
           return false;
@@ -71,27 +92,20 @@ jQuery(document).ready(function()
 
 
 </script>
-<div class="logs_image">
-<div align="center" id="values" class="panel_scroll">
+
+
+
+
+
+<div class="logs_image">    
 
     <form:form commandName="logs"  action="" id="logssearchform">
     <input type="hidden" name="action" value="change"/>
-    <table>
-        <tr>
-            <td><h3>Please select an IDM to view the log file</h3></td>
-        </tr>
-        <tr>
-            <td>
-                <form:select path="currentIdm" id="currentIdm">
+    <div>
+        <h3>Please select an IDM to view the log file</h3>
+        <form:select path="currentIdm" id="currentIdm">
                     <form:options items="${logs.idms}"/>
-                </form:select>
-            </td>
-            <td style="display:none">
-                    <%--  <input type="submit" name="_eventId_change" value="Change IDM" style="width:100px"/>--%>
-            </td>
-        </tr>
-        <tr></tr>
-    </table>
+        </form:select>
     <c:if test="${logs.error!= null}">
         <h3>${logs.error}</h3>
     </c:if>
@@ -101,11 +115,32 @@ jQuery(document).ready(function()
     <div id="ajaxsuccess" style="color:green">
     </div>
     <div id="settingsform" style="text-align:center">
-        <form:textarea path="logs" cssStyle="width:100%" rows="20" disabled="true" id="logsview"/>
+        <div id="logs_div">
+	    loading    
+	</div>
     </div>
+    <div></br></div>    
    </form:form>
 </div>
-</div>
+
+
+<style type="text/css">
+#error
+{
+    color:red;
+} 
+
+#logs_div
+{   
+    text-align: left;
+    height:500px;
+    overflow:scroll;
+    overflow-x: hidden;
+    border-style:ridge;
+    border-width:2px;
+}
+
+</style>
 
 <script type="text/javascript">
     var myselect=document.getElementById("currentIdm")

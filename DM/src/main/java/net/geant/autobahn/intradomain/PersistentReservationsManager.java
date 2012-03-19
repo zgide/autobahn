@@ -40,7 +40,7 @@ public class PersistentReservationsManager {
 	public void save(IntradomainReservation intraRes) {
 		if(hbm == null)
 			return;
-		
+		hbm.currentSession().clear();
 		IntradomainReservationDAO dao = HibernateDmDAOFactory.getInstance()
 				.getIntradomainReservationDAO();
 		

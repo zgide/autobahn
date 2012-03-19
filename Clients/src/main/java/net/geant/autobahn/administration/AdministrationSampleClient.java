@@ -5,6 +5,20 @@ import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 import net.geant.autobahn.administration.Administration;
 
+import org.apache.cxf.annotations.DataBinding;
+
+import net.geant.autobahn.intradomain.IntradomainPath;
+import net.geant.autobahn.intradomain.IntradomainReservation;
+import net.geant.autobahn.intradomain.common.GenericLink;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+@DataBinding(org.apache.cxf.aegis.databinding.AegisDatabinding.class)
 public class AdministrationSampleClient {
 
     private static final QName SERVICE_NAME = new QName("http://administration.autobahn.geant.net/", "AdministrationService");
@@ -36,7 +50,6 @@ public class AdministrationSampleClient {
         String port = (new String(byteStr).trim());
         
         if (idm == null || idm.equals("")) {
-            //idm = "109.105.111.62";
             idm = "150.140.8.13";
         }
         if (port == null || port.equals("")) {
@@ -59,7 +72,7 @@ public class AdministrationSampleClient {
                 }
             }
         }
-        
+                
         System.out.println("\n---getProperties():");
         List<KeyValue> props = instance.adm.getProperties();
         if (props != null) {
@@ -90,7 +103,7 @@ public class AdministrationSampleClient {
                 System.out.println(i+": "+topo.get(i));
             }
         }
-        */
+        
         System.out.println("\n---getStatus():");
         Status stat = instance.adm.getStatus();
         if (stat != null) {
@@ -101,7 +114,57 @@ public class AdministrationSampleClient {
                 System.out.println("getNeighbors length:"+stat.getNeighbors().size());
             }
         }
+        */
         
+        System.out.println("\n---getProperties():");
+        List<KeyValue> props = instance.adm.getProperties();
+        if (props != null) {
+            for (int i=0; i<props.size(); i++) {
+                if (props.get(i) != null) {
+                    System.out.println(i+": "+props.get(i).getKey()+"="+props.get(i).getValue());
+                }
+            }
+        }
+        
+        System.out.println("\n---NOC PANEL WEB SERVICES---");
+        
+        System.out.println("\n---getIntradomainPaths");
+        HashMap<String, IntradomainPath> intraPaths = instance.adm.getIntradomainPaths();
+        //Test intraPaths = instance.adm.getIntradomainPaths();
+        //for(Entry<String, IntradomainPath> entry : intraPaths.getTest().entrySet()){
+        for(Entry<String, IntradomainPath> entry : intraPaths.entrySet()){
+            System.out.println("Key: " + entry.getKey() + " --- " + "Value: " + entry.getValue().getEgressConstraints().getConstraintID());
+        }
+        
+        
+        System.out.println("\n---getIntradomainReservationParams");
+        HashMap<String, IntradomainReservation> resvParams = instance.adm.getIntradomainReservationParams();
+        for(Entry<String, IntradomainReservation> entry : resvParams.entrySet()){
+            System.out.println("Key: " + entry.getKey() + " --- " + "Value: " + entry.getValue().getReservedPath().getPathId());
+        }
+        
+        
+        System.out.println("\n---getIntradomainCalendarsUsage");
+        //HashMap<GenericLink, HashMap<Calendar, Long>> calendarsUsage = instance.adm.getIntradomainCalendarsUsage(null);
+        IntradomainPath path = new IntradomainPath();
+        List<GenericLink> links = new ArrayList<GenericLink>();
+        GenericLink link = new GenericLink();
+        
+        link.setLinkId(666);
+        links.add(link);
+        path.setLinks(links);
+        
+        //HashMap<GenericLink, HashMap<Calendar, Long>> calendarsUsage = instance.adm.getIntradomainCalendarsUsage(path);
+        HashMap<GenericLink, TreeMap<Calendar, Long>> calendarsUsage = instance.adm.getIntradomainCalendarsUsage(null);
+        //HashMap<GenericLink, Long> calendarsUsage = instance.adm.getIntradomainCalendarsUsage(null);
+        
+        for(Entry<GenericLink, TreeMap<Calendar, Long>> entry : calendarsUsage.entrySet()){
+        //for(Entry<GenericLink, Long> entry : calendarsUsage.entrySet()){
+            for(Entry<Calendar, Long> entry2 : entry.getValue().entrySet()) {
+                System.out.println("Key: " + entry.getKey().getLinkId() + " --- " + "Value: " + entry2.getValue());
+            }            
+        }
+              
         System.out.println("\n---restart():");
         instance.adm.restart();
         
@@ -109,8 +172,7 @@ public class AdministrationSampleClient {
         instance.adm.setProperties(null);
         
         System.exit(0);
-    }
-    
+    }  
     
 }
 

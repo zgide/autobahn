@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.apache.log4j.Logger;
+
 /**
  * Path class represents end-to-end path from a start port to an end port
  * consisting of links.
@@ -31,6 +33,7 @@ import javax.xml.bind.annotation.XmlElement;
 public class Path implements Serializable {
 
 	private static final long serialVersionUID = -8340881450016772656L;
+    private static final Logger log = Logger.getLogger(Path.class);
 
 	@XmlTransient
     private long pathID;
@@ -346,7 +349,53 @@ public class Path implements Serializable {
     }
 
     /**
-     * Returns link object idenitfied by the given id.
+     * Returns array of domain IDs traversed by the path.
+     * 
+     * @return array of all domain IDs, sorted from start to end, null if path is empty
+     */
+    public String[] getDomains() {
+        if (links == null || links.isEmpty()) {
+            return null;
+        }
+
+        List<String> domains = new ArrayList<String>();
+        Link startLink = links.get(0);
+        if (startLink.getStartPort().isClientPort()) {
+            domains.add(startLink.getStartDomainID());
+        } else {
+            domains.add(startLink.getEndDomainID());
+        }
+        
+        for (int i=0; i<links.size(); i++) {
+            String prevDomain = domains.get(domains.size()-1);
+            Link lnk = links.get(i);
+            if (lnk.getStartDomainID().equals(prevDomain)) {
+                if (lnk.getEndDomainID().equals(prevDomain)) {
+                    // This link remains within the previous domain 
+                    continue;
+                } else {
+                    domains.add(lnk.getEndDomainID());
+                }
+            } else {
+                if (lnk.getEndDomainID().equals(prevDomain)) {
+                    domains.add(lnk.getStartDomainID());
+                } else {
+                    // This link is not adjacent to the previous one, probably an error
+                    // In any case, this method can not return reliable results
+                    log.error("Path " + this + " does not have its links in order" +
+                            " or has not been built properly. There was a link " + 
+                            lnk.getStartDomainID() + "-" + lnk.getEndDomainID() + 
+                            " after domain " + prevDomain);
+                    return null;
+                }
+            }
+        }
+
+        return domains.toArray(new String[0]);
+    }
+
+    /**
+     * Returns link object identified by the given id.
      * 
      * @param bodId identifier of a link
      * @return Link object

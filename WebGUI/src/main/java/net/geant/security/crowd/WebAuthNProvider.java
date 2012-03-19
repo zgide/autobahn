@@ -2,6 +2,8 @@ package net.geant.security.crowd;
 
 import javax.naming.NamingException;
 
+import net.geant.autobahn.aai.UserAuthParameters;
+
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
@@ -26,17 +28,21 @@ public class WebAuthNProvider extends AuthNProvider {
                 
         String authorities[]=new String[4];
         try {
-            String role = new String("ROLE_" + ((String[])authNToken.getAttributes().get("projectRole").get())[0]);
-            String membership = new String("PM_" + ((String[])authNToken.getAttributes().get("projectMembership").get())[0]);
-            String organization = new String("ORG_" + ((String[])authNToken.getAttributes().get("organization").get())[0]);
-            String email = new String("EMAIL_" + crowdUserDetails.getEmail());
+            String role = new String(UserAuthParameters.PREFIX_ROLE + 
+                    ((String[])authNToken.getAttributes().get("projectRole").get())[0]);
+            String membership = new String(UserAuthParameters.PREFIX_PROJECTMEMB + 
+                    ((String[])authNToken.getAttributes().get("projectMembership").get())[0]);
+            String organization = new String(UserAuthParameters.PREFIX_ORGANIZATION + 
+                    ((String[])authNToken.getAttributes().get("organization").get())[0]);
+            String email = new String(UserAuthParameters.PREFIX_EMAIL + 
+                    crowdUserDetails.getEmail());
             
-            authorities[0]=role;
-            authorities[1]=membership;
-            authorities[2]=organization;
-            authorities[3]=email;
+            authorities[0] = role;
+            authorities[1] = membership;
+            authorities[2] = organization;
+            authorities[3] = email;
             
-            for(int i=0;i<authorities.length;i++) {
+            for (int i = 0; i < authorities.length; i++) {
                 System.out.println(authorities[i]);
             }
         } catch (NamingException e) {

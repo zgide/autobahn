@@ -41,6 +41,26 @@
     <definition name="secure/statistics" template="/WEB-INF/views/jsp/autobahn/statistics.jsp">
     </definition>
     
+    <definition name="secure/intras_select" extends="template.main">
+        <put-attribute name="content" value="/WEB-INF/views/jsp/autobahn/intras_select.jsp"/>
+    </definition>
+    
+    <definition name="secure/intra_details" extends="template.main">
+        <put-attribute name="content" value="/WEB-INF/views/jsp/autobahn/intra_details.jsp"/>
+    </definition>
+    
+    <definition name="secure/calendar_select" extends="template.main">
+        <put-attribute name="content" value="/WEB-INF/views/jsp/autobahn/calendar_select.jsp"/>
+    </definition>
+    <definition name="secure/calendar" template="/WEB-INF/views/jsp/autobahn/calendar.jsp">
+    </definition>
+    
+    <definition name="secure/dmacl_select" extends="template.main">
+        <put-attribute name="content" value="/WEB-INF/views/jsp/autobahn/dmacl_select.jsp"/>
+    </definition>
+    <definition name="secure/dmacl" template="/WEB-INF/views/jsp/autobahn/dmacl.jsp">
+    </definition>
+    
     <definition name="secure/noIDMRegistered" extends="template.main">
     	<put-attribute name="content" value="/WEB-INF/views/jsp/autobahn/noIDMRegistered.jsp"/>
     </definition>
@@ -73,6 +93,10 @@
 	
 	<definition name="secure/view-users" extends="template.main">
         <put-attribute name="content" value="/WEB-INF/views/jsp/autobahn/xmlusers-admin.jsp"/>
+    </definition>
+
+	<definition name="secure/intras" extends="template.main">
+	   	<put-attribute name="content" value="/WEB-INF/views/jsp/autobahn/intras.jsp"/>
     </definition>
 
     <definition name="secure/restartAll" extends="template.main">

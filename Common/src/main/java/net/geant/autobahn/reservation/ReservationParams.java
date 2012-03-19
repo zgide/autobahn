@@ -3,6 +3,7 @@
  */
 package net.geant.autobahn.reservation;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,7 +26,7 @@ import net.geant.autobahn.aai.UserAuthParameters;
 		"capacity", "maxDelay", "resiliency", "bidirectional",
 		"startTime", "endTime", "pathConstraintsIngress", "pathConstraintsEgress", "mtu", "authParameters"
 })
-public class ReservationParams {
+public class ReservationParams implements Serializable{
 	@XmlTransient
 	private long id;
 	

@@ -1,5 +1,8 @@
 package net.geant.autobahn.autoBahnGUI.web;
 
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
@@ -7,15 +10,24 @@ import java.util.LinkedHashSet;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import net.geant.autobahn.aai.AccessPolicy;
 import net.geant.autobahn.administration.KeyValue;
+import net.geant.autobahn.administration.ReservationType;
 import net.geant.autobahn.administration.StatisticsType;
 import net.geant.autobahn.autoBahnGUI.manager.Manager;
+import net.geant.autobahn.autoBahnGUI.manager.ReservationHelper;
 import net.geant.autobahn.autoBahnGUI.model.googlemaps.Line;
 import net.geant.autobahn.autoBahnGUI.model.googlemaps.Topology;
+import net.geant.autobahn.autoBahnGUI.model.AccessPolicyFormModel;
+import net.geant.autobahn.autoBahnGUI.model.IntraCalendarFormModel;
+import net.geant.autobahn.autoBahnGUI.model.IntrasFormModel;
 import net.geant.autobahn.autoBahnGUI.model.ServicesFormModel;
 import net.geant.autobahn.autoBahnGUI.model.SettingsFormModel;
 import net.geant.autobahn.autoBahnGUI.model.StatisticsFormModel;
 import net.geant.autobahn.autoBahnGUI.topology.TopologyFinder;
+import net.geant.autobahn.intradomain.IntradomainReservation;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONSerializer;
 import net.sf.json.JSONObject;
 
@@ -27,8 +39,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * Main  controller for Autobahn client portal 
@@ -55,6 +69,10 @@ public class AutobahnController {
      * Logs information
      */
     protected final Log logger = LogFactory.getLog(getClass());
+    
+    List<ReservationType> actualInterReservationList = new ArrayList<ReservationType>();
+    
+    List<IntradomainReservation> actualIntraDomainReservationList = new ArrayList<IntradomainReservation>();
 
     public AutobahnController(){
         logger.info("Creating controller");
@@ -227,7 +245,7 @@ public class AutobahnController {
             }
             reader.close();
             String data = sb.toString();
-
+            
             JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(data);
             LinkedHashSet propkeys=new LinkedHashSet(jsonObject.keySet());
 
@@ -295,6 +313,145 @@ public class AutobahnController {
 
     }
 
+    @RequestMapping("/secure/dataTable.htm")
+    public void doGet(@RequestParam String resState, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	 
+    	 JQueryDataTableParamModel param = DataTablesParamUtility.getParam(request); 
+    	 SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+    	 List<ReservationHelper> resHelper = new ArrayList<ReservationHelper>();
+    	 String sEcho = param.sEcho;
+    	     	 
+    	 int iTotalRecords;
+    	 int iTotalDisplayRecords;
+    	 
+    	 JSONArray data = new JSONArray();
+    	 
+    	 IntrasFormModel intras = null;
+    	 List<ReservationType> inter_reservations = null;
+    	 
+    	 if(resState.equals("ALL")){
+    		 intras = manager.getIntraReservationsForInterDomainManager(null);
+    		 inter_reservations = manager.getDomainReservations(null);   		 
+    	 }	 
+    	 else {	 
+    		 intras = manager.getIntraReservationsForIDMWithSelectedReservationState(null, resState);
+    		 inter_reservations = manager.getInterReservationsForIDMWithSelectedReservationState(null, resState);
+    	 }
+    		 
+    	 resHelper = manager.getDomainReservations(intras, inter_reservations);
+    	    	
+    	 iTotalRecords  = resHelper.size();
+    	 List<ReservationHelper> reservations = new ArrayList<ReservationHelper>();
+    	 for(ReservationHelper res  : resHelper){
+    		
+    		 String resId = res.getBodID();
+    		 String state = res.getState();
+    		 String capacity = Long.toString(res.getCapacity());
+    		 String start = res.getStartTime().toString();
+    		 String end = res.getEndTime().toString();
+    		 String prev = res.getPrevDomain();
+    		 String last = res.getNextDomain();
+    		 
+    		 if(resId.toLowerCase().contains(param.sSearch.toLowerCase()) ||
+    				 capacity.toLowerCase().contains(param.sSearch.toLowerCase()) ||
+    				 	state.toLowerCase().contains(param.sSearch.toLowerCase()) ||
+    				 		start.toLowerCase().contains(param.sSearch.toLowerCase()) ||
+    				 			end.toLowerCase().contains(param.sSearch.toLowerCase()) ||
+    				 				prev.toLowerCase().contains(param.sSearch.toLowerCase()) ||
+    				 					last.toLowerCase().contains(param.sSearch.toLowerCase())){   										
+    			 reservations.add(res);
+    		 }
+    	 }
+         
+		 iTotalDisplayRecords = reservations.size();
+		 final int sortColumnIndex = param.iSortColumnIndex;
+		 final int sortDirection = param.sSortDirection.equals("asc") ? -1 : 1;
+		 
+		 Collections.sort(reservations, new Comparator<ReservationHelper>(){
+			 @Override
+			 public int compare(ReservationHelper res1, ReservationHelper res2) {			 
+				 switch(sortColumnIndex){
+				 	case 0:
+				 		return res1.getBodID().compareTo(res2.getBodID()) * sortDirection;
+				 	case 1:
+				 		return res1.getState().compareTo(res2.getState()) * sortDirection;
+				 	case 2:
+				 		return Long.toString(res1.getCapacity()).compareTo(Long.toString(
+				 				res2.getCapacity())) * sortDirection;
+				 	case 3:
+				 		return res1.getStartTime().compareTo(res2.getStartTime()) * sortDirection;
+				 	case 4:
+				 		return res1.getEndTime().compareTo(res2.getEndTime()) * sortDirection;
+				 	case 5:
+				 		return res1.getPrevDomain().compareTo(res2.getPrevDomain()) * sortDirection;
+				 	case 6:
+				 		return res1.getNextDomain().compareTo(res2.getNextDomain()) * sortDirection;
+				 }				 
+				 return 0;
+			 }
+		 });
+		 
+		 if(reservations.size() < param.iDisplayStart + param.iDisplayLength)
+			 reservations = reservations.subList(param.iDisplayStart, reservations.size());
+		 else
+			reservations = reservations.subList(param.iDisplayStart, param.iDisplayStart + param.iDisplayLength);
+		 
+		 try {
+			
+			 JSONObject jsonResponse = new JSONObject();
+			 jsonResponse.put("sEcho", sEcho);
+             jsonResponse.put("iTotalRecords", iTotalRecords);
+             jsonResponse.put("iTotalDisplayRecords", iTotalDisplayRecords);
+             
+			 for(ReservationHelper res : reservations){
+				 JSONArray row = new JSONArray();
+				 StringBuffer buffer = new StringBuffer();
+				 int end = res.getBodID().indexOf("@");
+				 String res_idm = res.getBodID().substring(0, end);
+				 buffer.append("<a href=\"intra_details.htm?idm=").append(res_idm).append("&resId=").append(res.getBodID()).append("\">").append(res.getBodID()).append("</a>");	
+			 	 row.add(buffer.toString());
+				 row.add(res.getState());
+				 row.add(Long.toString(res.getCapacity() / 1000000));
+				 row.add(formatter.format( res.getStartTime().getTime()).toString());
+				 row.add(formatter.format(res.getEndTime().getTime()).toString());
+				 row.add(res.getPrevDomain());
+				 row.add(res.getNextDomain());
+				 
+				 data.add(row);       
+			 }
+			 jsonResponse.put("aaData", data);
+			 response.setContentType("text/x-json;charset=UTF-8");
+			 response.getWriter().print(jsonResponse.toString());
+			 
+		} catch (JSONException e) {
+			   e.printStackTrace();
+			   response.setContentType("text/html");
+			   response.getWriter().print(e.getMessage());
+		}		 
+    }   
+    /**
+     * Check if a list of intradomain reservations contains the supplied Id
+     * 
+     * @param reservations - the list of intradomain reservations
+     * @param resId - the reservation Id
+     * @return true if rt is contained in reservations
+     */
+    @SuppressWarnings("unused")
+	private boolean IntraListContainsReservation(
+            List<IntradomainReservation> reservations, String resId) {
+
+        if (reservations == null || resId == null) {
+            return false;
+        }
+        
+        for (IntradomainReservation intrares : reservations) {
+            if (intrares.getReservationId().equals(resId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     //no jsp because json request returns false
     @SuppressWarnings("rawtypes")
 	@RequestMapping("/secure/logs_request.htm")
@@ -323,17 +480,19 @@ public class AutobahnController {
             Logger.getLogger("autoBAHN controler").info(data);
 
             String currentIDm=null;
+            String resId = null;
 
             for (Object entry:propkeys)
             {
                 String key=entry.toString();
                 String value=jsonObject.getString(key);
                 Logger.getLogger("autoBAHN controler").info("prop "+key+" val "+value);
-                if (key.equals("currentIdm") )
-                {
+                if (key.equals("currentIdm") ) {
                     currentIDm=value;
                 }
-
+                if (key.equals("resId") ) {
+                    resId=value;
+                }
             }
 
             //saving
@@ -342,7 +501,7 @@ public class AutobahnController {
             JSONObject jsonRes;
             if (currentIDm!=null)
             {
-                String log=manager.getLogsInterDomainManager(currentIDm,true,true);
+                String log=manager.getLogsInterDomainManager(currentIDm, true, true, resId);
                 jsonRes = new JSONObject().element("result", log);
                 //response.getWriter().write("{success:true}");
                 Logger.getLogger("autoBAHN controler").info("success");
@@ -370,6 +529,34 @@ public class AutobahnController {
             st = fm.getStatistics();
         }
         model.put("statistics", st);
+    }
+    
+    
+    @RequestMapping("/secure/calendar.htm")
+    public void handleCalendarChange(@RequestParam String currentIdm, Map<String, Object> model) {
+
+        Logger.getLogger("autoBAHN controller").info("handle calendar change");
+        if (currentIdm != null) {
+            Logger.getLogger("autoBAHN controler").info("putting in model: "+currentIdm);
+            model.put("currIdm", currentIdm);
+            Logger.getLogger("autoBAHN controler").info("put in model: "+currentIdm);
+            
+            IntraCalendarFormModel fmc = manager.getIntraCalendarForInterDomainManager(currentIdm);
+            model.put("calendar", fmc);
+        }
+    }
+    
+    @RequestMapping("/secure/dmacl.htm")
+    public void handleDmaclChange(@RequestParam String currentIdm, Map<String, Object> model) {
+
+        Logger.getLogger("autoBAHN controler").info("handle Access Policy change");
+        AccessPolicy dmacp = null;
+        if (currentIdm != null) {
+            AccessPolicyFormModel fm = manager.getAccessPolicyForInterDomainManager(currentIdm);
+            dmacp = fm.getAccessPolicy();
+        }
+        model.put("dmacp", dmacp);
+        model.put("selectedIdm", currentIdm);
     }
     
     public void doNothing()

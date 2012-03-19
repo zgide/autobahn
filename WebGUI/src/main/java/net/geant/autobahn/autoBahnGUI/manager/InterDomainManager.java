@@ -2,11 +2,13 @@ package net.geant.autobahn.autoBahnGUI.manager;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.TreeMap;
+import net.geant.autobahn.aai.AccessPolicy;
 import net.geant.autobahn.administration.Administration;
 import net.geant.autobahn.administration.AdministrationException;
 import net.geant.autobahn.administration.AdministrationService;
@@ -15,6 +17,9 @@ import net.geant.autobahn.administration.ReservationType;
 import net.geant.autobahn.administration.ServiceType;
 import net.geant.autobahn.administration.StatisticsType;
 import net.geant.autobahn.administration.Status;
+import net.geant.autobahn.intradomain.IntradomainPath;
+import net.geant.autobahn.intradomain.IntradomainReservation;
+import net.geant.autobahn.intradomain.common.GenericLink;
 import net.geant.autobahn.network.Link;
 import net.geant.autobahn.useraccesspoint.ModifyRequest;
 import net.geant.autobahn.useraccesspoint.PortType;
@@ -86,6 +91,28 @@ public class InterDomainManager implements UserAccessPoint, Administration {
     private StatisticsType statistics;
     
     /**
+     * Triggers for enabling/disabling the use of cached objects for intradomain information (NOCPanel) 
+     */
+    private boolean intraRsvCacheIsUptodate = false;
+    private boolean intraPathsCacheIsUptodate = false;
+    private boolean intraCalendarsCacheIsUptodate = false;
+
+    /**
+     * Caching object for storing intradomain calendar information for NOC Panel
+     */
+    public Map<GenericLink, TreeMap<Calendar, Long>> intraCalendarsUsage = Collections.synchronizedMap(new HashMap<GenericLink, TreeMap<Calendar, Long>>());
+
+    /**
+     * Caching object for storing intradomain paths information for NOC Panel
+     */
+    public Map<String, IntradomainPath> intradomainPaths = Collections.synchronizedMap(new HashMap<String, IntradomainPath>());
+
+    /**
+     * Caching object for storing intradomain reservation parameters for NOC Panel
+     */
+    public Map<String, IntradomainReservation> intraRsvParams = Collections.synchronizedMap(new HashMap<String, IntradomainReservation>());
+
+    /**
      * Logs information
      */
     public static final Logger logger = Logger.getLogger("IDMsManager");
@@ -102,6 +129,7 @@ public class InterDomainManager implements UserAccessPoint, Administration {
         this.identifier = identifier;
         this.url = url;
         connect(url);
+        getServices(true);
     }
 
     /**
@@ -237,6 +265,23 @@ public class InterDomainManager implements UserAccessPoint, Administration {
 
     /*
      * (non-Javadoc)
+     * 
+     * @see net.geant.autobahn.administration.Administration#getAccessPolicy()
+     */
+    public AccessPolicy getAccessPolicy() {
+        if (isAdmnistrationConnected()) {
+            try {
+                return administration.getAccessPolicy();
+            } catch (Exception e) {
+                logger.error("Cannot get access policy from idm:"
+                        + e.getClass().getName() + ":" + e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    /*
+     * (non-Javadoc)
      * @see net.geant.autobahn.administration.Administration#getReservation(java.lang.String)
      */
     @Override
@@ -283,6 +328,24 @@ public class InterDomainManager implements UserAccessPoint, Administration {
                 logger.error("Cannot set properties for idm:"
                         + e.getClass().getName() + ":" + e.getMessage());
             }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * net.geant.autobahn.administration.Administration#setAccessPolicy(net.
+     * geant.autobahn.aai.AccessPolicy )
+     */
+    public void setAccessPolicy(AccessPolicy acp) {
+        if (isAdmnistrationConnected()) {
+            try {
+                administration.setAccessPolicy(acp);
+            } catch (Exception e) {
+                logger.error("Cannot set access policy for idm:"
+                        + e.getClass().getName() + ":" + e.getMessage());
+            }
+        }
     }
 
     /**
@@ -664,6 +727,90 @@ public class InterDomainManager implements UserAccessPoint, Administration {
      * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#getDomainClientPorts()
      */
     @Override
+    public HashMap<String, IntradomainPath> getIntradomainPaths() {
+        if (!intraPathsCacheIsUptodate) {
+            if (!isAdmnistrationConnected()) {
+                return null;
+            }
+            
+            try {
+                intradomainPaths = administration.getIntradomainPaths();
+                setIntraPathsCacheIsUptodate(true);
+                
+                return new HashMap<String, IntradomainPath>(intradomainPaths);
+            } catch (Exception e) {
+                logger.error("Cannot get intradomain paths from:" + identifier
+                        + ":" + e.getClass().getName() + ":" + e.getMessage());
+            }            
+        } else {
+            return new HashMap<String, IntradomainPath>(intradomainPaths);
+        }
+        
+        return null;
+    }
+
+    @Override
+    public HashMap<String, IntradomainReservation> getIntradomainReservationParams() {
+        if (!intraRsvCacheIsUptodate) {
+            if (!isAdmnistrationConnected()) {
+                return null;
+            }
+            try {
+                intraRsvParams = administration.getIntradomainReservationParams();
+                setIntraRsvCacheIsUptodate(true);
+
+                return new HashMap<String, IntradomainReservation>(intraRsvParams);
+            } catch (Exception e) {
+                logger.error("Cannot get intradomain reservations from:"
+                        + identifier + ":" + e.getClass().getName() + ":"
+                        + e.getMessage());
+            }            
+        } else {
+            return new HashMap<String, IntradomainReservation>(intraRsvParams);
+        }
+
+        return null;
+    }
+
+    public HashMap<GenericLink, TreeMap<Calendar, Long>> getIntradomainCalendarsUsage(IntradomainPath path) {
+        if (!intraCalendarsCacheIsUptodate) {
+            if (!isAdmnistrationConnected()) {
+                return null;
+            }
+            
+            try {
+                intraCalendarsUsage = administration.getIntradomainCalendarsUsage(path);
+                setIntraCalendarsCacheIsUptodate(true);                  
+                
+                return new HashMap<GenericLink, TreeMap<Calendar,Long>>(intraCalendarsUsage);
+            } catch (Exception e) {
+                logger.error("Cannot get intradomain calendar from:"
+                        + identifier + ":" + e.getClass().getName() + ":"
+                        + e.getMessage());
+            }
+            
+        } else {
+            return new HashMap<GenericLink, TreeMap<Calendar,Long>>(intraCalendarsUsage);
+        }
+        
+        return null;
+    }
+
+    @Override
+    public String getReservationLog(String resId) {
+        if (!isAdmnistrationConnected()) {
+            return null;
+        }
+
+        try {
+            return administration.getReservationLog(resId);
+        } catch (Exception e) {
+            logger.error("Cannot get log for reservation with id - " + resId + " : " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
     public List<PortType> getDomainClientPorts() {
         // logger.info("Getting ports from idm:"+identifier+":"+ports);
         if (ports != null)
@@ -761,6 +908,20 @@ public class InterDomainManager implements UserAccessPoint, Administration {
     public void restart() {
         administration.restart();
     }
+
+    /**
+     * Methods that change the state of caching flags for NOCPanel. If they are set "true", then the 
+     * appropriate method invokes the service to retrieve the information.  
+     */    
+    public synchronized void setIntraRsvCacheIsUptodate(boolean intraRsvCacheIsUptodate) {
+        this.intraRsvCacheIsUptodate = intraRsvCacheIsUptodate;
+    }
+    public synchronized void setIntraPathsCacheIsUptodate(boolean intraPathsCacheIsUptodate) {
+        this.intraPathsCacheIsUptodate = intraPathsCacheIsUptodate;
+    }
+    public synchronized void setIntraCalendarsCacheIsUptodate(boolean intraCalendarsCacheIsUptodate) {
+        this.intraCalendarsCacheIsUptodate = intraCalendarsCacheIsUptodate;
+    }    
 
     @Override
     public void handleTopologyChange(boolean deleteReservations, boolean update) throws AdministrationException {

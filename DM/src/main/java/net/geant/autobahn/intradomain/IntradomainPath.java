@@ -3,6 +3,7 @@
  */
 package net.geant.autobahn.intradomain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import net.geant.autobahn.constraints.PathConstraints;
+import net.geant.autobahn.intradomain.common.GenericInterface;
 import net.geant.autobahn.intradomain.common.GenericLink;
 
 /**
@@ -29,7 +31,9 @@ import net.geant.autobahn.intradomain.common.GenericLink;
 @XmlType(name="IntradomainPath", namespace="net.geant.autobahn.intradomain.IntradomainPath", propOrder={
         "glinks", "pathConstraints", "capacity"
 })
-public class IntradomainPath implements Comparable<IntradomainPath> {
+public class IntradomainPath implements Comparable<IntradomainPath>, Serializable {
+
+	private static final long serialVersionUID = 4373239448704654651L;
 
 	@XmlTransient
 	private long pathId;
@@ -66,6 +70,42 @@ public class IntradomainPath implements Comparable<IntradomainPath> {
 		return glinks;
 	}
 
+	public List<GenericLink> getOrderedInterfaces() {
+		List<GenericInterface> ifaces = new ArrayList<GenericInterface>();
+		
+		ifaces.add(getFirstLink().getEndInterface());
+		ifaces.add(getFirstLink().getStartInterface());
+		
+		List<GenericLink> gls = getLinks().subList(1, getLinks().size());
+
+		for(GenericLink gl : gls) {
+			GenericInterface stif = gl.getStartInterface();
+			GenericInterface endif = gl.getEndInterface();
+			
+			GenericInterface lastIf = ifaces.get(ifaces.size() - 1);
+			
+			if(lastIf.getNode().equals(stif.getNode())) {
+				ifaces.add(stif);
+				ifaces.add(endif);
+			} else if(lastIf.getNode().equals(endif.getNode())) {
+				ifaces.add(endif);
+				ifaces.add(stif);
+			}
+		}
+		
+		List<GenericLink> res = new ArrayList<GenericLink>();
+		
+		for(int i = 0; i < ifaces.size(); i+=2) {
+			GenericLink gl = new GenericLink();
+			gl.setStartInterface(ifaces.get(i));
+			gl.setEndInterface(ifaces.get(i + 1));
+			
+			res.add(gl);
+		}
+		
+		return res;
+	}
+	
 	/**
 	 * @param links the list of generic links to set
 	 */

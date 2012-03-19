@@ -1,14 +1,26 @@
 package net.geant.autobahn.idm2dm;
 
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.TreeMap;
+
 import javax.jws.WebService;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.log4j.Logger;
 
 import net.geant.autobahn.aai.AAIException;
+import net.geant.autobahn.aai.AccessPolicy;
 import net.geant.autobahn.constraints.DomainConstraints;
 import net.geant.autobahn.idm2dm.ConstraintsAlreadyUsedException;
+import net.geant.autobahn.idm2dm.Idm2Dm;
 import net.geant.autobahn.idm2dm.OversubscribedException;
 import net.geant.autobahn.intradomain.AccessPoint;
+import net.geant.autobahn.intradomain.IntradomainPath;
+import net.geant.autobahn.intradomain.IntradomainReservation;
+import net.geant.autobahn.intradomain.common.GenericLink;
 import net.geant.autobahn.network.Link;
 import net.geant.autobahn.network.LinkIdentifiers;
 import net.geant.autobahn.reservation.ReservationParams;
@@ -25,7 +37,21 @@ import net.geant.autobahn.reservation.TimeRange;
 		targetNamespace="http://idm2dm.autobahn.geant.net/",
 		endpointInterface="net.geant.autobahn.idm2dm.Idm2Dm")
 public class Idm2DmImpl implements Idm2Dm {
+	
+	private static final long serialVersionUID = 342914189362499732L;
 
+	@XmlJavaTypeAdapter(value = IntradomainPathsAdapter.class)
+	@XmlElement(name = "paths")
+	HashMap<String, IntradomainPath> intraPaths = new LinkedHashMap<String, IntradomainPath>();
+	
+	@XmlJavaTypeAdapter(value = IntradomainReservationParamsAdapter.class)
+	@XmlElement(name = "reservations")
+	HashMap<String, IntradomainReservation> intraReservations = new LinkedHashMap<String, IntradomainReservation>();
+	
+	@XmlJavaTypeAdapter(value = GenericLinkCalendarAdapter.class)
+	@XmlElement(name = "linksCalendar")
+	HashMap<GenericLink, TreeMap<Calendar, Long>> linksCalendar = new LinkedHashMap<GenericLink, TreeMap<Calendar,Long>>();
+	
     private final Logger log = Logger.getLogger(Idm2DmImpl.class);
     
 	/* (non-Javadoc)
@@ -138,5 +164,38 @@ public class Idm2DmImpl implements Idm2Dm {
             log.error("DM restart failed: " + e.getMessage());
             log.debug("Exception info: ", e);
         }
+	}
+	
+    /* (non-Javadoc)
+     * @see net.geant.autobahn.idm2dm.Idm2Dm#getAccessPolicy()
+     */
+    public AccessPolicy getAccessPolicy() {
+        return AccessPoint.getInstance().getAccessPolicy();
+    }
+
+    /* (non-Javadoc)
+     * @see net.geant.autobahn.idm2dm.Idm2Dm#setAccessPolicy(net.geant.autobahn.aai.AccessPolicy)
+     */
+    public void setAccessPolicy(AccessPolicy accessPolicy) {
+        AccessPoint.getInstance().setAccessPolicy(accessPolicy);
+    }
+    
+    
+    public HashMap<String, IntradomainPath> getIntradomainPaths() {
+    	intraPaths = AccessPoint.getInstance().getIntradomainPaths();
+	    
+	    return intraPaths;	    
+	}
+	
+	public HashMap<String, IntradomainReservation> getIntradomainReservationParams() {
+	    intraReservations = AccessPoint.getInstance().getIntradomainReservationParams();
+	    
+	    return intraReservations;
+	}
+	
+	public HashMap<GenericLink, TreeMap<Calendar, Long>> getIntradomainCalendarsUsage(IntradomainPath path) {
+		linksCalendar = AccessPoint.getInstance().getIntradomainCalendarsUsage(path);
+		
+		return linksCalendar;
 	}
 }

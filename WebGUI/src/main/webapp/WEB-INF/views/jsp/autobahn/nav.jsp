@@ -9,6 +9,9 @@
 <a href="<c:url value="/${lnk}"/>">Login</a>
 </sec:authorize>
 
+<fmt:message key="lnk.home" var="lnk"/>
+<a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.home"/></a>
+
 <sec:authorize ifAllGranted="ROLE_USER">
 <fmt:message key="lnk.request" var="lnk"/>
 <a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.request"/></a>
@@ -49,6 +52,22 @@
   <a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.statistics"/></a>      
 </sec:authorize>
 
+<sec:authorize ifAllGranted="ROLE_NETWORKADMIN">
+  <br/><br/><br/><br/>
+  <hr/>NOC Panel
+  <hr/>
+</sec:authorize>
+
+<sec:authorize ifAllGranted="ROLE_NETWORKADMIN">
+  <fmt:message key="lnk.intras" var="lnk"/>
+  <a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.intras"/></a>      
+</sec:authorize>
+
+<sec:authorize ifAllGranted="ROLE_NETWORKADMIN">
+  <fmt:message key="lnk.calendar" var="lnk"/>
+  <a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.calendar"/></a>      
+</sec:authorize>
+
 <sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
 <fmt:message key="lnk.request" var="lnk"/>
 <a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.request"/></a>
@@ -65,11 +84,6 @@
 </sec:authorize>
 
 <sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
-  <fmt:message key="lnk.domainSettings" var="lnk"/>
-  <a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.domainSettings"/></a>	
-</sec:authorize>
- 
-<sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
   <fmt:message key="lnk.domainLogs" var="lnk"/>
   <a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.domainLogs"/></a>	  
 </sec:authorize>
@@ -80,12 +94,35 @@
 </sec:authorize>
 
 <sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
+  <fmt:message key="lnk.domainSettings" var="lnk"/>
+  <a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.domainSettings"/></a>	
+</sec:authorize>
+
+<sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
   <fmt:message key="lnk.user_administration" var="lnk"/>
   <a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.user_administration"/></a>      
 </sec:authorize>
 
-<fmt:message key="lnk.home" var="lnk"/>
-<a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.home"/></a>
+<sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
+  <br/>
+  <hr/>NOC Panel
+  <hr/>
+</sec:authorize>
+
+<sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
+  <fmt:message key="lnk.intras" var="lnk"/>
+  <a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.intras"/></a>      
+</sec:authorize>
+
+<sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
+  <fmt:message key="lnk.calendar" var="lnk"/>
+  <a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.calendar"/></a>      
+</sec:authorize>
+
+<sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
+  <fmt:message key="lnk.dmacl" var="lnk"/>
+  <a href="<c:url value="/${lnk}"/>"><fmt:message key="nav.dmacl"/></a>      
+</sec:authorize>
 
 <%@ include file="../common/endnav.jsp" %>
 

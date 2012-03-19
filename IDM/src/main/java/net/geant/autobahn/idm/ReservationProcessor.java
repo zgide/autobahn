@@ -1,10 +1,23 @@
 package net.geant.autobahn.idm;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.geant.autobahn.administration.Translator;
 import net.geant.autobahn.constraints.GlobalConstraints;
@@ -42,6 +55,9 @@ public class ReservationProcessor {
 	private String domainID;
     private boolean restorationMode = false;
     
+	private String timestamp;
+	private String milliseconds;
+
 	public ReservationProcessor(String domainID, Idm2Dm domainManager) {
 		this.domainManager = domainManager;
 		this.domainID = domainID;
@@ -458,14 +474,27 @@ public class ReservationProcessor {
 			HibernateUtil hbm = IdmHibernateUtil.getInstance();
 			Transaction t = hbm.beginTransaction();
 			
-			log.info("Processor: command " + command.getInfo() + " start");
+			String start = "Processor: command " + command.getInfo() + " start";
+			String end = "Processor: command " + command.getInfo() + " end";
+			
+			log.info(start);
 			command.run();
-			log.info("Processor: command " + command.getInfo() + " end");
+			log.info(end);
 			
 			if (!t.wasCommitted()) {
 			    t.commit();
 			}
+			
             hbm.closeSession();
+            
+            String[] str = start.split(" ");
+    	    String resId = str[str.length-2];
+            try {
+				createReservationLog(resId);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		@Override
@@ -537,5 +566,131 @@ public class ReservationProcessor {
 				res.addStatusListener(listener);
 			}
 		}
+	}
+	
+	private void createReservationLog(String resId) throws Exception {
+		
+		Scanner sc = null;
+	    
+	    File folder = new File("logs/reservations");
+		File filename = new File("logs/reservations/" + resId + ".log");
+	    FileWriter fileWriter = null;
+	    Boolean fileExists = null;
+	    Date startDate = null;
+	    
+	    if(!folder.isDirectory()) {
+	    	folder.mkdir();
+	    }
+	    
+	    if(!filename.exists()) {
+	    	try {
+	    		filename.createNewFile();
+	    		fileExists = false;
+			} catch (IOException e) {
+				log.debug(e.getMessage());
+			}
+	    } else {
+	    	fileExists = true;
+	    	startDate = parseDate(tail(filename));
+	    }	    
+	    	    
+	    try {
+	        sc = new Scanner(new BufferedReader(new FileReader("logs/debug.log")));
+	        fileWriter = new FileWriter(filename, true);
+	        
+	        while (sc.hasNext()) {
+	            String line = sc.nextLine();
+	            if (fileExists.equals(true) && line.contains(resId) && parseDate(line).compareTo(startDate) > 0) {
+					fileWriter.append(line + "\n");
+				} else if (fileExists.equals(false) && line.contains(resId)) {
+					fileWriter.append(line + "\n");
+				}
+	        }
+	        
+	        fileWriter.flush();	        
+	    } catch (FileNotFoundException e) {
+	    	log.debug(e.getMessage());
+		} catch (IOException e) {
+			log.debug(e.getMessage());
+		} finally {
+	        if (sc != null) {
+	            sc.close();
+	        }
+	    }
+	}
+	
+	private Date parseDate(String line) {
+		
+		String re1=".*?";	
+	    String re2="((?:2|1)\\d{3}(?:-|\\/)(?:(?:0[1-9])|(?:1[0-2]))(?:-|\\/)(?:(?:0[1-9])|(?:[1-2][0-9])|(?:3[0-1]))(?:T|\\s)(?:(?:[0-1][0-9])|(?:2[0-3])):(?:[0-5][0-9]):(?:[0-5][0-9]))";
+	    String re3=".*?";	
+	    String re4=".";	
+	    String re5=".*?";	
+	    String re6="(.)";	
+	    String re7="(.)";	
+	    String re8="(.)";	
+
+	    Pattern p = Pattern.compile(re1+re2+re3+re4+re5+re6+re7+re8,Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+	    Matcher m = p.matcher(line);
+	    if (m.find())
+	    {
+	        timestamp = m.group(1);
+	        String c1=m.group(2);
+	        String c2=m.group(3);
+	        String c3=m.group(4);
+	        milliseconds = c1.concat(c2).concat(c3);
+	    }
+	    
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+	    Date date = null;
+	    
+	    try {
+			date = dateFormat.parse(timestamp + "," + milliseconds);
+		} catch (ParseException e) {
+			log.debug("Error in parsing Date Foermat: " + e.getMessage());
+		}
+		
+	    return date;		
+	}
+	
+	private String tail(File file) {
+	    try {
+	        RandomAccessFile fileHandler = new RandomAccessFile(file, "r");
+	        long fileLength = file.length() - 1;
+	        StringBuilder sb = new StringBuilder();
+
+	        for(long filePointer = fileLength; filePointer != -1; filePointer--) {
+	            fileHandler.seek(filePointer);
+	            int readByte = fileHandler.readByte();
+
+	            if(readByte == 0xA) {
+	                if(filePointer == fileLength) {
+	                    continue;
+	                } else {
+	                    break;
+	                }
+	            } else if(readByte == 0xD) {
+	                if(filePointer == fileLength - 1) {
+	                    continue;
+	                } else {
+	                    break;
+	                }
+	            }
+
+	            sb.append((char) readByte);
+	        }
+
+	        String lastLine = sb.reverse().toString();
+	        fileHandler.close();
+	        
+	        return lastLine;
+	        
+	    } catch(java.io.FileNotFoundException e) {
+	        log.debug(e.getMessage());
+	        return null;
+	    } catch(java.io.IOException e) {
+	        log.debug(e.getMessage());
+	        return null;
+	    }
 	}
 }

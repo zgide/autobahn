@@ -6,13 +6,19 @@
 package net.geant.autobahn.calendar;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.jws.WebService;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.log4j.Logger;
 
 import net.geant.autobahn.idm2dm.ConstraintsAlreadyUsedException;
+import net.geant.autobahn.idm2dm.GenericLinkCalendarAdapter;
 import net.geant.autobahn.intradomain.IntradomainPath;
 import net.geant.autobahn.intradomain.common.GenericLink;
 import net.geant.autobahn.resourcesreservationcalendar.ResourcesReservationCalendar;
@@ -34,6 +40,10 @@ public class ResourcesReservationCalendarImpl implements ResourcesReservationCal
     private java.util.Properties props = null;
     private final Logger log = Logger.getLogger(ResourcesReservationCalendarImpl.class);
     
+    @XmlJavaTypeAdapter(value = GenericLinkCalendarAdapter.class)
+    @XmlElement(name = "linksCalendar")
+    private HashMap<GenericLink, TreeMap<Calendar, Long>> linksCalendar = new LinkedHashMap<GenericLink, TreeMap<Calendar,Long>>();
+        
     /**
      * This constructor is used if we want to initialize the properties
      * @param props
@@ -124,6 +134,17 @@ public class ResourcesReservationCalendarImpl implements ResourcesReservationCal
         } else {
             AccessPoint.getInstance().dispose();
         }
+	}
+	
+	public HashMap<GenericLink, TreeMap<Calendar, Long>> getIntradomainCalendarsUsage(IntradomainPath path) {
+		
+		if (props != null) {
+	        linksCalendar = AccessPoint.getInstance(props).getIntradomainCalendarsUsage(path);
+	    } else {
+	        linksCalendar = AccessPoint.getInstance().getIntradomainCalendarsUsage(path);	        
+	    }
+	    
+	    return linksCalendar;
 	}
    
 }

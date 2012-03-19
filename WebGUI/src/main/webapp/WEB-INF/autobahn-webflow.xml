@@ -46,6 +46,10 @@ http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.x
 		<webflow:flow-location path="/WEB-INF/flows/request-service.xml" id="secure/request-service.htm" />
 		<webflow:flow-location path="/WEB-INF/flows/services.xml" id="secure/reservations_select.htm" />
 		<webflow:flow-location path="/WEB-INF/flows/user_administration.xml" id="secure/view-users.htm" />
+        <webflow:flow-location path="/WEB-INF/flows/intras.xml" id="secure/intras.htm" />
+        <webflow:flow-location path="/WEB-INF/flows/intra_details.xml" id="secure/intra_details.htm" />
+        <webflow:flow-location path="/WEB-INF/flows/calendar.xml" id="secure/calendar_select.htm" />
+        <webflow:flow-location path="/WEB-INF/flows/dmacl.xml" id="secure/dmacl_select.htm" />
 	</webflow:flow-registry>
 	
 	<!-- Plugs in a custom creator for Web Flow views -->

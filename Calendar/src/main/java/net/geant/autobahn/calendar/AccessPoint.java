@@ -8,7 +8,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import net.geant.autobahn.constraints.ConstraintsNames;
 import net.geant.autobahn.constraints.GlobalConstraints;
@@ -338,6 +340,25 @@ public final class AccessPoint implements ResourcesReservationCalendar {
     
     public ConstraintsReservationCalendar getConstraintsCalendar() {
     	return constraintsCalendar;
+    }
+    
+    public HashMap<GenericLink, TreeMap<Calendar, Long>> getIntradomainCalendarsUsage(IntradomainPath path) {
+            
+        HashMap<GenericLink, TreeMap<Calendar, Long>> usageCalendars = new HashMap<GenericLink, TreeMap<Calendar,Long>>();
+        if (path != null){
+            for(GenericLink glink : path.getLinks()) {
+                AdditiveCalendar calendar = capacityCalendars.get(glink);
+                if(calendar != null) {
+                    usageCalendars.put(glink, calendar.getUsage());               
+                }
+            }
+        } else {
+            for(Entry<GenericLink, AdditiveCalendar> entry : capacityCalendars.entrySet()){
+                usageCalendars.put(entry.getKey(), (TreeMap<Calendar, Long>) entry.getValue().getUsage());
+            }
+        }
+            	
+        return usageCalendars;
     }
 
     public void dispose() {

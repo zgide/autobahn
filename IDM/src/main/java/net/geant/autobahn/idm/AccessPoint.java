@@ -11,10 +11,14 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.TreeMap;
 
+import net.geant.autobahn.aai.AccessPolicy;
 import net.geant.autobahn.administration.Administration;
 import net.geant.autobahn.administration.AdministrationException;
 import net.geant.autobahn.administration.KeyValue;
@@ -41,6 +45,9 @@ import net.geant.autobahn.interdomain.NoSuchReservationException;
 import net.geant.autobahn.interdomain.pathfinder.InterdomainPathfinder;
 import net.geant.autobahn.interdomain.pathfinder.InterdomainPathfinderImplDFS;
 import net.geant.autobahn.interdomain.pathfinder.TopologyImpl;
+import net.geant.autobahn.intradomain.IntradomainPath;
+import net.geant.autobahn.intradomain.IntradomainReservation;
+import net.geant.autobahn.intradomain.common.GenericLink;
 import net.geant.autobahn.lookup.LookupService;
 import net.geant.autobahn.lookup.LookupServiceException;
 import net.geant.autobahn.network.AdminDomain;
@@ -1549,6 +1556,45 @@ public final class AccessPoint implements UserAccessPoint,
         // Value in properties is in seconds, make it msec
         return timeout * 1000;        
     }
+
+    public AccessPolicy getAccessPolicy() {
+        return domainManager.getAccessPolicy();
+    }
+
+    public void setAccessPolicy(AccessPolicy accessPolicy) {
+        domainManager.setAccessPolicy(accessPolicy);
+    }
+    
+    public HashMap<String, IntradomainPath> getIntradomainPaths(){
+    	return domainManager.getIntradomainPaths();
+    }
+    
+    public HashMap<String, IntradomainReservation> getIntradomainReservationParams() {
+        return domainManager.getIntradomainReservationParams();
+    }
+    
+    public HashMap<GenericLink, TreeMap<Calendar, Long>> getIntradomainCalendarsUsage(IntradomainPath path) {
+       	return domainManager.getIntradomainCalendarsUsage(path);
+    }
+
+	public String getReservationLog(String resId) {
+		
+		try {
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream("logs/reservations/" + resId + ".log"));
+			StringBuffer sb = new StringBuffer();
+			int c;
+			
+			while ((c = bis.read()) != -1) {
+				sb.append((char)c);				
+			}
+			bis.close();
+			
+			return sb.toString();
+		} catch (IOException e) {
+			log.debug(e.getMessage());
+			return "Error ocurred while getting log info for reservation with ID: " + resId;
+		}
+	}
 
     @Override
     public void restart() {

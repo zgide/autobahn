@@ -4,7 +4,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import net.geant.autobahn.idm2dm.ConstraintsAlreadyUsedException;
 import net.geant.autobahn.intradomain.IntradomainPath;
@@ -91,7 +93,14 @@ public class ResourcesReservationCalendarClient implements ResourcesReservationC
 		if(rc != null)
              rc.removeReservation( path, capacity, start,  end);
 	}
-
+	
+	public HashMap<GenericLink, TreeMap<Calendar, Long>> getIntradomainCalendarsUsage(IntradomainPath path) {
+	    if(rc !=null) {
+	        return rc.getIntradomainCalendarsUsage(path);
+	    } else {
+	        return null;
+	    }	        
+	}
     public void dispose() {
         if(rc != null)
             rc.dispose();

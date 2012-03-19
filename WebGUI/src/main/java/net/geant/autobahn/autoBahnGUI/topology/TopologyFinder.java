@@ -721,10 +721,15 @@ public class TopologyFinder implements TopologyFinderNotifier{
         try {
             friendlyNamePort = manager.getFriendlyNamePort(name);
             if (friendlyNamePort != null) {
-                int start = friendlyNamePort.indexOf("(");
-                String str = friendlyNamePort.substring(0, start);
-                buffer.append("<h3  valign=\"middle\"><image src=\"").append(Marker.DEFAULT_ICON_INTERFACE).append("\"> Port information:</h3>");
-                buffer.append ("<center><strong>").append(str).append("</strong></center>");
+                if (friendlyNamePort.contains("(")) {
+                    int start = friendlyNamePort.indexOf("(");
+                    String str = friendlyNamePort.substring(0, start);
+                    buffer.append("<h3  valign=\"middle\"><image src=\"").append(Marker.DEFAULT_ICON_INTERFACE).append("\"> Port information:</h3>");
+                    buffer.append ("<center><strong>").append(str).append("</strong></center>");
+                } else {
+                    buffer.append("<h3 valign=\"middle\"><image src=\"").append(Marker.DEFAULT_ICON_INTERFACE).append("\"> Port information:</h3>");
+                    buffer.append ("<center><strong>").append(friendlyNamePort).append("</strong></center>");
+                }
             }
         } catch (UserAccessPointException e) {
             logger.info("for " + name + " no friendlyName port!");

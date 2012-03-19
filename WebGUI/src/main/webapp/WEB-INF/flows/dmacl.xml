@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+        http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    <on-start>
+        <evaluate expression="manager.getAccessPolicyForInterDomainManager(null)" result="flowScope.dmacl" />    
+    </on-start>
+    
+    <decision-state id="check-idm">
+        <if test="flowScope.dmacl.idms==null ||flowScope.dmacl.idms.size()==0" then="no-idm-regitered" else="view-dmacl"/>     
+    </decision-state>
+    
+    <view-state id="view-dmacl" view="secure/dmacl_select" model="dmacl">
+        <transition on="remove" to="view-dmacl" bind="true">
+            <set name="requestScope.selectedIdm" value="requestParameters.selectedIdm"
+                type="string" />
+            <set name="requestScope.role" value="requestParameters.role"
+                type="string" />
+            <set name="requestScope.email" value="requestParameters.email"
+                type="string" />
+            <set name="requestScope.membership" value="requestParameters.membership"
+                type="string" />
+            <set name="requestScope.organization" value="requestParameters.organization"
+                type="string" />
+
+            <evaluate expression="manager.removeRuleForIDM(selectedIdm, role, email, membership, organization)" />
+        </transition>
+
+        <transition on="add" to="view-dmacl" bind="true">
+            <set name="requestScope.selectedIdm" value="requestParameters.selectedIdm"
+                type="string" />
+            <set name="requestScope.role" value="requestParameters.role"
+                type="string" />
+            <set name="requestScope.email" value="requestParameters.email"
+                type="string" />
+            <set name="requestScope.membership" value="requestParameters.membership"
+                type="string" />
+            <set name="requestScope.organization" value="requestParameters.organization"
+                type="string" />
+                
+            <evaluate expression="manager.addRuleForIDM(selectedIdm, role, email, membership, organization)" />
+        </transition>
+        
+        <transition on-exception="java.lang.Exception" to="view-dmacl"> 
+            <evaluate expression="exceptionTranslator.translateException(flowRequestContext, flowExecutionException)"/>
+        </transition>
+    </view-state>
+
+    <end-state id="no-idm-regitered" view="secure/noIDMRegistered"/>
+
+</flow>

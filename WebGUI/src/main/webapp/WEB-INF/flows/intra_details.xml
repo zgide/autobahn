@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+        http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    <on-start>
+        <evaluate expression="manager.getIntraReservationsForInterDomainManager(requestParameters.idm, requestParameters.resId)" result="flowScope.intraRes" />
+        <evaluate expression="manager.getReservation(requestParameters.idm, requestParameters.resId)" result="flowScope.interRes" />
+        <evaluate expression="manager.getLogsInterDomainManager(requestParameters.idm, true, true, requestParameters.resId)" result="flowScope.logs" />
+        <evaluate expression="manager.getIntraCalendarForInterDomainManager(null)" result="flowScope.intraCalendar" />    
+    </on-start>
+    
+    <view-state id="intra_details" view="secure/intra_details">
+    </view-state>
+
+</flow>

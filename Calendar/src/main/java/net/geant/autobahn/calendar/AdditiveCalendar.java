@@ -135,4 +135,8 @@ public class AdditiveCalendar {
 
         return result.toString();
     }
+    
+    public TreeMap<Calendar, Long> getUsage() {
+        return (TreeMap<Calendar, Long>) this.usage;
+    }
 }

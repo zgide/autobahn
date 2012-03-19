@@ -48,7 +48,7 @@ public class LogsController extends SimpleFormController {
 		logs.setCurrentIdm(currentIdm);
 		String log=null;
 		if (manager!=null)
-			log = manager.getLogsInterDomainManager(currentIdm,true, true);
+			log = manager.getLogsInterDomainManager(currentIdm,true, true, null);
 		if (log == null)
 			logs.setError("GUI was unable to contact with administration intreface of: "+currentIdm);
 		logs.setLogs(log);
@@ -74,7 +74,7 @@ public class LogsController extends SimpleFormController {
 			String current = services.getCurrentIdm();
 			String log=null;
 			if (manager!=null)
-				log = manager.getLogsInterDomainManager(current, true, true);
+				log = manager.getLogsInterDomainManager(current, true, true, null);
 			services.setLogs(log);
 
 			if (log == null)

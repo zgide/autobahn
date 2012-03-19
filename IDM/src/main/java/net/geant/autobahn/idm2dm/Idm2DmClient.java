@@ -2,12 +2,19 @@ package net.geant.autobahn.idm2dm;
 
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 import net.geant.autobahn.aai.AAIException;
+import net.geant.autobahn.aai.AccessPolicy;
 import net.geant.autobahn.constraints.DomainConstraints;
 import net.geant.autobahn.idm2dm.ConstraintsAlreadyUsedException;
 import net.geant.autobahn.idm2dm.Idm2Dm;
 import net.geant.autobahn.idm2dm.OversubscribedException;
+import net.geant.autobahn.intradomain.IntradomainPath;
+import net.geant.autobahn.intradomain.IntradomainReservation;
+import net.geant.autobahn.intradomain.common.GenericLink;
 import net.geant.autobahn.network.Link;
 import net.geant.autobahn.network.LinkIdentifiers;
 import net.geant.autobahn.reservation.ReservationParams;
@@ -21,7 +28,9 @@ import org.apache.log4j.Logger;
  */
 
 public class Idm2DmClient implements Idm2Dm {
-	
+
+	private static final long serialVersionUID = 2502655943878207313L;
+
 	static private Logger log = Logger.getLogger(Idm2DmClient.class);
 	
 	private Idm2Dm idm2dm;
@@ -90,5 +99,25 @@ public class Idm2DmClient implements Idm2Dm {
 
 	public void restart() {
 		idm2dm.restart();
+	}
+
+    public AccessPolicy getAccessPolicy() {
+        return idm2dm.getAccessPolicy();
+    }
+
+    public void setAccessPolicy(AccessPolicy accessPolicy) {
+        idm2dm.setAccessPolicy(accessPolicy);
+    }
+    
+    public HashMap<String, IntradomainPath> getIntradomainPaths() {
+    	return idm2dm.getIntradomainPaths();
+	}
+	
+	public HashMap<String, IntradomainReservation> getIntradomainReservationParams() {
+        return idm2dm.getIntradomainReservationParams();
+	}
+	
+	public HashMap<GenericLink, TreeMap<Calendar, Long>> getIntradomainCalendarsUsage(IntradomainPath path) {
+		return idm2dm.getIntradomainCalendarsUsage(path);
 	}
 }

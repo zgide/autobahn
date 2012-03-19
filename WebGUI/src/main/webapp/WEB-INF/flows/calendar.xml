@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+        http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    <on-start>
+        <evaluate expression="manager.getIntraCalendarForInterDomainManager(null)" result="flowScope.calendar" />    
+    </on-start>
+    
+    <decision-state id="check-idm">
+        <if test="flowScope.calendar.idms==null ||flowScope.calendar.idms.size()==0" then="no-idm-regitered" else="calendar"/>     
+    </decision-state>
+    
+    <view-state id="calendar" view="secure/calendar_select" model="calendar">
+    </view-state>
+
+    <end-state id="no-idm-regitered" view="secure/noIDMRegistered"/>
+
+</flow>

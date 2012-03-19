@@ -8,7 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
     <groupId>net.geant.autobahn</groupId>
     <artifactId>autobahn</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <name>Autobahn: Automated Bandwith Allocation across Heterogeneous Networks</name>
     <url>https://forge.geant.net/forge/display/autobahn/Home</url>
     <packaging>pom</packaging>
@@ -126,7 +126,6 @@
 								<exclude>**/Test*.java</exclude>
 								<exclude>**/TopologyTest.java</exclude>
 								<exclude>**/TestTopology*.java</exclude>
-								<exclude>**/GetAdminDomainTest.java</exclude>
 								<exclude>**/topologies/*.java</exclude>
 							</excludes>
 						</configuration>
@@ -303,7 +302,6 @@
 		                              <exclude>**/Test*.java</exclude>
 		                              <exclude>**/TopologyTest.java</exclude>
 		                              <exclude>**/TestTopology*.java</exclude>
-		                              <exclude>**/GetAdminDomainTest.java</exclude>
 		                              <exclude>**/topologies/*.java</exclude>
 	                              </excludes>
 	                              

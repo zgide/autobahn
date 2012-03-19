@@ -1,14 +1,18 @@
 package net.geant.autobahn.resourcesreservationcalendar;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.geant.autobahn.idm2dm.ConstraintsAlreadyUsedException;
+import net.geant.autobahn.idm2dm.GenericLinkCalendarAdapter;
 import net.geant.autobahn.intradomain.IntradomainPath;
 import net.geant.autobahn.intradomain.common.GenericLink;
 
@@ -65,19 +69,17 @@ public interface ResourcesReservationCalendar {
      * @return Available network constraints for the path, null if not available
      */
     @WebMethod()
-    @WebResult(name="PathConstraints")
+    @WebResult(name="IntradomainPath")
     public IntradomainPath getConstraints(@WebParam(name = "path")IntradomainPath path,
     		@WebParam(name = "start")Calendar start, @WebParam(name = "end")Calendar end);
 
     /**
      * Reserves capacity and other resources in the calendar.
      * 
-     * @param glinks
-     *            List of generic links that a reservation uses
+     * @param path
+     *            Intradomain path to be reserved (includes the constraints)
      * @param capacity
      *            Capacity in bps
-     * @param pcon
-     *            Network constraints selected for this reservation
      * @param start
      *            Start time
      * @param end
@@ -94,12 +96,10 @@ public interface ResourcesReservationCalendar {
      * Removes reservation of capacity and other network resources from the
      * calendar in the specified period.
      * 
-     * @param glinks
-     *            List of generic links that a reservation uses
+     * @param path
+     *            List of generic links that a reservation uses. Network constraints to be released.
      * @param capacity
      *            Capacity in bps
-     * @param pcon
-     *            Network constraints to be released
      * @param start
      *            Start time
      * @param end
@@ -108,6 +108,10 @@ public interface ResourcesReservationCalendar {
     @WebMethod()
     public void removeReservation(@WebParam(name = "path")IntradomainPath path, @WebParam(name = "capacity")long capacity,
     		@WebParam(name = "start")Calendar start, @WebParam(name = "end")Calendar end);
+    
+    @WebMethod()
+    @XmlJavaTypeAdapter(GenericLinkCalendarAdapter.class)
+    public HashMap<GenericLink, TreeMap<Calendar, Long>> getIntradomainCalendarsUsage(@WebParam(name="intraPath")IntradomainPath path);    
 
     @WebMethod()
     public void dispose();

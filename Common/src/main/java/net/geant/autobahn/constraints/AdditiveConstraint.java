@@ -24,7 +24,8 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class AdditiveConstraint extends Constraint {
 
-    private Double value;
+	private static final long serialVersionUID = -7484174194234797807L;
+	private Double value;
 
     /**
      * Default constructor

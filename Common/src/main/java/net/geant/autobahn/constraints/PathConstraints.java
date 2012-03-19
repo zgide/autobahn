@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class PathConstraints implements Serializable {
 
+	private static final long serialVersionUID = 9015546458217947234L;
+
 	@XmlTransient
     private long constraintID;
 	
@@ -456,6 +458,19 @@ public class PathConstraints implements Serializable {
 
         
         return result;
+    }
+    
+    /**
+     * Get the first VLAN value in the allowed range
+     * 
+     * @return the VLAN number or 0 if no VLAN constraint exists
+     */
+    public int getFirstVlan() {
+        RangeConstraint vlanRange = getRangeConstraint(ConstraintsNames.VLANS);
+        if (vlanRange != null) {
+            return vlanRange.getFirstValue();
+        }
+        return 0;
     }
     
     /* (non-Javadoc)
