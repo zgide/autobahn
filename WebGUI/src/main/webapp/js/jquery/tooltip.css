@@ -73,7 +73,7 @@
 	position:relative;	
 	height:480px;
 	
-	width:730px;
+	width:770px;
 	float:left;	
 	margin:30px;
 	cursor:pointer;
@@ -88,7 +88,7 @@
 }
 .map {
 	
-	width: 730px;
+	width: 770px;
 	height: 480px;
 }
 .label_reserv {

@@ -7,7 +7,7 @@
 
 	/* vertical scrollers have typically larger height than width */	
 	height:auto; 
-	width: 730px;
+	width: 770px;
 	border-top:1px solid #ddd;
 	cursor:hand;	
 }
@@ -96,7 +96,7 @@
 	border:1px solid #ccc;
 	position:relative;	
 	height:auto;
-	width:730px;
+	width:770px;
 	float:left;	
 	margin:30px;
 	cursor:hand;

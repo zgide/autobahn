@@ -105,7 +105,7 @@
 		<c:forEach items="${element.reservations}" var="item" varStatus="loopStatus">
 				<tr>
 					<td title="${reservationDescriptions[item.state]}">
-					   ${reservationStates[item.state]}(${item.state})
+					   ${reservationStates[item.state]} (${item.state})
 					</td>
 					<td>${item.startTime.time}</td>
 					<td>${item.endTime.time}</td>
@@ -194,7 +194,7 @@
 		<c:forEach items="${element.reservations}" var="item" varStatus="loopStatus">
 				<tr>
 					<td title="${reservationDescriptions[item.state]}">
-					   ${reservationStates[item.state]}(${item.state})
+					   ${reservationStates[item.state]} (${item.state})
 					</td>
 					<td>${item.startTime.time}</td>
 					<td>${item.endTime.time}</td>
@@ -276,7 +276,7 @@
 		<c:forEach items="${element.reservations}" var="item" varStatus="loopStatus">
 				<tr>
 					<td title="${reservationDescriptions[item.state]}">
-					   ${reservationStates[item.state]}(${item.state})
+					   ${reservationStates[item.state]} (${item.state})
 					</td>
 					<td>${item.startTime.time}</td>
 					<td>${item.endTime.time}</td>

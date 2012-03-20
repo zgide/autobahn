@@ -9,7 +9,7 @@
 	position:relative;	
 	height:auto;
 	
-	width:730px;
+	width:770px;
 	float:left;	
 	margin:30px;
 	cursor:hand;
