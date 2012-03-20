@@ -178,7 +178,15 @@ cursor:pointer;
 	</div>
 
 <script type="text/javascript">
-    var myselect=document.getElementById("userHomeDomain")
+    var myselect=document.getElementById("service.userHomeDomain")
+    for (var i=0; i<myselect.options.length; i++){
+        if (myselect.options[i].value=="${authParameters.organization}") {
+            myselect.options[i].selected=true
+            break
+            }
+        }
+
+    myselect=document.getElementById("destinationDomain")
     for (var i=0; i<myselect.options.length; i++){
         if (myselect.options[i].value=="${authParameters.organization}") {
             myselect.options[i].selected=true
