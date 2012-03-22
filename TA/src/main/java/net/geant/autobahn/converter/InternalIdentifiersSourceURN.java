@@ -31,11 +31,4 @@ public class InternalIdentifiersSourceURN implements InternalIdentifiersSource {
     public String generateLinkID(String startPort, String endPort, String desc) {
         return domain + delimiter + "Link" + delimiter + ++count;
     }
-
-	@Override
-	public String generateClientPortID(String sname, String desc) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

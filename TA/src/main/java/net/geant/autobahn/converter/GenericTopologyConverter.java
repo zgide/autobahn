@@ -463,7 +463,7 @@ public abstract class GenericTopologyConverter implements TopologyConverter {
             	// End port
         		String dname = glink.getEndInterface().getName();
         		String dnode = glink.getEndInterface().getNode().getName();
-    			String bodID = internalIds.generateClientPortID(sname, InternalIdentifiersSourceURNHash.CLIENT_PORT);
+    			String bodID = internalIds.generatePortID(sname, dname, InternalIdentifiersSourceURNHash.CLIENT_PORT);
     			String ddesc = glink.getEndInterface().getDescription();
     			if (ddesc == null || ddesc.equals("") || ddesc.equalsIgnoreCase("null")) {
     			    ddesc = bodID;

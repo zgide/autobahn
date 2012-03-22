@@ -36,8 +36,9 @@ public class InternalIdentifiersSourceIPv4 implements InternalIdentifiersSource 
 
 	/**
 	 * 
-	 * @return Abstract identifier for the network's node.
+	 * @return Abstract identifier for the network node.
 	 */
+	@Override
 	public String generateNodeID(String name, String desc) {
 		if(!nodes.hasMoreValues())
 			throw new IllegalStateException("Address range has no more values");
@@ -47,8 +48,9 @@ public class InternalIdentifiersSourceIPv4 implements InternalIdentifiersSource 
 
 	/**
 	 * 
-	 * @return Abstract identifier for the network's port.
+	 * @return Abstract identifier for the network port.
 	 */
+    @Override
 	public String generatePortID(String snode, String dnode, String desc) {
 		if(!ports.hasMoreValues())
 			throw new IllegalStateException("Address range has no more values");
@@ -58,18 +60,13 @@ public class InternalIdentifiersSourceIPv4 implements InternalIdentifiersSource 
 	
 	/**
 	 * 
-	 * @return Abstract identifier for the network's link.
+	 * @return Abstract identifier for the network link.
 	 */
+    @Override
 	public String generateLinkID(String startPort, String endPort, String desc) {
 		if(!links.hasMoreValues())
 			throw new IllegalStateException("Address range has no more values");
 		
 		return links.nextValue();
-	}
-
-	@Override
-	public String generateClientPortID(String sname, String desc) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

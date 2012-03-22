@@ -25,11 +25,4 @@ public interface InternalIdentifiersSource {
      * @return Abstract identifier for the network's link.
      */
     public String generateLinkID(String startPort, String endPort, String desc);
-
-    /**
-     * 
-     * @return Absract identifier for client's port
-     */
-	public String generateClientPortID(String sname, String desc);
-
 }

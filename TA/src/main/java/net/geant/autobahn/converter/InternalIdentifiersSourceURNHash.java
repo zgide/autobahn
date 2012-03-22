@@ -32,6 +32,15 @@ public class InternalIdentifiersSourceURNHash implements
 		this.encrypt = encrypt;
 	}
 
+    /**
+     * 
+     * @param name
+     *            - Node name, to be used for identifier generation
+     * @param desc
+     *            - Small descriptor to be part of identifier
+     * @return Abstract identifier for the network's node.
+     */
+    @Override
 	public String generateNodeID(String name, String desc) {
 		if (encrypt) {
 			return domain + delimiter + desc + delimiter + getHash(name);
@@ -40,6 +49,18 @@ public class InternalIdentifiersSourceURNHash implements
 		}
 	}
 
+    /**
+     * 
+     * @param snode
+     *            - This port or node name, to be used for identifier generation
+     * @param dnode
+     *            - The port or node name at the other end of the link, to be
+     *            used for identifier generation
+     * @param desc
+     *            - Small descriptor to be part of identifier
+     * @return Abstract identifier for the network's port.
+     */
+    @Override
 	public String generatePortID(String snode, String dnode, String desc) {
 		if (encrypt) {
 			return domain + delimiter + desc + delimiter
@@ -50,14 +71,19 @@ public class InternalIdentifiersSourceURNHash implements
 		}
 	}
 
-	public String generateClientPortID(String sname, String desc) {
-		if (encrypt) {
-			return domain + delimiter + desc + delimiter + getHash(sname);
-		} else {
-			return domain + delimiter + desc + delimiter + sname;
-		}
-	}
-
+    /**
+     * 
+     * @param startPort
+     *            - The start port or node name, to be used for identifier
+     *            generation
+     * @param endPort
+     *            - The end port or node name, to be used for identifier
+     *            generation
+     * @param desc
+     *            - Small descriptor to be part of identifier
+     * @return Abstract identifier for the network's link.
+     */
+    @Override
 	public String generateLinkID(String startPort, String endPort, String desc) {
 		List<String> ports = new ArrayList<String>();
 		ports.add(startPort);
