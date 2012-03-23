@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+        http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <on-start>
+        <evaluate expression="manager.getUserPorts('allow')"
+            result="flowScope.portsAllow" />
+        <evaluate expression="manager.getUserPorts('deny')"
+            result="flowScope.portsDeny" />
+        <evaluate expression="manager.getUserAuthParameters()"
+            result="flowScope.authParameters" />
+    </on-start>
+
+    <view-state id="myprofile" view="secure/myprofile">
+        <binder>
+            <binding property="currentIdm" />
+        </binder>
+
+        <transition on="changePassword" to="myprofile" bind="true">
+            <set name="requestScope.password" value="requestParameters.password"
+                type="string" />
+
+            <evaluate expression="xmlUserDetailsAdmin.deleteUser(authParameters.identifier)" />
+            <evaluate expression="xmlUserDetailsAdmin.createUserFromUserParameters(authParameters.identifier, authParameters.organization, authParameters.projectMembership, authParameters.projectRole, password, authParameters.email)" />
+        </transition>
+    </view-state>
+
+</flow>

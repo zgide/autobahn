@@ -73,7 +73,6 @@
         <put-attribute name="content" value="/WEB-INF/views/jsp/autobahn/request-reservation.jsp"/>
     </definition>
 
-
     <definition name="secure/request-service-success" extends="template.main">
         <put-attribute name="content" value="/WEB-INF/views/jsp/autobahn/request-service-success.jsp"/>
     </definition>
@@ -97,6 +96,10 @@
 
 	<definition name="secure/intras" extends="template.main">
 	   	<put-attribute name="content" value="/WEB-INF/views/jsp/autobahn/intras.jsp"/>
+    </definition>
+
+    <definition name="secure/myprofile" extends="template.main">
+        <put-attribute name="content" value="/WEB-INF/views/jsp/autobahn/myprofile.jsp"/>
     </definition>
 
     <definition name="secure/restartAll" extends="template.main">
