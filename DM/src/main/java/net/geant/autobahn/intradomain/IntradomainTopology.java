@@ -602,7 +602,6 @@ public class IntradomainTopology {
 
 				Node dnode = new Node();
 				dnode.setNodeId(0);
-				dnode.setName("external-node-" + id);
 				nodes.add(dnode);
 				
 				GenericInterface dport = new GenericInterface();
@@ -615,7 +614,9 @@ public class IntradomainTopology {
 				dport.setClientPort(isClientDomain(l.getExternalDomain()));						
                 dport.setDescription(unescHtml(getExternalDomainDescription(
                         l.getExternalDomain())));
-				
+
+                dnode.setName("external-node-" + domainId + "-" + dport.getName());
+                
 				glink.setEndInterface(dport);
 				
 				String idcpLink = getIdcpLink(l.getExternalDomain());
