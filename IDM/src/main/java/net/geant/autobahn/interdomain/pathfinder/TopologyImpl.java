@@ -15,6 +15,7 @@ import net.geant.autobahn.dao.IdmDAOFactory;
 import net.geant.autobahn.dao.hibernate.HibernateIdmDAOFactory;
 import net.geant.autobahn.dao.hibernate.HibernateUtil;
 import net.geant.autobahn.dao.hibernate.IdmHibernateUtil;
+import net.geant.autobahn.idm.AccessPoint;
 import net.geant.autobahn.idm.TopologyMerge;
 import net.geant.autobahn.lookup.LookupService;
 import net.geant.autobahn.lookup.LookupServiceException;
@@ -329,27 +330,71 @@ public final class TopologyImpl implements Topology, OspfAsync, Closeable {
 	
 	public void updateAbstractTopology() {	
 	    try{
+	    	/**
+	    	 * Each domain keeps the most up to date abstract topology locally (DB).
+	    	 * For external domains, it contacts the Lookup Service. For each external 
+	    	 * link, either persists it to the db if it is new or updates it using merge.
+	    	 * 
+	    	 */
 	        if(lookup != null && lookup.topoIsUptodate() == false) {
+	            String localDomain = AccessPoint.getInstance().getLocalDomain();
+	            if (localDomain == null) {
+	            	log.error("Could not retrieve local domain name");
+	            	return;
+	            }
 	            List<Link> dbLinks = ldao.getValidLinks();
                 for (Link link : lookup.getAbstractLink()) {
-                    for (Link dbLink : dbLinks) {
-                        if (!dbLink.equals(link)) {
-                            //Save into db
-                            HibernateUtil hbm = IdmHibernateUtil.getInstance();
-                            hbm.closeSession();
-                            Transaction t = hbm.beginTransaction();
-                            Link l = topoMerge.merge(link);
-                            ldao.update(l);
-                            t.commit();
-                            hbm.closeSession();
+                	boolean isLocalClient = false;
+                	boolean isLocalVirtual = false;
+                	
+                	if (link.getStartPort().isClientPort() && localDomain.equals(link.getEndDomainID())) {
+                		isLocalClient = true;
+                	}
+                	
+                	if (link.getEndPort().isClientPort() && localDomain.equals(link.getStartDomainID())) {
+                		isLocalClient = true;
+                	}
+                	
+                	if (localDomain.equals(link.getStartDomainID()) && localDomain.equals(link.getEndDomainID())) {
+                		isLocalVirtual = true;
+                	}
+                	
+                	//Process external domain links AND interdomain links
+                	//This means tha LS information overwrites local information for external and interdomain links
+                	if (!isLocalClient && !isLocalVirtual) {
+                		
+	                	boolean found = false;
+	                	for (Link dbLink : dbLinks) {
+	                        if (dbLink.equals(link)) {
+	                            found = true;
+	                            break;
+	                        }
+	                    }
+	                	
+                        //Save into db
+                        HibernateUtil hbm = IdmHibernateUtil.getInstance();
+                        hbm.closeSession();
+                        Transaction t = hbm.beginTransaction();
+                        if (found) {
+                        	daos.getAdminDomainDAO().merge(link.getStartPort().getNode().getProvisioningDomain().getAdminDomain());
+                        	daos.getProvisioningDomainDAO().merge(link.getStartPort().getNode().getProvisioningDomain());
+                        	daos.getIDMNodeDAO().merge(link.getStartPort().getNode());
+                        	daos.getPortDAO().merge(link.getStartPort());
+                        	daos.getAdminDomainDAO().merge(link.getEndPort().getNode().getProvisioningDomain().getAdminDomain());
+                        	daos.getProvisioningDomainDAO().merge(link.getEndPort().getNode().getProvisioningDomain());
+                        	daos.getIDMNodeDAO().merge(link.getEndPort().getNode());
+                        	daos.getPortDAO().merge(link.getEndPort());
+                        	ldao.merge(link);
+                        } else {
+                        	Link l = topoMerge.merge(link);                        
+                        	ldao.update(l);
                         }
+                        t.commit();
+                        hbm.closeSession();
                     }
-                }           
-            }
-	        
-	        if(lookup != null && LookupService.timestamp == 0) {
-	            lookup.removeAbstractLinks();
+                }
 	        }
+	        
 	    } catch (HibernateException e) {
             log.error("Error with hibernate: ", e);
         } catch (LookupServiceException e) {
