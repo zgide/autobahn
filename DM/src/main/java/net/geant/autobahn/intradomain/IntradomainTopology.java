@@ -401,7 +401,6 @@ public class IntradomainTopology {
 
 				Node dnode = new Node();
 				dnode.setNodeId(0);
-				dnode.setName("external-node-" + ++id);
 				nodes.add(dnode);
 
 				GenericInterface dport = new GenericInterface();
@@ -414,6 +413,8 @@ public class IntradomainTopology {
 				dport.setClientPort(isClientDomain(l.getExternalDomain()));
                 dport.setDescription(unescHtml(getExternalDomainDescription(
                         l.getExternalDomain())));
+
+                dnode.setName("external-node-" + domainId + "-" + dport.getName());
 
 				glink.setEndInterface(dport);
 				
@@ -616,7 +617,7 @@ public class IntradomainTopology {
                         l.getExternalDomain())));
 
                 dnode.setName("external-node-" + domainId + "-" + dport.getName());
-                
+
 				glink.setEndInterface(dport);
 				
 				String idcpLink = getIdcpLink(l.getExternalDomain());
@@ -732,7 +733,6 @@ public class IntradomainTopology {
 				
 				Node endNode = new Node();
 				endNode.setNodeId(0L);
-				endNode.setName("external-node-" + id);
 				nodes.add(endNode);
 				
 				GenericInterface endPort = new GenericInterface();
@@ -745,6 +745,9 @@ public class IntradomainTopology {
 				endPort.setClientPort(isClientDomain(interLink.getExternalDomain()));
                 endPort.setDescription(unescHtml(getExternalDomainDescription(
                         interLink.getExternalDomain())));
+
+                endNode.setName("external-node-" + domainId + "-" + endPort.getName());
+
 				link.setEndInterface(endPort);
 				
 				String idcpLink = getIdcpLink(interLink.getExternalDomain());
