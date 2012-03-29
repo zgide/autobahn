@@ -49,6 +49,10 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
+		</repository>	
+		<repository>
+			<id>Internet 2 Shibboleth</id>
+			<url>http://shibboleth.internet2.edu/downloads/maven2/</url>
 		</repository>		
 	</repositories>
 	
