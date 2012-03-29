@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,7 +45,8 @@ public class ReservationProcessor {
 
 	private static final Logger log = Logger.getLogger(ReservationProcessor.class);
 	
-	private Map<String, BlockingQueue<AutobahnCommand>> events = new HashMap<String, BlockingQueue<AutobahnCommand>>();
+	private Map<String, BlockingQueue<AutobahnCommand>> events =
+		new ConcurrentHashMap<String, BlockingQueue<AutobahnCommand>>();
 	private Map<String, AutobahnReservation> reservations = new HashMap<String, AutobahnReservation>();
 	private Map<String, String> previousDomains = new HashMap<String, String>();
 	
