@@ -24,10 +24,19 @@ AutoBAHN is developed by the <a href="http://www.geant.net">GEANT project</a>.
 <br />
 
 <p>
-If you want to learn more, please visit <a href="http://autobahn.geant.net">autobahn.geant.net</a>.
+If you want to learn more, please visit 
+<a href="http://bod.geant.net">bod.geant.net</a> and
+<a href="http://autobahn.geant.net">autobahn.geant.net</a>.
 <br />
 <br />
 How to contact us: <a href="mailto:autobahn-support@geant.net">autobahn-support@geant.net</a>
+<br />
+<br />
+If you have an issue contact your NREN or open a ticket to the 
+Multi-Domain Service Desk (MDSD):
+<a href="https://issues.geant.net/jira/browse/MDSD">
+    https://issues.geant.net/jira/browse/MDSD
+</a>
 </p>
 
 </div>
