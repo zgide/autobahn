@@ -591,6 +591,24 @@ http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schema
        
     </http:tlsClientParameters>
    </http:conduit>
+   
+   <http:conduit name="{http://gui.autobahn.geant.net/}GuiService.http-conduit">
+    <http:tlsClientParameters disableCNCheck="true" secureSocketProtocol="TLS">
+    
+      <!--sec:trustManagers>
+          <sec:keyStore type="JKS" password="changeit" file="etc/security/tomcat.jks"/>
+      </sec:trustManagers-->     
+      
+      <sec:cipherSuitesFilter>
+          <sec:include>.*_EXPORT_.*</sec:include>
+  	      <sec:include>.*_EXPORT1024_.*</sec:include>
+     	  <sec:include>.*_WITH_DES_.*</sec:include>
+      	  <sec:include>.*_WITH_NULL_.*</sec:include>
+      	  <sec:exclude>.*_DH_anon_.*</sec:exclude>
+      </sec:cipherSuitesFilter>
+       
+    </http:tlsClientParameters>
+   </http:conduit>
 
   <http:destination name="{http://oscars.es.net/OSCARS}OSCARS.http-destination">    
   </http:destination>
@@ -599,6 +617,9 @@ http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schema
   </http:destination>
   
   <http:destination name="{http://oscars.es.net/OSCARS}OSCARSNotify.http-destination">    
+  </http:destination>
+  
+  <http:destination name="{http://gui.autobahn.geant.net/}GuiService.http-destination">    
   </http:destination>
   
   <httpj:engine-factory>
