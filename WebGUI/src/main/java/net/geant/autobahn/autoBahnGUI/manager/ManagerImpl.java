@@ -48,13 +48,13 @@ import net.geant.autobahn.autoBahnGUI.model.ServicesFormModel;
 import net.geant.autobahn.autoBahnGUI.model.SettingsFormModel;
 import net.geant.autobahn.autoBahnGUI.model.StatisticsFormModel;
 import net.geant.autobahn.autoBahnGUI.topology.TopologyFinderNotifier;
+import net.geant.autobahn.constraints.RangeConstraint;
 import net.geant.autobahn.gui.EventType;
 import net.geant.autobahn.gui.ReservationChangedType;
 import net.geant.autobahn.intradomain.IntradomainReservation;
 import net.geant.autobahn.lookup.LookupService;
 import net.geant.autobahn.lookup.LookupServiceException;
 import net.geant.autobahn.network.Link;
-import net.geant.autobahn.reservation.User;
 import net.geant.autobahn.useraccesspoint.Mode;
 import net.geant.autobahn.useraccesspoint.PortType;
 import net.geant.autobahn.useraccesspoint.Priority;
@@ -190,6 +190,23 @@ public class ManagerImpl implements Manager, ManagerNotifier {
 
     private List<ReservationHelper> reservaionHelpers = new ArrayList<ReservationHelper>();
 
+    private static ManagerImpl instance;
+
+    /**
+     * Returns an instance of ManagerImpl. Singleton.
+     * @return
+     */
+    public synchronized static ManagerImpl getInstance() {
+        if (instance == null) {
+            try {
+                instance = new ManagerImpl();
+            } catch (Exception e) {
+                ManagerImpl.logger.error("Error while creating ManagerImpl instance", e);
+            }
+        }
+        return instance;
+    }
+
     public ManagerImpl() {
         Properties properties = new Properties();
         try {
@@ -217,6 +234,9 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             }
         }
         Collections.sort(timezones);
+        
+        // Make sure we have a single instance even if someone calls the constructor directly
+        instance = this;
     }
 
     @Override
@@ -867,7 +887,7 @@ public class ManagerImpl implements Manager, ManagerNotifier {
     public String submitServiceAtInterDomainManager(String idm, ServiceRequest request) throws UserAccessPointException, ManagerException {
         logger.info("Submitting service");
         if (request == null) {
-            throw new ManagerException(ManagerException.NO_SERVICE, "Sumitting null service");
+            throw new ManagerException(ManagerException.NO_SERVICE, "Submitting null service");
         }
         if (request.getReservations() == null || request.getReservations().isEmpty()) {
             throw new ManagerException(ManagerException.SERVICE_WITHOUT_RESERVATIONS, "Empty service submitted");
@@ -1234,7 +1254,7 @@ public class ManagerImpl implements Manager, ManagerNotifier {
         if (allPorts == null) {
             return null;
         }
-        List<String> userAllowed = getUserPorts("allow");
+        List<String> userAllowed = getUserPorts("ports.allow");
         if (userAllowed != null) {
             logger.info("Some ports allowed only:");
             for (PortType p : allPorts) {
@@ -1246,7 +1266,7 @@ public class ManagerImpl implements Manager, ManagerNotifier {
                 }
             }
         } else {
-            List<String> userDenied = getUserPorts("deny");
+            List<String> userDenied = getUserPorts("ports.deny");
             if (userDenied != null) {
                 logger.info("Some ports denied:");
                 for (PortType p : allPorts) {
@@ -1268,10 +1288,54 @@ public class ManagerImpl implements Manager, ManagerNotifier {
 
     /**
      * 
-     * @param key - Permitted values are allow and deny
+     * @param key - Permitted values are ports.allow and ports.deny
      * @return null if no such property is found
      */
     public List<String> getUserPorts(String key) {
+        String userPorts = getUserProperty(key);
+        if (userPorts == null) {
+            return null;
+        }
+        return Arrays.asList(userPorts.split(","));
+    }
+
+    /**
+     * 
+     * @return -1 if no such property is found or property has non-numeric value
+     */
+    public long getUserMaxCapacity() {
+        long res;
+        String maxCapacity = getUserProperty("maxCapacity");
+        try {
+            res = new Long(maxCapacity).longValue();
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+        return res;
+    }
+
+    /**
+     * Returns a RangeConstraint containing the VLAN ranges defined for this user
+     * 
+     * @param key - Permitted values are vlan.allow and vlan.deny
+     * @return null if no such property is found
+     */
+    public RangeConstraint getUserVlans(String key) {
+        String userVlans = getUserProperty(key);
+        if (userVlans == null) {
+            return null;
+        }
+        RangeConstraint r = new RangeConstraint(userVlans);
+        return r;
+    }
+
+    /**
+     * Returns the specified property for the current user
+     * 
+     * @param key - the property name
+     * @return null if no such property is found
+     */
+    public String getUserProperty(String key) {
         UserAuthParameters userAuth = this.getUserAuthParameters();
         if (userAuth == null) {
             logger.info("No user auth data");
@@ -1283,12 +1347,12 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             logger.info(username + " not found in etc/aai");
             return null;
         }
-        String allowed = prop.getProperty(key);
-        if (allowed == null || allowed.length() == 0) {
+        String value = prop.getProperty(key);
+        if (value == null || value.length() == 0) {
             logger.info(key + " has no values");
             return null;
         }
-        return Arrays.asList(allowed.split(","));
+        return value;
     }
 
     public Properties getPropertiesFromResource(String path) {

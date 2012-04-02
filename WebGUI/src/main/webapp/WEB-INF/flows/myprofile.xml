@@ -5,10 +5,16 @@
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
     <on-start>
-        <evaluate expression="manager.getUserPorts('allow')"
+        <evaluate expression="manager.getUserPorts('ports.allow')"
             result="flowScope.portsAllow" />
-        <evaluate expression="manager.getUserPorts('deny')"
+        <evaluate expression="manager.getUserPorts('ports.deny')"
             result="flowScope.portsDeny" />
+        <evaluate expression="manager.getUserVlans('vlan.allow')"
+            result="flowScope.vlanAllow" />
+        <evaluate expression="manager.getUserVlans('vlan.deny')"
+            result="flowScope.vlanDeny" />
+        <evaluate expression="manager.getUserMaxCapacity()"
+            result="flowScope.maxCapacity" />
         <evaluate expression="manager.getUserAuthParameters()"
             result="flowScope.authParameters" />
     </on-start>

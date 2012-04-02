@@ -71,6 +71,41 @@
     All available ports are allowed.
 </c:if>
 
+<c:if test="${vlanAllow != null}">
+    <table class="class_intras">
+        <tr><th>
+            <spring:message code="myprofile.vlan" text="VLANs allowed (All other VLANs are denied)" />
+        </th></tr>
+        <tr><td>${vlanAllow}</td></tr>
+    </table>
+    <br />
+</c:if>
+
+<c:if test="${vlanAllow == null && vlanDeny != null}">
+    <table class="class_intras">
+        <tr><th>
+            <spring:message code="myprofile.vlan" text="VLANs denied (All other VLANs are allowed)" />
+        </th></tr>
+        <tr><td>${vlanDeny}</td></tr>
+    </table>
+    <br />
+</c:if>
+
+<c:if test="${vlanAllow == null && vlanDeny == null}">
+    <br />
+    All available VLANs are allowed.
+</c:if>
+
+<c:if test="${maxCapacity >= 0}">
+    <br />
+    Maximum allowed capacity limit for a single request is ${maxCapacity} Mpbs.
+</c:if>
+
+<c:if test="${maxCapacity < 0}">
+    <br />
+    You have no maximum allowed capacity limit for a single request.
+</c:if>
+
 <br />
 <br />
 </div>

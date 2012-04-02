@@ -238,13 +238,14 @@ function blockInputStartTime(checked) {
                         <td class="label" style="width: 20px;"><spring:message code="reservation.mode"/></td>
                         <td class="value">
                             <form:select path="request.startPort.mode" id="mode-start" onchange="checkIfVlanSelected1(this.options[this.options.selectedIndex].text)">
-                              <form:options items="${modes}"/>
-                          </form:select>
-                       </td>
-                       <td class="label" style="width: 20px;" id="hide1"><spring:message code="reservation.vlan"/></td>
-                       <td id="hide2" >
-                           <form:input path="request.startPort.vlan" maxlength="4" cssStyle="width:30px; height:20px; margin-right:0px;"/> 
+                                <form:options items="${modes}"/>
+                            </form:select>
                         </td>
+                        <td class="label" style="width: 20px;" id="hide1"><spring:message code="reservation.vlan"/></td>
+                        <td id="hide2" >
+                            <form:input path="request.startPort.vlan" maxlength="4" cssStyle="width:30px; height:20px; margin-right:0px;"/> 
+                        </td>
+                        <td class="error"><form:errors path="request.startPort.vlan"/></td>
                     </tr>
                 </table>
             </td>
@@ -268,16 +269,17 @@ function blockInputStartTime(checked) {
             <td>
                 <table>
                     <tr>
-                      <td class="label" style="width: 20px;"><spring:message code="reservation.mode"/></td>
-                       <td class="value">	
-                          <form:select path="request.endPort.mode" id="mode-end" onchange="checkIfVlanSelected2(this.options[this.options.selectedIndex].text)" >
-                               <form:options items="${modes}"/>
-                          </form:select>
-                       </td>
-                       <td class="label" style="width: 20px;" id="hide3" ><spring:message code="reservation.vlan"/></td>
+                        <td class="label" style="width: 20px;"><spring:message code="reservation.mode"/></td>
+                        <td class="value">	
+                            <form:select path="request.endPort.mode" id="mode-end" onchange="checkIfVlanSelected2(this.options[this.options.selectedIndex].text)" >
+                                <form:options items="${modes}"/>
+                            </form:select>
+                        </td>
+                        <td class="label" style="width: 20px;" id="hide3" ><spring:message code="reservation.vlan"/></td>
                         <td id="hide4">
                             <form:input path="request.endPort.vlan" maxlength="4" cssStyle="width:30px; height:20px; margin-right:0px;"/> 
                         </td>
+                        <td class="error"><form:errors path="request.endPort.vlan"/></td>
                     </tr>
                 </table>
             </td>
