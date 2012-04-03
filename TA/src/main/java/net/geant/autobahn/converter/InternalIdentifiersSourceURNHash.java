@@ -8,7 +8,7 @@ import java.util.zip.CRC32;
 public class InternalIdentifiersSourceURNHash implements
 		InternalIdentifiersSource {
 
-	static String delimiter = ":";
+	static String delimiter = ".";
 
 	String domain;
 	boolean encrypt;
