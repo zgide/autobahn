@@ -228,6 +228,7 @@ function blockInputStartTime(checked) {
                 </form:select>
             </td>
             <form:hidden path="request.startPortFriendlyName" />
+            
         </tr>
 
         <tr>
@@ -257,8 +258,6 @@ function blockInputStartTime(checked) {
             <td class="value">
                 <form:select path="request.endPort.address" onchange="setEndFriendlyName(this.options[this.options.selectedIndex].text)">
                     <form:options items="${friendlyports_destinationDomain}" itemValue="address" itemLabel="friendlyName"/>
-                    <option disabled="true" value="IDCP">IDCP</option>
-                    <form:options items="${idcpPorts_all}" />
                 </form:select>
             </td>
             <form:hidden path="request.endPortFriendlyName" />

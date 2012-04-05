@@ -38,6 +38,7 @@
 			<evaluate expression="manager.getReservationRequestTemplate()" result="flowScope.reservation"/>
 			<evaluate expression="manager.getTimezones()" result="flowScope.timezones"/>
 			<evaluate expression="manager.getReservationModes()" result="flowScope.modes"/>
+			<evaluate expression="manager.getAllIdcpPorts()" result="flowScope.alldomains_IdcpPorts"/>
 		</transition>
 		<transition on-exception="java.lang.Exception" to="request-service"> 
 			<evaluate expression="exceptionTranslator.translateException(flowRequestContext, flowExecutionException)"/>

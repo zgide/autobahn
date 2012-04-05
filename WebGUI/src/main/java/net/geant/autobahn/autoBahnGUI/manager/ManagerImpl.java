@@ -191,6 +191,11 @@ public class ManagerImpl implements Manager, ManagerNotifier {
     private List<ReservationHelper> reservaionHelpers = new ArrayList<ReservationHelper>();
 
     private static ManagerImpl instance;
+    
+    /**
+     * IDCP name
+     */
+    private static String IDCP = "IDCP";
 
     /**
      * Returns an instance of ManagerImpl. Singleton.
@@ -340,6 +345,9 @@ public class ManagerImpl implements Manager, ManagerNotifier {
     @Override
     public List<PortType> getAllIdcpPorts (String idmIdentifier) {
         if (idmIdentifier != null) {
+        	if (idmIdentifier.equalsIgnoreCase(IDCP)) {
+        		return getAllIdcpPorts();
+        	}
             InterDomainManager manager = idms.get(idmIdentifier);
             if (manager == null) {
                 logger.info("getAllIdcpPorts() could not find idm manager for " 
@@ -570,6 +578,9 @@ public class ManagerImpl implements Manager, ManagerNotifier {
      */
     @Override
     public List<PortType> getInterDomainManagerPorts(String idmIdentifier) {
+    	if(idmIdentifier.equalsIgnoreCase(IDCP)) {
+    		return getAllIdcpPorts();
+    	}
         InterDomainManager manager = idms.get(idmIdentifier);
         if (manager == null) {
             logger.info("idms.get manager is NULL");

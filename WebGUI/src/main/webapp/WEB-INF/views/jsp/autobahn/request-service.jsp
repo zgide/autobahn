@@ -79,6 +79,7 @@ cursor:pointer;
             <td class="value">
                 <form:select path="destinationDomain">
                     <form:options items="${idms}"/>
+                    <option value="IDCP">IDCP</option>
                 </form:select>
             </td>
 	</tr>
