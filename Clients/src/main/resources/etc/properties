@@ -1,0 +1,11 @@
+idm=
+domain=
+capacity=
+description=
+startport=
+endport=
+
+#optional
+#delay=
+#takes true false values
+#bidirectional=

@@ -50,6 +50,25 @@
                     </descriptors>
                 </configuration>
             </plugin>
+			 <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>test-reservation-client</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>test-reservation-client</finalName>
+                    <descriptors>
+                        <descriptor>/src/main/assembly/test-reservation-assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
