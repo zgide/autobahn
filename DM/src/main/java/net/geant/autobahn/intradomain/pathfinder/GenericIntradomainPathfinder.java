@@ -151,7 +151,14 @@ public abstract class GenericIntradomainPathfinder implements
 		
 		IntradomainPath ipath = new IntradomainPath();
 
-		IntradomainPath[] segments = getPathsSeparatedByTranslatingNodes(edges);
+        // Setting a limit of 2 segments means that a multi-translation path
+        // will not be possible, so essentially only a single VLAN translation
+        // per path is supported. Increasing this limit creates problems,
+        // because of the nature of the ResourcesReservation.checkResources /
+        // addReservation procedure for adding a Reservation (i.e.
+        // checkResources only checks the ingress/egress constraints and
+        // provides addReservation with the constraints to reserve).
+		IntradomainPath[] segments = getPathsSeparatedByTranslatingNodes(edges, 2);
 		
         log.debug("IntraPath consists of " + segments.length + " VLAN segments");
 		for(IntradomainPath seg : segments) {
@@ -172,20 +179,33 @@ public abstract class GenericIntradomainPathfinder implements
 		return ipath;
 	}
 	
-	private IntradomainPath[] getPathsSeparatedByTranslatingNodes(GraphEdge[] edges) {
+	/**
+	 * Separates the input list of edges into segments (IntradomainPaths) based on
+	 * the existence of translating nodes. If the limit is reached, all remaining
+	 * edges are added to the last segment.
+	 * 
+	 * @param edges
+	 * @param limit - 0 or negative means no limit
+	 * @return
+	 */
+	private IntradomainPath[] getPathsSeparatedByTranslatingNodes(GraphEdge[] edges, int limit) {
 		List<IntradomainPath> res = new ArrayList<IntradomainPath>();
 		
 		IntradomainPath pth = new IntradomainPath();
+		int count = 1;
 		
 		for(GraphEdge edge : edges) {
 			Node sn = edge.getStartNode().getInternalNode();
 			Node en = edge.getEndNode().getInternalNode();
 			
-			if(en.isVlanTranslationSupport() || (edge.getLink().isInterdomain() && sn.isVlanTranslationSupport())) {
+            if (limit <= 0 || count < limit
+                    && en.isVlanTranslationSupport() || (edge.getLink().isInterdomain()
+                    && sn.isVlanTranslationSupport())) {
 				pth.addGenericLink(edge.getLink(), edge.getConstraints());
 				
 				res.add(pth);
 				pth = new IntradomainPath();
+				count++;
 			} else {
 				pth.addGenericLink(edge.getLink(), edge.getConstraints());
 			}
