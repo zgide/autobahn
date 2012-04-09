@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
@@ -38,6 +39,7 @@ import net.geant.autobahn.reservation.dao.ReservationHistoryDAO;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Transaction;
+
 
 public class ReservationProcessor {
 
@@ -483,10 +485,10 @@ public class ReservationProcessor {
 			command.run();
 			log.info(end);
 			
-			if (!t.wasCommitted()) {
-			    t.commit();
-			}
 			
+			if (!t.wasCommitted()) {
+				t.commit();
+			}
             hbm.closeSession();
             
             String[] str = start.split(" ");
@@ -527,6 +529,19 @@ public class ReservationProcessor {
 				}
 			} catch(InterruptedException ex) {
 				ex.printStackTrace();
+			} catch(Exception e) {
+				log.error("Unexpected erro in Reservation Runner: ", e);
+				AutobahnReservation rsv = reservations.get(resID);
+				if (rsv != null) {
+					List<ReservationStatusListener> list = rsv.getStatusListeners();
+					if (list != null) {
+						for (ReservationStatusListener listener : list) {
+							if (listener != null) {
+								listener.reservationProcessingFailed(resID, "Exception in ReservationRunner: " + e.getMessage());								
+							}
+						}
+					}
+				}
 			}
 		}
 

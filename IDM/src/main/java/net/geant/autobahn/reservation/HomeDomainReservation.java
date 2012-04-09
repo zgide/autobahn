@@ -436,10 +436,15 @@ public class HomeDomainReservation extends AutobahnReservation {
      * @param newState <code>HomeDomainState</code> state to switch to
      */
     public void switchState(HomeDomainState newState) {
-        setState(newState);
-        
-        // execute the state
-        newState.run(this);
+        try {
+			setState(newState);
+			
+			// execute the state
+			newState.run(this);
+		} catch (Exception e) {
+			this.fail("Unexpected exception in state " + newState);
+			log.error("Unexpected error: ", e);
+		}
     }
     
     @Override

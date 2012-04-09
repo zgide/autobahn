@@ -101,10 +101,15 @@ public class LastDomainReservation extends ExternalReservation {
      * @param newState <code>LastDomainState</code> state to switch to
      */
     public void switchState(LastDomainState newState) {
-        setState(newState);
-        
-        // execute the state
-        newState.run(this);
+        try {
+			setState(newState);
+			
+			// execute the state
+			newState.run(this);
+		} catch (Exception e) {
+			this.fail(ReservationErrors.UNEXPECTED_ERROR, "Unexpected exception in state " + newState);
+			log.error("Unexpected error: ", e);
+		}
     }
     
     @Override
