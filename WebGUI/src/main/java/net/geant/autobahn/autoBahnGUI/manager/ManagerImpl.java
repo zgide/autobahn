@@ -62,6 +62,8 @@ import net.geant.autobahn.useraccesspoint.ReservationRequest;
 import net.geant.autobahn.useraccesspoint.Resiliency;
 import net.geant.autobahn.useraccesspoint.ServiceRequest;
 import net.geant.autobahn.useraccesspoint.UserAccessPointException;
+import net.geant.security.UserProfile;
+import net.geant.security.UserProfileManager;
 
 import org.apache.log4j.Logger;
 import org.springframework.security.Authentication;
@@ -1265,7 +1267,7 @@ public class ManagerImpl implements Manager, ManagerNotifier {
         if (allPorts == null) {
             return null;
         }
-        List<String> userAllowed = getUserPorts("ports.allow");
+        List<String> userAllowed = getUserPorts(true);
         if (userAllowed != null) {
             logger.info("Some ports allowed only:");
             for (PortType p : allPorts) {
@@ -1277,7 +1279,7 @@ public class ManagerImpl implements Manager, ManagerNotifier {
                 }
             }
         } else {
-            List<String> userDenied = getUserPorts("ports.deny");
+            List<String> userDenied = getUserPorts(false);
             if (userDenied != null) {
                 logger.info("Some ports denied:");
                 for (PortType p : allPorts) {
@@ -1299,11 +1301,16 @@ public class ManagerImpl implements Manager, ManagerNotifier {
 
     /**
      * 
-     * @param key - Permitted values are ports.allow and ports.deny
+     * @param allow - If true, ports permitted will be returned, else ports denied
      * @return null if no such property is found
      */
-    public List<String> getUserPorts(String key) {
-        String userPorts = getUserProperty(key);
+    public List<String> getUserPorts(boolean allow) {
+        String userPorts;
+        if (allow) {
+            userPorts = getUserProperty(UserProfile.PORTSALLOW);
+        } else {
+            userPorts = getUserProperty(UserProfile.PORTSDENY);
+        }
         if (userPorts == null) {
             return null;
         }
@@ -1316,7 +1323,7 @@ public class ManagerImpl implements Manager, ManagerNotifier {
      */
     public long getUserMaxCapacity() {
         long res;
-        String maxCapacity = getUserProperty("maxCapacity");
+        String maxCapacity = getUserProperty(UserProfile.MAXCAPACITY);
         try {
             res = new Long(maxCapacity).longValue();
         } catch (NumberFormatException e) {
@@ -1328,11 +1335,16 @@ public class ManagerImpl implements Manager, ManagerNotifier {
     /**
      * Returns a RangeConstraint containing the VLAN ranges defined for this user
      * 
-     * @param key - Permitted values are vlan.allow and vlan.deny
+     * @param allow - If true, VLANs permitted will be returned, else VLANs denied
      * @return null if no such property is found
      */
-    public RangeConstraint getUserVlans(String key) {
-        String userVlans = getUserProperty(key);
+    public RangeConstraint getUserVlans(boolean allow) {
+        String userVlans;
+        if (allow) {
+            userVlans = getUserProperty(UserProfile.VLANALLOW);
+        } else {
+            userVlans = getUserProperty(UserProfile.VLANDENY);
+        }
         if (userVlans == null) {
             return null;
         }
@@ -1353,31 +1365,12 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             return null;
         }
         String username = userAuth.getIdentifier();
-        Properties prop = getPropertiesFromResource("../etc/aai/" + username);
-        if (prop == null) {
-            logger.info(username + " not found in etc/aai");
-            return null;
-        }
-        String value = prop.getProperty(key);
+        String value = UserProfileManager.getUserProfileManager().getUserProperty(username, key);
         if (value == null || value.length() == 0) {
-            logger.info(key + " has no values");
+            logger.info(username + " does not have the " + key + " property");
             return null;
         }
         return value;
-    }
-
-    public Properties getPropertiesFromResource(String path) {
-        Properties properties = new Properties();
-        try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream(path);
-            properties.load(is);
-            is.close();
-            logger.debug(properties.size() + " properties loaded from " + path);
-        } catch (Exception e) {
-            logger.info("Could not load " + path + ": " + e.getMessage());
-            return null;
-        }
-        return properties;
     }
 
     /*

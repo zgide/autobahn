@@ -116,8 +116,8 @@ public class ReservatiomDepandentOnTimezone implements Serializable {
 		}
 		
 		//check if user can request the specified vlan
-		RangeConstraint vlansAllow = ManagerImpl.getInstance().getUserVlans("vlan.allow");
-        RangeConstraint vlansDeny = ManagerImpl.getInstance().getUserVlans("vlan.deny");
+		RangeConstraint vlansAllow = ManagerImpl.getInstance().getUserVlans(true);
+        RangeConstraint vlansDeny = ManagerImpl.getInstance().getUserVlans(false);
         int startVlan = this.getRequest().getStartPort().getVlan();
         int endVlan = this.getRequest().getEndPort().getVlan();
 		if (vlansAllow != null) {

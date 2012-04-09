@@ -28,6 +28,13 @@
 			<evaluate expression="xmlUserDetailsAdmin.usersParameters" result="flowScope.users" />
 		</transition>
 
+        <transition on="edit" to="edit-user" bind="false">
+            <set name="requestScope.username" value="requestParameters.username"
+                type="string" />
+
+            <evaluate expression="userProfileManager.getUserProfile(username)" result="flowScope.userProfile" />
+        </transition>
+
 		<transition on="add" to="view-users" bind="true">
 			<set name="requestScope.username" value="requestParameters.username"
 				type="string" />
@@ -51,5 +58,29 @@
 			<evaluate expression="exceptionTranslator.translateException(flowRequestContext, flowExecutionException)"/>
 		</transition>
 	</view-state>
+
+    <view-state id="edit-user" view="secure/edit-user">
+        <transition on="save" to="edit-user" bind="false">
+            <set name="requestScope.username" value="requestParameters.username"
+                type="string" />
+            <set name="requestScope.portsAllow" value="requestParameters.portsAllow"
+                type="string" />
+            <set name="requestScope.portsDeny" value="requestParameters.portsDeny"
+                type="string" />
+            <set name="requestScope.vlanAllow" value="requestParameters.vlanAllow"
+                type="string" />
+            <set name="requestScope.vlanDeny" value="requestParameters.vlanDeny"
+                type="string" />
+            <set name="requestScope.maxCapacity" value="requestParameters.maxCapacity"
+                type="string" />
+
+            <evaluate expression="userProfileManager.setUserProfile(username, portsAllow, portsDeny, vlanAllow, vlanDeny, maxCapacity)" />
+            <evaluate expression="userProfileManager.getUserProfile(username)" result="flowScope.userProfile" />
+        </transition>
+
+        <transition on-exception="java.lang.Exception" to="edit-user"> 
+            <evaluate expression="exceptionTranslator.translateException(flowRequestContext, flowExecutionException)"/>
+        </transition>
+    </view-state>
 
 </flow>

@@ -27,6 +27,8 @@
             access="ROLE_ADMINISTRATOR" />
         <intercept-url pattern="/portal/secure/view-users.htm"
             access="ROLE_ADMINISTRATOR" />
+        <intercept-url pattern="/portal/secure/edit-user.htm"
+            access="ROLE_ADMINISTRATOR" />
         <intercept-url pattern="/portal/secure/restartAll.htm"
             access="ROLE_ADMINISTRATOR" />      
 		<intercept-url pattern="/portal/secure/**"
@@ -38,6 +40,11 @@
 		<logout invalidate-session="true" />
 	</http>
 
+    <!-- User rights Manager -->
+    <beans:bean id="userProfileManager"
+        class="net.geant.security.UserProfileManager"
+        factory-method="getUserProfileManager"/>
+    
 	<!-- XML IDP -->
 	<beans:bean id="xmlUserDetailsAdmin"
 		class="net.geant.security.xml.userdetails.XmlUserDetailsAdmin">

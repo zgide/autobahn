@@ -5,6 +5,7 @@
 
 <div style="text-align: left;" class="home_image">
 <table width="100%">
+                <form:form commandName="xmlUserDetailsAdmin" >
                 <tr>
                         <th><spring:message code="userview.identifier" text="Identifier"/></th>
                         <th><spring:message code="userview.organization" text="Organization"/></th>
@@ -15,17 +16,22 @@
                 </tr>
                 <c:forEach items="${users}" var="user" varStatus="loopStatus">
                                 <tr>
-                                        <td>${user.identifier}</td>
+                                        <td>
+                                            <a href="${flowExecutionUrl}&_eventId=edit&username=${user.identifier}">
+                                                ${user.identifier}
+                                            </a>
+                                        </td>
                                         <td>${user.organization}</td>
                                         <td>${user.projectMembership}</td>
                                         <td>${user.projectRole}</td>
                                         <td>${user.email}</td>
                                         <td>
-                                                <a href="${flowExecutionUrl}&_eventId=remove&username=${user.identifier}">Remove</a>
+                                            <a href="${flowExecutionUrl}&_eventId=remove&username=${user.identifier}">
+                                                Remove
+                                            </a>
                                         </td>
                                 </tr>
                 </c:forEach>
-                <form:form commandName="xmlUserDetailsAdmin" >
                 <input type="hidden" name="_eventId" value="add" />
                                <tr>
                                         <td><input type="text" name="username" style="width:auto" size="10" /></td>
