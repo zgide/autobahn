@@ -6,40 +6,16 @@
 <script type="text/javascript" src="<c:url value="/scripts/jscalendar/js/lang/en.js"/>"></script>
 <script src="http://cdn.jquerytools.org/1.2.3/full/jquery.tools.min.js"></script>
 <script type="text/javascript" src="<c:url value="/js/jquery/jquery.validate.min.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/scripts/date.js"/>"></script>
 
 <script language="javascript">
 
 function passPort(){
     setStartFriendlyName(document.getElementById('request.startPort.address').options[document.getElementById('request.startPort.address').options.selectedIndex].text);
     var now = new Date();
-    var month = parseInt(now.getMonth())+1;
-    if (month > 12) {
-        month = 01;
-    }
-    if (month < 10) {
-        month = "0" + month;
-    }
-    var day;
-    if (now.getDate()<10) {
-        day= "0" + now.getDate();
-    } else {
-        day= now.getDate();
-    }
-    var year = now.getFullYear();
-    var hour = now.getHours();
-    if (hour<10) {
-        hour = "0" + hour;
-    }
-    var minutes = parseInt(now.getMinutes()) + 10;
-    if (minutes>49) {
-        minutes=59;
-    }
-    document.getElementById('startTime').value=year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":00";
-    if (hour<10) {
-        document.getElementById('endTime').value=year + "-" + month + "-" + day + " " + "0" + (parseInt(hour)+1) + ":" + minutes + ":00";
-    } else {
-        document.getElementById('endTime').value=year + "-" + month + "-" + day + " " + (parseInt(hour)+1) + ":" + minutes + ":00";	
-    }
+    
+    document.getElementById('startTime').value = now.addMinutes(10).toString("yyyy-MM-dd HH:mm:ss");
+    document.getElementById('endTime').value = now.addMinutes(60).toString("yyyy-MM-dd HH:mm:ss");
 }
 
 function alerta(){
