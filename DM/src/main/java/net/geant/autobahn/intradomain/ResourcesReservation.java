@@ -334,10 +334,10 @@ public class ResourcesReservation {
 	 *             When selected resources are already reserved for another
 	 *             reservation in the same time.
 	 */
-	public void addReservation(String resID, Link[] links,
+	public synchronized void addReservation(String resID, Link[] links,
 			ReservationParams par) throws OversubscribedException, 
 			ConstraintsAlreadyUsedException {
-
+		
 		IntradomainPath pSkel = buildPathSkeleton(links[0], links[links.length - 1], par);
 		
 		Calendar sTime = par.getStartTime();

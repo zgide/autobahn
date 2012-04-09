@@ -263,8 +263,6 @@ public final class AccessPoint implements Idm2Dm, DmAdministration {
 		} catch (OversubscribedException e) {
 			log.warn("Oversubscribed when adding Reservation: " + resId + ", "
 					+ e.getMessage());
-		} catch (Exception e) {
-			log.error("ERROR when adding reservation: " + resId + ", ", e);
 		}
 	}
 

@@ -57,6 +57,8 @@ public class ReservationProcessor {
     
 	private String timestamp;
 	private String milliseconds;
+	
+	private static Object rsvRunnerLock = new Object();
 
 	public ReservationProcessor(String domainID, Idm2Dm domainManager) {
 		this.domainManager = domainManager;
@@ -517,7 +519,11 @@ public class ReservationProcessor {
 			Runnable command = null;
 			try {
 				while(!end && (command = queue.take()) != null) {
-					command.run();
+					//Make sure that only a single reservation is 
+					//processed each time 
+					synchronized (rsvRunnerLock) {
+						command.run();
+					}
 				}
 			} catch(InterruptedException ex) {
 				ex.printStackTrace();
