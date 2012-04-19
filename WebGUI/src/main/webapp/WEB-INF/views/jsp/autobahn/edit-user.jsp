@@ -49,7 +49,7 @@
         </tr>
         <tr>
             <td colspan="5" align="center" style="padding-top: 20px">
-                <input type="submit" value="Save" style="width: auto" />
+                <input type="submit" value="Save" name="_eventId_save" style="width: auto" />
             </td>
         </tr>
     </form:form>

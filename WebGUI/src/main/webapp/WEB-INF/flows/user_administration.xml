@@ -50,6 +50,7 @@
 				type="string" />
 				
 			<evaluate expression="xmlUserDetailsAdmin.createUserFromUserParameters(username, organization, membership, role, password, email)" />
+			<evaluate expression="userProfileManager.setUserProfile(username, null, null, null, null, null)" />
 			<evaluate expression="xmlUserDetailsAdmin.loadUsers()" />
 			<evaluate expression="xmlUserDetailsAdmin.usersParameters" result="flowScope.users" />
 		</transition>

@@ -1,6 +1,7 @@
 package net.geant.security;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -8,12 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import net.geant.autobahn.resources.ResourcePath;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class UserProfileManager {
 
-    public static final String userConfigPath = "../etc/aai/";
+    public static final String userConfigPath = "etc/aai/";
     private static UserProfileManager userProfileManager;
     private static final Log logger = LogFactory
             .getLog("net.geant.security.UserProfileManager");
@@ -35,9 +38,11 @@ public class UserProfileManager {
      */
     public Properties readUserPropertiesFromFile(String username) {
         Properties properties = new Properties();
-        String path = userConfigPath + username;
+        ResourcePath resource=new ResourcePath();
+        String path =resource.getFullPath(userConfigPath + username );
         try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream(path);
+            //InputStream is = getClass().getClassLoader().getResourceAsStream(path);
+        	InputStream is = new FileInputStream(path);
             properties.load(is);
             is.close();
             userProfiles.put(username, new UserProfile(username, properties));
@@ -50,7 +55,8 @@ public class UserProfileManager {
     }
 
     public void writeUserPropertiesToFile(String username, Properties props) {
-        String path = userConfigPath + username;
+        ResourcePath resource=new ResourcePath();
+        String path =resource.getFullPath(userConfigPath + username );
         try {
             if (props == null) {
                 File f = new File(path);
