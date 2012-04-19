@@ -13,9 +13,18 @@
 function passPort(){
     setStartFriendlyName(document.getElementById('request.startPort.address').options[document.getElementById('request.startPort.address').options.selectedIndex].text);
     var now = new Date();
+
+    var startTime = document.getElementById('startTime').value;
+    var endTime = document.getElementById('endTime').value;
     
-    document.getElementById('startTime').value = now.addMinutes(10).toString("yyyy-MM-dd HH:mm:ss");
-    document.getElementById('endTime').value = now.addMinutes(60).toString("yyyy-MM-dd HH:mm:ss");
+    if (startTime.indexOf("UTC") != -1) {
+	    document.getElementById('startTime').value = now.addMinutes(10).toString("yyyy-MM-dd HH:mm:ss");
+    	document.getElementById('endTime').value = now.addMinutes(60).toString("yyyy-MM-dd HH:mm:ss");    	
+    } else {
+	    document.getElementById('startTime').value = startTime.replace("T"," ");
+    	document.getElementById('endTime').value = endTime.replace("T"," ");    	
+    }
+    
 }
 
 function alerta(){
