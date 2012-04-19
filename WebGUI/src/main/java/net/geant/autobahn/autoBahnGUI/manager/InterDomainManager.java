@@ -201,14 +201,10 @@ public class InterDomainManager implements UserAccessPoint, Administration {
      * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#submitService(net.geant.autobahn.useraccesspoint.ServiceRequest)
      */
     @Override
-    public String submitService(ServiceRequest request) {
+    public String submitService(ServiceRequest request)
+            throws UserAccessPointException {
         if (isUserAccessPointConnected()) {
-            try {
-                return userAccessPoint.submitService(request);
-            } catch (UserAccessPointException e) {
-                logger.error("Cannot submit the service to idm: "
-                        + e.getClass().getName() + " : " + e.getMessage());
-            }
+            return userAccessPoint.submitService(request);
         }
         return null;
     }

@@ -8,6 +8,7 @@ import net.geant.autobahn.useraccesspoint.UserAccessPointException;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -62,14 +63,22 @@ public class ExceptionTranslator implements MessageSourceAware {
 				
 				if (conf!= null){
 					logger.info("FileSystemManagerException:"+conf.getMessage());
-					requestContext.getFlowScope().put("error", messages.getMessage(ManagerException.name+"."+conf.getError(), null, Locale.getDefault()));
+					try {
+					    requestContext.getFlowScope().put("error", messages.getMessage(ManagerException.name+"."+conf.getError(), null, Locale.getDefault()));
+                    } catch (NoSuchMessageException nsme) {
+                        requestContext.getFlowScope().put("error", conf.getError());
+                    }
 					return;
 				}
 				UserAccessPointException ue = findUserAccessPointException ((FlowExecutionException)exception);
 				
 				if (ue!= null){
 					logger.info("FileSystemManagerException:"+ue.getMessage());
-					requestContext.getFlowScope().put("error", messages.getMessage(ue.getMessage(), null, Locale.getDefault()));
+					try {
+					    requestContext.getFlowScope().put("error", messages.getMessage(ue.getMessage(), null, Locale.getDefault()));
+					} catch (NoSuchMessageException nsme) {
+					    requestContext.getFlowScope().put("error", ue.getMessage());
+					}
 					return;
 				}
 				
