@@ -604,7 +604,6 @@ public class ManagerImpl implements Manager, ManagerNotifier {
 
     @Override
     public Map<String, String> getServicesForAllInterDomainManagers() {
-
         List<ServiceType> list = new ArrayList<ServiceType>();
         InterDomainManager manager = null;
         List<ServiceType> managerServices = null;
@@ -612,10 +611,12 @@ public class ManagerImpl implements Manager, ManagerNotifier {
         for (String idm : idms.keySet()) {
             manager = idms.get(idm);
             if (manager == null)
-                continue;
-            managerServices = manager.getServices(false);
+            	continue;
+            
+            managerServices = manager.getServices(true);
             if (managerServices == null)
-                continue;
+            	continue;
+         
             list.addAll(managerServices);
         }
         Map<String, String> map = new HashMap<String, String>();
@@ -624,19 +625,24 @@ public class ManagerImpl implements Manager, ManagerNotifier {
 
             List<ReservationType> res = list.get(i).getReservations();
             for (int j = 0; j < res.size(); j++) {
-
-                if (res.get(j).getPath() == null) {
-                    continue;
-                }
-                String bodyID = res.get(j).getBodID();
-                String homeID = res.get(j).getPath().getHomeDomainID();
-                map.put(bodyID, homeID);
+            	
+            	
+            	if(res.get(j).getBodID().contains("@")){
+            		int index = res.get(j).getBodID().indexOf("@");
+            		String idm = res.get(j).getBodID().substring(0, index);
+            		String service = res.get(j).getBodID();
+            		
+            		map.put(service, idm);
+            	}
+            
             }
         }
         if (map.size() == 0) {
+        	System.out.println("map has no services");
             return null;
         } else {
-            return sortMapByKey(map);
+        	System.out.println(map.keySet());
+        	return sortMapByKey(map);
         }
     }
 

@@ -220,20 +220,38 @@ function refreashMap (map){
   	request.send(null);
 }
 
+
+
 function onPopupClose(evt) {
     selectControl.unselect(this.feature);
 }
+
 function onFeatureSelect(evt) {
     var feature = this;
-
-    removeAllMapPopup();
-
-    popup = feature.createPopup(true);
-    feature.popup = popup;
-    popup.feature = feature;
-    map.addPopup(popup);
-
+    
+    if (feature.popup == null )
+    {
+    	for(var i=0; i< map.popups.length; i = i + 1){
+    		map.popups[i].hide();
+    	}
+    	
+    	popup = feature.createPopup(true);
+    	feature.popup = popup;
+    	popup.feature = feature;
+    	map.addPopup(popup);
+    	
+    }else
+    {
+    	feature.popup.toggle();
+    	for(var i=0; i< map.popups.length; i = i + 1){
+    		if(map.popups[i] == feature.popup )
+    			map.popups[i].visible();
+    		else
+    			map.popups[i].hide();
+    	}
+    }
 }
+
 function onFeatureUnselect(evt) {
     feature = evt.feature;
     if (feature.popup) {
@@ -252,8 +270,9 @@ function removeAllMapPopup(){
 
 function make_all(map){
 if (GBrowserIsCompatible()) {
-    setInterval('refreashMap(map)',3000);
+    setInterval('refreashMap(map)',60000);
     refreashMap(map);
+    
   }else {
     alert('Sorry, the Google Maps API is not compatible with this browser');
   }

@@ -7,8 +7,6 @@
 	}
 </style>
 
-
-<!--script src="http://cdn.jquerytools.org/1.2.3/full/jquery.tools.min.js"></script-->
 <script type="text/javascript" src="<c:url value="/js/jquery/jquery.validate.min.js"/>"></script>
 <link rel="stylesheet" type="text/css" href="<c:url value="/js/jquery/scrollable.css"/>"/>
 
@@ -24,32 +22,42 @@
 		
 <c:set var="end" value="2"></c:set>
 <c:set var="k" value="0"></c:set>
+<c:set var="counter" value="1"></c:set>
 
-
-<c:if test="${size > 2}">
-<div id="actions" style="padding-left:15px; text-align:center">
-<!--   	<a class="prev" style="position: relative; float: left;" >&laquo; BACK</a>-->
-   	<div class="navi">
-   	  <c:forEach begin="1" end="${size}" step="2" var="i">
+<div id="actions" style="padding-left:15px; text-align:center"> 
+<table>
+<tr>
+	<td style="width: 10%">
+		<a class="prev" style="position: relative; float: left;" >&laquo;BACK</a>
+	</td>
+	<td class="navi" style="width: 90%">
+	
+	 <c:forEach begin="1" end="${size}" step="2" var="i">
    	    <c:set var="class" value=""></c:set>
    	    <c:if test="${i == 1}">
    	    	<c:set var="class" value="active"></c:set>
    	    </c:if>
-   	    
+   	    <c:if test="${i % 50 == 0}">
+   	    	<br/>
+   	    </c:if>
    	    <c:choose>
    	      <c:when test="${i == size}">
-   	        <a href="#" class="${class}">${i}</a>
+   	        <a href="#" class="${class}"></a>
    	      </c:when>
    	      <c:otherwise>
-	   	    <a href="#" class="${class}">${i} - ${i + 1}</a>
+	   	    <a href="#" class="${class}"></a>
    	      </c:otherwise>
    	    </c:choose>
    	  </c:forEach>
-   	
-<!--   	<a class="next" style="font-weight:normal;border:0px;">NEXT &raquo;</a>-->
+	
+	
+	</td>
+	<td style="width: 10%">
+		<a class="next" style="position: relative; float: right;">NEXT&raquo;</a>
+	</td>
+<tr>
+</table>
 </div>
-</div>
-</c:if>
 
 <div class="scrollable vertical" style="height:590px; overflow: hidden; ">
   <div class="items">
@@ -59,7 +67,7 @@
  
  
  
-		<c:forEach items="${services.services}"  begin="${k}" varStatus="x">
+<c:forEach items="${services.services}"  begin="${k}" varStatus="x">
 
 <c:choose>
    <c:when test="${flag == 'true'}"> 
@@ -69,7 +77,7 @@
   <div class="item" style="height:570px; overflow: auto;">
    	<c:forEach items="${services.services}" var="element" begin="${k}" end="${end-1}" varStatus="y">
    								
-   	<h4 align="right" style="padding-bottom:10px;"><b>Service: ${element.bodID}</b></h4>
+   	<h4 align="right" style="padding-bottom:10px;"><b> Service: ${element.bodID}</b></h4>
 	<div id="coolection_service">
 	<table width="300px">
 		<tr>
@@ -146,6 +154,7 @@
    					
    	<c:set var="k" value="${x.count}"></c:set>
    	<c:set var="end" value="${x.count + 2}"></c:set>
+   	<c:set var="counter" value="${x.count +1}"></c:set>	
    				
    </c:if>
    		
@@ -158,7 +167,7 @@
    				
    		<div class="item"  style="height:570px; overflow: auto;">
    			<c:forEach items="${services.services}" var="element" begin="${k}" end="${end-1}" varStatus="y">
-   	<h4 align="right" style="padding-bottom:10px;"><b>Service: ${element.bodID}</b></h4>
+   	<h4 align="right" style="padding-bottom:10px;"><b> Service: ${element.bodID}</b></h4>
 <div id="coolection_service">
 	<table width="300px">
 		<tr>
@@ -239,7 +248,7 @@
    				
    	<div class="item" style="height:570px; overflow: auto;">
    			<c:forEach items="${services.services}" var="element" begin="${k}" end="${end-1}" varStatus="z">
-   	<h4 align="right" style="padding-bottom:10px;"><b>Service: ${element.bodID}</b></h4>
+   	<h4 align="right" style="padding-bottom:10px;"><b> Service: ${element.bodID}</b></h4>
 <div id="coolection_service">
 	<table width="300px">
 		<tr>
@@ -311,7 +320,7 @@
    					
    		<c:set var="k" value="${x.count}"></c:set>
    		<c:set var="end" value="${x.count + 2}"></c:set>
-   				
+   		<c:set var="counter" value="${x.count +1}"></c:set>		
    </c:if>
    				
    						
@@ -327,7 +336,6 @@
   </c:forEach>
    	</div>
   </div>	
-
 <script>
 
 jQuery(document).ready(function() {	 

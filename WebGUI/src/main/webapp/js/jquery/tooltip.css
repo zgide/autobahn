@@ -3,9 +3,9 @@
 }
 /* trigger button */
 #download_now {
-	background:transparent url(img/download_new.png) no-repeat scroll 0 0;
+	background:transparent url(img/reservations.png) no-repeat scroll 0 0;
 	display:block;
-	height:250px;
+	height:267px;
 	margin-bottom:30px;
 	overflow:hidden;
 	text-indent:-999em;
@@ -15,6 +15,7 @@
 	position:absolute;  
 	right:25px; 
 	top: 350px;
+	z-index: 2;
 	
 }
 
