@@ -17,7 +17,7 @@ function passPort(){
     var startTime = document.getElementById('startTime').value;
     var endTime = document.getElementById('endTime').value;
     
-    if (startTime.indexOf("UTC") != -1) {
+    if (isNaN(startTime.charAt(0)) == true) {
 	    document.getElementById('startTime').value = now.addMinutes(10).toString("yyyy-MM-dd HH:mm:ss");
     	document.getElementById('endTime').value = now.addMinutes(60).toString("yyyy-MM-dd HH:mm:ss");    	
     } else {
