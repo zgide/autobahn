@@ -1,5 +1,24 @@
 package net.geant.autobahn.idm;
 
+import net.geant.autobahn.administration.Translator;
+import net.geant.autobahn.constraints.GlobalConstraints;
+import net.geant.autobahn.dao.hibernate.HibernateIdmDAOFactory;
+import net.geant.autobahn.dao.hibernate.HibernateUtil;
+import net.geant.autobahn.dao.hibernate.IdmHibernateUtil;
+import net.geant.autobahn.idm2dm.Idm2Dm;
+import net.geant.autobahn.interdomain.Interdomain;
+import net.geant.autobahn.interdomain.InterdomainClient;
+import net.geant.autobahn.interdomain.NoSuchReservationException;
+import net.geant.autobahn.reservation.AutobahnReservation;
+import net.geant.autobahn.reservation.ExternalReservation;
+import net.geant.autobahn.reservation.LastDomainReservation;
+import net.geant.autobahn.reservation.Reservation;
+import net.geant.autobahn.reservation.ReservationStatusListener;
+import net.geant.autobahn.reservation.dao.ReservationDAO;
+import net.geant.autobahn.reservation.dao.ReservationHistoryDAO;
+import org.apache.log4j.Logger;
+import org.hibernate.Transaction;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,26 +38,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.geant.autobahn.administration.Translator;
-import net.geant.autobahn.constraints.GlobalConstraints;
-import net.geant.autobahn.dao.hibernate.HibernateIdmDAOFactory;
-import net.geant.autobahn.dao.hibernate.HibernateUtil;
-import net.geant.autobahn.dao.hibernate.IdmHibernateUtil;
-import net.geant.autobahn.idm2dm.Idm2Dm;
-import net.geant.autobahn.interdomain.Interdomain;
-import net.geant.autobahn.interdomain.InterdomainClient;
-import net.geant.autobahn.interdomain.NoSuchReservationException;
-import net.geant.autobahn.reservation.AutobahnReservation;
-import net.geant.autobahn.reservation.ExternalReservation;
-import net.geant.autobahn.reservation.LastDomainReservation;
-import net.geant.autobahn.reservation.Reservation;
-import net.geant.autobahn.reservation.ReservationStatusListener;
-import net.geant.autobahn.reservation.dao.ReservationDAO;
-import net.geant.autobahn.reservation.dao.ReservationHistoryDAO;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Transaction;
 
 
 public class ReservationProcessor {
@@ -411,10 +410,14 @@ public class ReservationProcessor {
 		
 		AutobahnCommand command = new AutobahnCommand() {
             public void run() {
-                rdao.update(res);
-        		res.activate(success);
+                if (success){
+                    rdao.update(res);
+                } else {
+                    rdao.merge(res);
+                }
 
-        		hdao.update(Translator.convertHistory(res));
+        		res.activate(success);
+                hdao.update(Translator.convertHistory(res));
             }
 
 			@Override
