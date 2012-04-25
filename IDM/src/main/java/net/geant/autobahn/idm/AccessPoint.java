@@ -524,6 +524,7 @@ public final class AccessPoint implements UserAccessPoint,
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#cancelService(java.lang.String)
 	 */
+	@Override
 	public void cancelService(String serviceID) throws UserAccessPointException {
 		
         log.info("============= CANCEL REQUEST ============");
@@ -536,6 +537,7 @@ public final class AccessPoint implements UserAccessPoint,
 	/* (non-Javadoc)
      * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#getAllDomains()
      */
+	@Override
     public String[] getAllDomains() {
         
         List<AdminDomain> domains = daos.getAdminDomainDAO().getAll();
@@ -560,6 +562,7 @@ public final class AccessPoint implements UserAccessPoint,
     /* (non-Javadoc)
      * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#getAllDomains_NonClient()
      */
+    @Override
     public String[] getAllDomains_NonClient() {
         
         List<AdminDomain> domains = daos.getAdminDomainDAO().getAll();
@@ -586,6 +589,7 @@ public final class AccessPoint implements UserAccessPoint,
     /* (non-Javadoc)
      * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#getAllLinks()
      */
+    @Override
     public String[] getAllLinks() {
         
         List<Link> links = daos.getLinkDAO().getAll();
@@ -610,6 +614,7 @@ public final class AccessPoint implements UserAccessPoint,
     /* (non-Javadoc)
      * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#getAllLinks_NonClient()
      */
+    @Override
     public String[] getAllLinks_NonClient() {
         
         List<Link> links = daos.getLinkDAO().getAll();
@@ -638,6 +643,7 @@ public final class AccessPoint implements UserAccessPoint,
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#getAllClientPorts()
 	 */
+    @Override
 	public List<PortType> getAllClientPorts() {
 		
 		List<Port> cports = daos.getPortDAO().getClientPorts();
@@ -692,6 +698,7 @@ public final class AccessPoint implements UserAccessPoint,
     /* (non-Javadoc)
      * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#getAllIdcpPorts()
      */
+    @Override
     public List<PortType> getIdcpPorts() {
         List<Port> cports = daos.getPortDAO().getAll();
         List<PortType> idcpPorts = new ArrayList<PortType>();
@@ -719,6 +726,7 @@ public final class AccessPoint implements UserAccessPoint,
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#getDomainClientPorts()
 	 */
+    @Override
 	public List<PortType> getDomainClientPorts() {
 		List<Port> cports = daos.getPortDAO().getDomainClientPorts(domainName);
 		List<PortType> cp = new ArrayList<PortType>();
@@ -764,6 +772,7 @@ public final class AccessPoint implements UserAccessPoint,
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#queryService(java.lang.String)
 	 */
+    @Override
 	public ServiceResponse queryService(String serviceID)
 			throws UserAccessPointException {
 		
@@ -807,6 +816,7 @@ public final class AccessPoint implements UserAccessPoint,
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#submitService(net.geant.autobahn.useraccesspoint.ServiceRequest, String)
 	 */
+	@Override
 	public String submitServiceAndRegister(ServiceRequest request, String url)
 			throws UserAccessPointException {
 		
@@ -856,6 +866,7 @@ public final class AccessPoint implements UserAccessPoint,
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#submitService(net.geant.autobahn.useraccesspoint.ServiceRequest)
 	 */
+	@Override
 	public String submitService(ServiceRequest request)
 			throws UserAccessPointException {
 		
@@ -865,6 +876,7 @@ public final class AccessPoint implements UserAccessPoint,
 	/**
 	 * 
 	 */
+	@Override
 	public boolean checkReservationPossibility(ReservationRequest req) throws UserAccessPointException {
 		
 		HomeDomainReservation res = reqConverter.createReservation(req);
@@ -900,6 +912,7 @@ public final class AccessPoint implements UserAccessPoint,
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.useraccesspoint.UserAccessPoint#registerCallback(String, String)
 	 */
+	@Override
 	public void registerCallback(String serviceId, String url) {
 		UapCallbackClient client = new UapCallbackClient(url);
 		
@@ -957,6 +970,7 @@ public final class AccessPoint implements UserAccessPoint,
     /**
      * 
      */
+    @Override
 	public void modifyReservation(ModifyRequest request) {
 		reservationProcessor.modifyReservation(request.getResId(), 
 				request.getStartTime(), request.getEndTime());
@@ -973,7 +987,13 @@ public final class AccessPoint implements UserAccessPoint,
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.interdomain.Interdomain#getIdentifiers(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public LinkIdentifiers getIdentifiers(String portName, String bodId) {
+        // Block until proper initialization
+        while (state != State.READY) {
+            Thread.yield();
+        }
+
 		Idm2Dm dm = new Idm2DmClient(properties.getProperty("dm.address"));
 		return dm.getIdentifiers(portName, bodId);
 	}
@@ -981,70 +1001,132 @@ public final class AccessPoint implements UserAccessPoint,
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.interdomain.Interdomain#scheduleReservation(net.geant.autobahn.reservation.Reservation)
 	 */
+	@Override
 	public void scheduleReservation(Reservation reservation) {
+        // Block until proper initialization
+        while (state != State.READY) {
+            Thread.yield();
+        }
+
 		reservationProcessor.scheduleReservation(reservation);
 	}
 	
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.interdomain.Interdomain#reportSchedule(java.lang.String, int, java.lang.String, boolean, net.geant.autobahn.constraints.GlobalConstraints)
 	 */
+	@Override
 	public void reportSchedule(String resID, int code, String message,
 			boolean success, GlobalConstraints global) {
+        // Block until proper initialization
+        while (state != State.READY) {
+            Thread.yield();
+        }
+
 		reservationProcessor.reportSchedule(resID, code, message, success, global);
 	}
 
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.interdomain.Interdomain#cancelReservation(java.lang.String)
 	 */
+	@Override
 	public void cancelReservation(String resID) throws NoSuchReservationException {
+        // Block until proper initialization
+        while (state != State.READY) {
+            Thread.yield();
+        }
+
 		reservationProcessor.cancelReservation(resID);
 	}
 
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.interdomain.Interdomain#reportCancellation(java.lang.String, java.lang.String, boolean)
 	 */
+	@Override
 	public void reportCancellation(String resID, String message, boolean success) {
+        // Block until proper initialization
+        while (state != State.READY) {
+            Thread.yield();
+        }
+
 		reservationProcessor.reportCancellation(resID, message, success);
 	}
 
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.interdomain.Interdomain#reportActive(java.lang.String, java.lang.String, boolean)
 	 */
+	@Override
 	public void reportActive(String resID, String message, boolean success) throws NoSuchReservationException {
+	    // Block until proper initialization
+        while (state != State.READY) {
+            Thread.yield();
+        }
+
 		reservationProcessor.reportActive(resID, message, success);
 	}
 
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.interdomain.Interdomain#reportFinished(java.lang.String, java.lang.String, boolean)
 	 */
+	@Override
 	public void reportFinished(String resID, String message, boolean success) {
+        // Block until proper initialization
+        while (state != State.READY) {
+            Thread.yield();
+        }
+
 		reservationProcessor.reportFinished(resID, message, success);
 	}
 
+	@Override
 	public void withdrawReservation(String resID) throws NoSuchReservationException {
+        // Block until proper initialization
+        while (state != State.READY) {
+            Thread.yield();
+        }
+
 		reservationProcessor.withdrawReservation(resID);
 	}
-	
+
+	@Override
 	public void reportWithdraw(String resID, String message, boolean success) {
+        // Block until proper initialization
+        while (state != State.READY) {
+            Thread.yield();
+        }
+
 		reservationProcessor.reportWithdraw(resID, message, success);
 	}
 
+	@Override
 	public void modifyReservation(String resID, TimeRange time) {
+        // Block until proper initialization
+        while (state != State.READY) {
+            Thread.yield();
+        }
+
 		reservationProcessor.modifyReservation(resID, time.getStartTime(), 
 				time.getEndTime());
 	}
 
+	@Override
 	public void reportModify(String resID, TimeRange time, String message,
 			boolean success) {
+        // Block until proper initialization
+        while (state != State.READY) {
+            Thread.yield();
+        }
+
 		reservationProcessor.reportModify(resID, time.getStartTime(), 
 				time.getEndTime(), message, success);
 	}
 	
 	// ----------------- DM2IDM ----------------
+	@Override
 	public void activate(String resID, boolean success) {
 		reservationProcessor.activate(resID, success);
 	}
 
+	@Override
 	public void finish(String resID, boolean success) {
 		reservationProcessor.finish(resID, success);
 	}
@@ -1052,6 +1134,7 @@ public final class AccessPoint implements UserAccessPoint,
 	/* (non-Javadoc)
 	 * @see net.geant.autobahn.dm2idm.Dm2Idm#getIdentifiers(java.lang.String, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public LinkIdentifiers getIdentifiers(String domain, String portName, String linkBodId) {
 		
 		final int maxTries = 3;
