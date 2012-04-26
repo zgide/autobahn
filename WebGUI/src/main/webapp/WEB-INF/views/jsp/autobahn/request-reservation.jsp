@@ -206,7 +206,13 @@ function blockInputStartTime(checked) {
 <div>
     <table>
         <tr>
-            <td class="label"><spring:message code="reservation.startPort"/><br /><span class="error"><form:errors path="request.startPort.address"/></span></td>
+            <td class="label">
+                <spring:message code="reservation.startPort"/>
+                <br/>
+                <span class="error">
+                    <form:errors path="request.startPort.address"/>
+                </span>
+            </td>
             <td class="value">
                 <form:select path="request.startPort.address" onchange="setStartFriendlyName(this.options[this.options.selectedIndex].text)">
                     <form:options items="${friendlyports_domain}" itemValue="address" itemLabel="friendlyName"/>	
@@ -221,13 +227,20 @@ function blockInputStartTime(checked) {
             <td>
                 <table>
                     <tr>
-                        <td class="label" style="width: 20px;"><spring:message code="reservation.mode"/></td>
+                        <td class="label" style="width: 20px;">
+                            <spring:message code="reservation.mode"/>
+                        </td>
                         <td class="value">
                             <form:select path="request.startPort.mode" id="mode-start" onchange="checkIfVlanSelected1(this.options[this.options.selectedIndex].text)">
                                 <form:options items="${modes}"/>
                             </form:select>
                         </td>
-                        <td class="label" style="width: 20px;" id="hide1"><spring:message code="reservation.vlan"/></td>
+                        <td class="label" style="width: 50px;" id="hide1">
+                            <spring:message code="reservation.vlan"/>
+			                <img src="<c:url value="/images/help_icon.png"/>" 
+			                    alt="Select the desired start port VLAN. Leave 0 if you want the VLAN to be automatically selected" 
+			                    title="Select the desired start port VLAN. Leave 0 if you want the VLAN to be automatically selected" />
+                        </td>
                         <td id="hide2" >
                             <form:input path="request.startPort.vlan" maxlength="4" cssStyle="width:30px; height:20px; margin-right:0px;"/> 
                         </td>
@@ -239,7 +252,13 @@ function blockInputStartTime(checked) {
         <tr><td>&nbsp;</td></tr>
 
         <tr>
-            <td class="label"><spring:message code="reservation.endPort"/><br /><span class="error"><form:errors path="request.endPort.address"/></span></td>
+            <td class="label">
+                <spring:message code="reservation.endPort"/>
+                <br/>
+                <span class="error">
+                    <form:errors path="request.endPort.address"/>
+                </span>
+            </td>
             <td class="value">
                 <form:select path="request.endPort.address" onchange="setEndFriendlyName(this.options[this.options.selectedIndex].text)">
                     <form:options items="${friendlyports_destinationDomain}" itemValue="address" itemLabel="friendlyName"/>
@@ -253,13 +272,20 @@ function blockInputStartTime(checked) {
             <td>
                 <table>
                     <tr>
-                        <td class="label" style="width: 20px;"><spring:message code="reservation.mode"/></td>
+                        <td class="label" style="width: 20px;">
+                            <spring:message code="reservation.mode"/>
+                        </td>
                         <td class="value">	
                             <form:select path="request.endPort.mode" id="mode-end" onchange="checkIfVlanSelected2(this.options[this.options.selectedIndex].text)" >
                                 <form:options items="${modes}"/>
                             </form:select>
                         </td>
-                        <td class="label" style="width: 20px;" id="hide3" ><spring:message code="reservation.vlan"/></td>
+                        <td class="label" style="width: 50px;" id="hide3">
+                            <spring:message code="reservation.vlan"/>
+                            <img src="<c:url value="/images/help_icon.png"/>" 
+                                alt="Select the desired end port VLAN. Leave 0 if you want the VLAN to be automatically selected" 
+                                title="Select the desired end port VLAN. Leave 0 if you want the VLAN to be automatically selected" />
+                        </td>
                         <td id="hide4">
                             <form:input path="request.endPort.vlan" maxlength="4" cssStyle="width:30px; height:20px; margin-right:0px;"/> 
                         </td>
@@ -271,7 +297,12 @@ function blockInputStartTime(checked) {
         <tr><td>&nbsp;</td></tr>
 
         <tr>
-            <td class="label"><spring:message code="reservation.timezone"/></td>
+            <td class="label">
+                <spring:message code="reservation.timezone"/>
+                <img src="<c:url value="/images/help_icon.png"/>" 
+                    alt="Select the timezone for the start / end times below" 
+                    title="Select the timezone for the start / end times below" />
+            </td>
             <td class="value">
                 <form:select path="timezone">
                     <form:options items="${timezones}"/>
@@ -329,7 +360,16 @@ function blockInputStartTime(checked) {
         </tr>
 
         <tr>
-            <td class="label" style="min-width:150px"><spring:message code="reservation.description"/><br /><span class="error"><form:errors path="request.description"/></span></td>
+            <td class="label" style="min-width:150px">
+                <spring:message code="reservation.description"/>
+                <img src="<c:url value="/images/help_icon.png"/>" 
+                    alt="Free text description of the specific circuit" 
+                    title="Free text description of the specific circuit" />
+                <br/>
+                <span class="error">
+                    <form:errors path="request.description"/>
+                </span>
+            </td>
             <td class="value">
                 <form:textarea rows="4" cols="45" path="request.description" id="rdescription"/>
             </td>
@@ -396,12 +436,21 @@ function blockInputStartTime(checked) {
 <div>
     <table>
         <tr>
-            <td class="label" valign="top"><spring:message code="reservation.userInclude"/></td>
+            <td class="label" valign="top">
+                <spring:message code="reservation.userInclude"/>
+                 <img src="<c:url value="/images/help_icon.png"/>" 
+                     alt="Select the domains and/or links that you want to force the pathfinder to include in the path. Paths without these domains and/or links will be ignored" 
+                     title="Select the domains and/or links that you want to force the pathfinder to include in the path. Paths without these domains and/or links will be ignored" />
+            </td>
             <td>
                 <table>
                     <tr>
-                        <td class="label"><spring:message code="reservation.userIncludeDomains"/></td>
-                        <td class="label"><spring:message code="reservation.userIncludeLinks"/></td>
+                        <td class="label">
+                            <spring:message code="reservation.userIncludeDomains"/>
+                        </td>
+                        <td class="label">
+                            <spring:message code="reservation.userIncludeLinks"/>
+                        </td>
                     </tr>
                     <tr>
                         <td class="value">
@@ -423,12 +472,21 @@ function blockInputStartTime(checked) {
             </td>
         </tr>
         <tr>
-            <td class="label" valign="top"><spring:message code="reservation.userExclude"/></td>
+            <td class="label" valign="top">
+                <spring:message code="reservation.userExclude"/>
+                 <img src="<c:url value="/images/help_icon.png"/>" 
+                     alt="Select the domains and/or links that you want to force the pathfinder to exclude from the path. Paths with these domains and/or links will be ignored" 
+                     title="Select the domains and/or links that you want to force the pathfinder to exclude from the path. Paths with these domains and/or links will be ignored" />
+            </td>
             <td>
                 <table>
                     <tr>
-                        <td class="label"><spring:message code="reservation.userExcludeDomains"/></td>
-                        <td class="label"><spring:message code="reservation.userExcludeLinks"/></td>
+                        <td class="label">
+                            <spring:message code="reservation.userExcludeDomains"/>
+                        </td>
+                        <td class="label">
+                            <spring:message code="reservation.userExcludeLinks"/>
+                        </td>
                         
                     </tr>
                     <tr>

@@ -62,7 +62,7 @@
 <div class="scrollable vertical" style="height:590px; overflow: hidden; ">
   <div class="items">
 	<c:if test="${services.services==null}">
-        <h3>No submitted services available.</h3>
+        <h3>No circuits available.</h3>
     </c:if>
  
  

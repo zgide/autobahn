@@ -8,6 +8,9 @@
 <div style="text-align: left;" class="home_image">
 <br />
 <div id="collection" style="padding: 15px">
+The attributes listed below (except password) are transmitted when a request is submitted.
+Each domain may choose to authorize the request or not based on these attributes.
+<br/><br/>
 <table class="class_intras">
     <tr>
         <td class="label"><spring:message code="myprofile.username" text="Username" /></td>
@@ -42,6 +45,8 @@
 </table>
 <br />
 
+Overview of restrictions on submitted requests:
+<br/>
 <c:if test="${portsAllow != null && fn:length(portsAllow) > 0}">
     <table class="class_intras">
         <tr><th>

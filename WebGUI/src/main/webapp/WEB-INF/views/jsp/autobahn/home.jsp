@@ -1,6 +1,6 @@
 <%@ include file="../common/includes.jsp" %>
 <link rel="stylesheet" type="text/css" href="<c:url value="/js/jquery/tabs.css"/>"/>
-<h2><spring:message code="home.title" text="About AutoBAHN"/></h2>
+<h2><spring:message code="home.title" text="About BoD"/></h2>
 
 <div style="text-align: center;" class="home_image">
 <p>

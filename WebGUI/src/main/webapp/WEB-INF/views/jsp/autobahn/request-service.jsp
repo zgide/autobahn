@@ -1,6 +1,6 @@
 <%@ include file="../common/includes.jsp"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<h2><spring:message code="service.htitle" text="Request Reservation Service" /></h2>
+<h2><spring:message code="service.htitle" text="Request Dynamic Circuit" /></h2>
 
 <style>
 .images {
@@ -52,7 +52,16 @@ cursor:pointer;
 <br>
 <table width="100%">
 	<tr>
-		<td class="label" ><spring:message code="service.userHomeDomain"/><br /><span class="error"><form:errors path="service.userHomeDomain"/></span></td>
+		<td class="label">
+		    <spring:message code="service.userHomeDomain"/> 
+		    <img src="<c:url value="/images/help_icon.png"/>" 
+		        alt="Select the domain where request will be submitted" 
+		        title="Select the domain where request will be submitted" />
+		    <br/>
+		    <span class="error">
+		        <form:errors path="service.userHomeDomain"/>
+		    </span>
+		</td>
 		<td class="value">
             <c:if test="${home!=null}">
                 <c:if test="${fn:length(serviceModel.service.reservations) != 0}">
@@ -75,23 +84,50 @@ cursor:pointer;
 		<!--td class="error"><form:errors path="service.userHomeDomain"/></td-->
 	</tr>
     <tr>
-        <td class="label" ><spring:message code="service.destinationDomain"/><br /><span class="error"><form:errors path="destinationDomain"/></span></td>
-            <td class="value">
-                <form:select path="destinationDomain">
-                    <form:options items="${idms}"/>
-                    <option value="IDCP">IDCP</option>
-                </form:select>
-            </td>
+        <td class="label">
+            <spring:message code="service.destinationDomain"/>
+            <img src="<c:url value="/images/help_icon.png"/>" 
+                alt="Select the domain that contains the destination port" 
+                title="Select the domain that contains the destination port" />
+            <br/>
+            <span class="error">
+                <form:errors path="destinationDomain"/>
+            </span>
+        </td>
+        <td class="value">
+            <form:select path="destinationDomain">
+                <form:options items="${idms}"/>
+                <option value="IDCP">IDCP</option>
+            </form:select>
+        </td>
 	</tr>
 	<tr>
-		<td class="label" ><spring:message code="service.userName"/><br /><span class="error"><form:errors path="service.userName"/></span></td>
+		<td class="label">
+		    <spring:message code="service.userName"/>
+            <img src="<c:url value="/images/help_icon.png"/>" 
+                alt="Your username will be submitted with the request" 
+                title="Your username will be submitted with the request" />
+		    <br/>
+		    <span class="error">
+		        <form:errors path="service.userName"/>
+		    </span>
+		</td>
 		<td class="value">
 			<form:input path="service.userName" disabled="true"/>
 		</td>
 		<!--td class="error"><form:errors path="service.userName"/></td-->
 	</tr>
 	<tr>
-		<td class="label" ><spring:message code="service.justification"/><br /><span class="error"><form:errors path="service.justification"/></span></td>
+		<td class="label">
+		    <spring:message code="service.justification"/>
+            <img src="<c:url value="/images/help_icon.png"/>" 
+                alt="Enter some free text here to explain or identify the purpose of this request" 
+                title="Enter some free text here to explain or identify the purpose of this request" />
+		    <br/>
+		    <span class="error">
+		        <form:errors path="service.justification"/>
+		    </span>
+		</td>
 		<td class="value">
 			<form:textarea rows="8" cols="65" path="service.justification"/>
 		</td>

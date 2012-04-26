@@ -19,7 +19,7 @@ public class Actions {
     
     public void login() throws Exception {
         selenium.open("/autobahn-gui/portal/home.htm");
-        selenium.click("link=Request service");
+        selenium.click("link=Request dynamic circuit");
         selenium.waitForPageToLoad("30000");
         selenium.type("j_username", "dmarchal");
         selenium.type("j_password", "auto123");
@@ -37,9 +37,9 @@ public class Actions {
         selenium.waitForPageToLoad("30000");
         selenium.click("link=About AutoBAHN");
         selenium.waitForPageToLoad("30000");
-        selenium.click("link=Request service");
+        selenium.click("link=Request dynamic circuit");
         selenium.waitForPageToLoad("30000");
-        selenium.click("link=Submited services");
+        selenium.click("link=Track circuits");
         selenium.waitForPageToLoad("30000");
         selenium.select("currentIdm", "label=http://150.140.8.17:8080/autobahn/interdomain");
         selenium.click("_eventId_change");
@@ -47,7 +47,7 @@ public class Actions {
         selenium.select("currentIdm", "label=http://150.140.8.18:8080/autobahn/interdomain");
         selenium.click("_eventId_change");
         selenium.waitForPageToLoad("30000");
-        selenium.click("link=Autobahn map");
+        selenium.click("link=BoD Deployments Map");
         selenium.waitForPageToLoad("30000");
         selenium.click("link=Domains settings");
         selenium.waitForPageToLoad("30000");
@@ -76,9 +76,9 @@ public class Actions {
         selenium.click("Login");
         selenium.waitForPageToLoad("30000");
         stc.verifyTrue(selenium.isTextPresent("About AutoBAHN"));
-        selenium.click("link=Request service");
+        selenium.click("link=Request dynamic circuit");
         selenium.waitForPageToLoad("30000");
-        stc.verifyTrue(selenium.isTextPresent("Request Reservation Service"));
+        stc.verifyTrue(selenium.isTextPresent("Request Dynamic Circuit"));
         selenium.type("justification", "test justification");
         selenium.click("_eventId_add");
         selenium.waitForPageToLoad("30000");
@@ -106,7 +106,7 @@ public class Actions {
         selenium.click("Login");
         selenium.waitForPageToLoad("30000");
         stc.verifyTrue(selenium.isTextPresent("About AutoBAHN"));
-        selenium.click("link=Request service");
+        selenium.click("link=Request dynamic circuit");
         selenium.waitForPageToLoad("30000");
         stc.verifyTrue(selenium.isTextPresent("Service Reservations"));
         stc.verifyTrue(selenium.isTextPresent("Action"));
@@ -119,15 +119,15 @@ public class Actions {
         stc.verifyTrue(selenium.isTextPresent("Capacity [bits/s]"));
         stc.verifyTrue(selenium.isTextPresent("VLAN identifier"));
         stc.verifyTrue(selenium.isTextPresent("Resilience"));
-        selenium.click("link=Submited services");
+        selenium.click("link=Track circuits");
         selenium.waitForPageToLoad("30000");
         selenium.click("link=Domains settings");
         selenium.waitForPageToLoad("30000");
         stc.verifyTrue(selenium.isTextPresent("Domains Settings"));
         selenium.click("link=Submited services");
         selenium.waitForPageToLoad("30000");
-        stc.verifyTrue(selenium.isTextPresent("Submitted Reservation Services"));
-        selenium.click("link=Autobahn map");
+        stc.verifyTrue(selenium.isTextPresent("Track Circuits"));
+        selenium.click("link=BoD Deployments Map");
         selenium.waitForPageToLoad("30000");
         stc.verifyTrue(selenium.isTextPresent("AutoBAHN Reservation and Reachability Map"));
         selenium.click("link=Domains logs");

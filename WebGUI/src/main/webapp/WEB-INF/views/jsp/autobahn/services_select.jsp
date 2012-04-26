@@ -6,7 +6,7 @@
 
 
 
-<h2><spring:message code="services.htitle" text="Submitted Reservation Services" /></h2>
+<h2><spring:message code="services.htitle" text="Track Circuits" /></h2>
 
  <!-- generally javascript should go in a separate file -->
 <script type="text/javascript">
@@ -60,7 +60,7 @@ jQuery(document).ready(function()
 <div align="center" class="logs_image">
 <form:form commandName="services" action="" id="servicessearchform">
 <table>
-	<tr><td><h3>Please select an IDM to view its submitted services</h3></td></tr>
+	<tr><td><h3>Please select a domain to track your circuits submitted there</h3></td></tr>
 	<tr>
 	<td>
 		<center><form:select path="currentIdm">

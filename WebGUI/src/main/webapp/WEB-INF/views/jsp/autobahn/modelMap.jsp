@@ -62,8 +62,8 @@
     java.util.Properties prop = new java.util.Properties();
     prop.load(pageContext.getServletContext().getResourceAsStream("/META-INF/MANIFEST.MF"));
     %>
-    	<p>Copyrights@ GEANT AutoBAHN, version <%=prop.getProperty("Implementation-Version")%></p>
-    	<p>Designed and Developed by <a href="http://www.geant.net">GEANT</a></p> 
+        <p>Copyrights DANTE (for <a href="http://www.geant.net">GEANT</a>)</p>
+        <p>AutoBAHN version <%=prop.getProperty("Implementation-Version")%></p> 
     </div>
     </div>
   </body>
