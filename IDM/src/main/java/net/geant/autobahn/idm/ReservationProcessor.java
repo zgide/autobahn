@@ -445,8 +445,13 @@ public class ReservationProcessor {
 		
 		AutobahnCommand command = new AutobahnCommand() {
             public void run() {
-            	rdao.update(res);
-        		res.finish(success);
+            	if (success){
+                    rdao.update(res);
+                } else {
+                    rdao.merge(res);
+                }
+            	
+            	res.finish(success);
         		
         		hdao.update(Translator.convertHistory(res));
             }
@@ -458,7 +463,7 @@ public class ReservationProcessor {
         };
 
         if(restorationMode) {
-        	command.run();
+        	new TransactionTask(command).run();
         	return;
         }
         
