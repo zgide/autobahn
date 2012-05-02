@@ -73,7 +73,7 @@ padding-left:0px;
 height:85px;
 background: url(footer.png) no-repeat;
 text-align:center;
-color:white;
+color:#25648D;
 font-family: Arial, Helvetica, sans;
 font-size:10px;
 position: relative;
@@ -81,7 +81,7 @@ clear:both;
 }
 #footer p:first-child {padding-top:20px; margin:0px; font-size:1.7m;font-family:"Calibri","Arial";}
 #footer p {margin:0px; font-size:1.7em;font-family:"Calibri","Arial";}
-#footer a {color:white}
+#footer a {color:#25648D}
 
 body {
 	margin-top: 10px;
