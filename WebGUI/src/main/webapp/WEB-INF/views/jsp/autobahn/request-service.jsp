@@ -20,7 +20,7 @@
 	-moz-border-radius:20px;
 	-webkit-border-radius:20px;
 	-moz-box-shadow:0 0 25px #666;
-	-webkit-box-shadow:0 0 25px #666;	
+	/*-webkit-box-shadow:0 0 25px #666;	*/
 	
 	
 
