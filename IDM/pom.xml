@@ -92,6 +92,11 @@
 								<artifactId>autobahn-common</artifactId>
 								<version>1.2-SNAPSHOT</version>
 							</dependency>
+							<dependency>
+								<groupId>net.geant.autobahn</groupId>
+								<artifactId>autobahn-idm</artifactId>
+								<version>1.2-SNAPSHOT</version>
+							</dependency>
 						</dependencies>
 
 						<executions>
