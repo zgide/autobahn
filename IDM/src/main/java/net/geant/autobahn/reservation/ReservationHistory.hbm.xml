@@ -57,5 +57,8 @@
         <property name="authParameters" type="java.lang.String">
             <column name="AUTH_PARAMS" />
         </property>
+        <property name="failureCause" type="java.lang.String">
+            <column name="FAILURE_CAUSE" />
+        </property>
     </class>
 </hibernate-mapping>

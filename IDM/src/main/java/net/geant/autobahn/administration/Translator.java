@@ -113,6 +113,7 @@ public class Translator {
 		res.setMtu(r.getMtu());
 		res.setResiliency(r.getResiliency());
 		res.setState(r.getIntState());
+		res.setFailureCause(r.getFailureCause());
 		
 		// Start port
 		PortType sport = PortType.convert(r.getStartPort(), r.getStartVlan(), r.getStartPortDescription());
@@ -127,7 +128,7 @@ public class Translator {
 	
     
     public static ReservationHistory convertHistory(AutobahnReservation src) {
-        ReservationType rtype = convert(src);
+    	ReservationType rtype = convert(src);
     	ReservationHistory r = new ReservationHistory();
         
         r.setBodID(src.getBodID());
@@ -149,6 +150,10 @@ public class Translator {
         r.setIntState(rtype.getState());
         r.setStartVlan(rtype.getStartPort().getVlan());
         r.setEndVlan(rtype.getEndPort().getVlan());
+        
+        if (src instanceof HomeDomainReservation) {
+        	r.setFailureCause(((HomeDomainReservation) src).getFailureCause());
+        }
         
         return r;
     }

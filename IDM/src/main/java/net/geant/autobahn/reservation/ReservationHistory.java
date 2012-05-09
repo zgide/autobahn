@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name="ReservationHistory", namespace="reservation.autobahn.geant.net", propOrder={
 		"bodID", "description", "startPort", "endPort", "startPortDescription", "endPortDescription",
 		"resiliency", "startTime", "endTime", "capacity", "bidirectional", "maxDelay", "mtu", "priority",
-		"intState", "startVlan", "endVlan", "authParameters"
+		"intState", "startVlan", "endVlan", "authParameters", "failureCause"
 })
 public class ReservationHistory implements Serializable {
 
@@ -48,6 +48,8 @@ public class ReservationHistory implements Serializable {
     protected int endVlan;
     
     private String authParameters;
+
+	private String failureCause;
     
     /**
      * Default constructor
@@ -337,4 +339,12 @@ public class ReservationHistory implements Serializable {
     public String toString() {
         return bodID;
     }
+
+	public void setFailureCause(String failureCause) {
+		this.failureCause = failureCause;
+	}
+	
+	public String getFailureCause() {
+		return failureCause;
+	}
 }
