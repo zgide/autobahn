@@ -16,8 +16,11 @@ import net.geant.autobahn.reservation.ServiceHistory;
 import net.geant.autobahn.reservation.User;
 import net.geant.autobahn.useraccesspoint.PortType;
 
+import org.apache.log4j.Logger;
+
 public class Translator {
 	
+    private static final Logger log = Logger.getLogger(Translator.class);
 
 	public static ServiceType convert(Service serv) {
 		ServiceType stype = new ServiceType();
@@ -152,9 +155,24 @@ public class Translator {
         r.setEndVlan(rtype.getEndPort().getVlan());
         
         if (src instanceof HomeDomainReservation) {
-        	r.setFailureCause(((HomeDomainReservation) src).getFailureCause());
+            String failure = (((HomeDomainReservation) src).getFailureCause());
+            if (failure != null) {
+                while (failure.indexOf("<") != -1) {
+                    int start = failure.indexOf("<");
+                    int end = failure.indexOf(")>", start);
+                    if (end != -1) {
+                        failure = failure.substring(0, start)
+                                + failure.substring(end + 2);
+                    }
+                }
+                StringBuilder cmsg = new StringBuilder(failure);
+                if (cmsg.length() > 250) {
+                    cmsg.setLength(250);
+                    cmsg.append("...");
+                }
+                r.setFailureCause(cmsg.toString());
+            }
         }
-        
         return r;
     }
     
