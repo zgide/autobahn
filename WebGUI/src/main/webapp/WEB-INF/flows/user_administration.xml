@@ -31,7 +31,7 @@
         <transition on="edit" to="edit-user" bind="false">
             <set name="requestScope.username" value="requestParameters.username"
                 type="string" />
-
+            <evaluate expression="manager.getAllClientPorts()" result="flowScope.ports_all"/>
             <evaluate expression="userProfileManager.getUserProfile(username)" result="flowScope.userProfile" />
         </transition>
 
@@ -50,9 +50,9 @@
 				type="string" />
 				
 			<evaluate expression="xmlUserDetailsAdmin.createUserFromUserParameters(username, organization, membership, role, password, email)" />
-			<evaluate expression="userProfileManager.setUserProfile(username, null, null, null, null, null)" />
 			<evaluate expression="xmlUserDetailsAdmin.loadUsers()" />
 			<evaluate expression="xmlUserDetailsAdmin.usersParameters" result="flowScope.users" />
+                        <evaluate expression="userProfileManager.setUserProfile(username, null, null, null, null, null)" />
 		</transition>
 		
 		<transition on-exception="java.lang.Exception" to="view-users"> 

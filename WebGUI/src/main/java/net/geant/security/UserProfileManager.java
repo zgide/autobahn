@@ -39,6 +39,7 @@ public class UserProfileManager {
     public Properties readUserPropertiesFromFile(String username) {
         Properties properties = new Properties();
         ResourcePath resource=new ResourcePath();
+        
         String path =resource.getFullPath(userConfigPath + username );
         try {
             //InputStream is = getClass().getClassLoader().getResourceAsStream(path);
@@ -57,14 +58,16 @@ public class UserProfileManager {
     public void writeUserPropertiesToFile(String username, Properties props) {
         ResourcePath resource=new ResourcePath();
         String path =resource.getFullPath(userConfigPath + username );
+        File folder=new File(resource.getFullPath(userConfigPath)); 
         try {
             if (props == null) {
-                File f = new File(path);
+            	File f = new File(path); 
                 f.delete();
                 logger.debug("Removed " + path);
                 return;
             }
-
+            
+            folder.mkdirs();
             OutputStream os = new FileOutputStream(path);
             props.store(os, null);
             os.close();

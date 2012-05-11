@@ -1289,12 +1289,8 @@ public class ManagerImpl implements Manager, ManagerNotifier {
             if (userDenied != null) {
                 logger.info("Some ports denied:");
                 for (PortType p : allPorts) {
-                    for (String s : userDenied) {
-                        if (p.getAddress().equals(s)) {
-                            logger.info(" --" + s);
-                            continue;
-                        }
-                        res.add(p);
+                	if(!userDenied.contains(p.getAddress()) ){
+                		res.add(p); 
                     }
                 }
             } else {
@@ -1319,6 +1315,10 @@ public class ManagerImpl implements Manager, ManagerNotifier {
         }
         if (userPorts == null) {
             return null;
+        }
+        userPorts=userPorts.replaceAll("\\s","");
+        if(userPorts.isEmpty()) {
+        	return null;
         }
         return Arrays.asList(userPorts.split(","));
     }
