@@ -28,7 +28,8 @@ final public class ServiceScheduler implements Runnable,  ServiceStatusListener 
 	private Queue<String> exec = new LinkedBlockingQueue<String>();
 	private Queue<String> cancel = new LinkedBlockingQueue<String>();
 	private Queue<String> priorityCancel = new LinkedBlockingQueue<String>();
-	private boolean quit, waiting;
+	private volatile boolean quit;
+    private boolean waiting;
 
 	private Map<String, Service> services = new HashMap<String, Service>();
 	private Map<String, Service> resToService = new HashMap<String, Service>(); 
@@ -118,8 +119,8 @@ final public class ServiceScheduler implements Runnable,  ServiceStatusListener 
 		// put service on priority cancel queue
 		// do not allow run to wait
 		priorityCancel.add(serviceID);
-		if (waiting) {
-			synchronized (this) {
+    	synchronized (this) {
+        	if (waiting) {
 				this.notify();
 			}
 		}
@@ -171,8 +172,8 @@ final public class ServiceScheduler implements Runnable,  ServiceStatusListener 
 					try {
 						this.wait();
 					} catch (InterruptedException e) { }
+    				waiting = false;
 				}
-				waiting = false;
 			}
 		}
 	}
