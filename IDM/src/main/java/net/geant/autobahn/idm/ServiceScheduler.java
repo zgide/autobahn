@@ -166,9 +166,8 @@ final public class ServiceScheduler implements Runnable,  ServiceStatusListener 
 				break;
 			
 			// if nothing on queues, wait
-			if (priorityCancel.isEmpty() && cancel.isEmpty() && exec.isEmpty()) {
-				
-				synchronized (this) {
+			synchronized (this) {
+    			if (priorityCancel.isEmpty() && cancel.isEmpty() && exec.isEmpty()) {			
 					waiting = true;
 					try {
 						this.wait();
