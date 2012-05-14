@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.geant.autobahn.reservation.Reservation;
 import net.geant.autobahn.reservation.Service;
@@ -31,7 +32,7 @@ final public class ServiceScheduler implements Runnable,  ServiceStatusListener 
 	private volatile boolean quit;
     private boolean waiting;
 
-	private Map<String, Service> services = new HashMap<String, Service>();
+	private Map<String, Service> services = new ConcurrentHashMap<String, Service>();
 	private Map<String, Service> resToService = new HashMap<String, Service>(); 
 	
 	/**
